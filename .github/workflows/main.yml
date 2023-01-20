@@ -2,18 +2,29 @@ on: [push]
 jobs:
   build_latex:
     runs-on: ubuntu-latest
+    container:
+      image: docker://python:3.10-slim
     steps:
+      - name: Install system dependencies
+        run: |
+          apt-get update && apt-get install -y \
+            git \
+            texlive-full \
+            python3-pip \
+            && rm -rf /var/lib/apt/lists/*
       - uses: actions/checkout@v3
         with:
           ssh-known-hosts: version.aalto.fi
           submodules: recursive
-      - uses: xu-cheng/texlive-action/full@v1
-        with:
-          run: |
-            cd src
-            latexmk
+      - name: Install Python dependencies
+        run: |
+          pip3 install --no-cache-dir -r requirements.txt
+      - name: Build LaTeX
+        run: |
+          cd src
+          latexmk
       - name: Upload PDF file
         uses: actions/upload-artifact@v3
         with:
           name: PDF
-          path: src/main.pdf
+          path: src/build/main.pdf

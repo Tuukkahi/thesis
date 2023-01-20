@@ -151,7 +151,7 @@
 %% * the second when you want to print your thesis to bind it, or
 %% * the third when producing a ps file and a pdf/a from it.
 %%
-\documentclass[english, 12pt, a4paper, elec, utf8, a-1b, online]{aaltothesis}
+\documentclass[UKenglish, 12pt, a4paper, sci, utf8, a-1b, online]{aaltothesis}
 %\documentclass[english, 12pt, a4paper, elec, utf8, a-1b]{aaltothesis}
 %\documentclass[english, 12pt, a4paper, elec, dvips, online]{aaltothesis}
 
@@ -177,8 +177,9 @@
 \usepackage{graphicx}
 
 %% Math fonts, symbols, and formatting; these are usually needed
-\usepackage{amsfonts,amssymb,amsbsy,amsmath}
-
+\usepackage{amsfonts,amssymb,amsbsy,amsmath,amsthm,bm}
+\usepackage{algorithm,algpseudocode}
+\usepackage[labelfont=bf]{caption}
 %% Change the school field to specify your school if the automatically set name
 %% is wrong
 % \university{aalto-yliopisto}
@@ -186,29 +187,29 @@
 
 %% Edit to conform to your degree programme
 %%
-\degreeprogram{Electronics and electrical engineering}
+\degreeprogram{Mathematics and Operations Research}
 %%
 
 %% Your major
 %%
-\major{An appropriate major}
+\major{Applied Mathematics}
 %%
 
 %% Major subject code
 %%
-\code{ELEC0007}
+\code{SCI3053}
 %%
  
 %% Choose one of the three below
 %%
-\univdegree{BSc}
-%\univdegree{MSc}
+%\univdegree{BSc}
+\univdegree{MSc}
 %\univdegree{Lic}
 %%
 
 %% Your name (self explanatory...)
 %%
-\thesisauthor{Eddie Engineer}
+\thesisauthor{Tuukka Himanka}
 %%
 
 %% Your thesis title comes here and possibly again together with the Finnish or
@@ -311,7 +312,19 @@ text must be identical to the text on the abstract page.
 %% to 'false'. This allows you to write the metadata in the correct format
 %% directly into the file thesistemplate.xmpdata.
 %\setboolean{writexmpdatafile}{false}
+\newcommand{\inputpypgf}[1]{%
+  \InputIfFileExists{#1}{}{\typeout{No file #1.}}%
+}
 
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{theorem}{section}
+\numberwithin{definition}{section}
 %% All that is printed on paper starts here
 %%
 \begin{document}
@@ -433,10 +446,29 @@ Otaniemi, 31.8.2018
 %% This text will be translated to English soon.
 %%
 \section{Introduction}
+\input{introduction/introduction.tex}
 
+\clearpage
+\section{Theoretical Background}
+\input{background/background.tex}
+
+\clearpage
+\section{Model}
+\input{model/model.tex}
+
+\clearpage
+\section{Numerical Experiments}
+\input{experiments/experiments.tex}
+
+\clearpage
+\section{Conclusions}
+\input{conclusions/conclusions.tex}
+\clearpage
+\thesisappendix
+\input{appendix/appendix.tex}
 %% Leave page number of the first page empty
 %% 
-\thispagestyle{empty}
+%\thispagestyle{empty}
 
 \clearpage
 %% L\"ahdeluettelo

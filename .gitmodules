@@ -1,0 +1,3 @@
+[submodule "src/aaltologo"]
+	path = src/aaltologo
+	url = https://version.aalto.fi/gitlab/latex/aaltologo.git

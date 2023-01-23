@@ -151,7 +151,7 @@
 %% * the second when you want to print your thesis to bind it, or
 %% * the third when producing a ps file and a pdf/a from it.
 %%
-\documentclass[english, 12pt, a4paper, elec, utf8, a-1b, online]{aaltothesis}
+\documentclass[english, 12pt, a4paper, sci, utf8, a-1b, online]{aaltothesis}
 %\documentclass[english, 12pt, a4paper, elec, utf8, a-1b]{aaltothesis}
 %\documentclass[english, 12pt, a4paper, elec, dvips, online]{aaltothesis}
 
@@ -186,29 +186,29 @@
 
 %% Edit to conform to your degree programme
 %%
-\degreeprogram{Electronics and electrical engineering}
+\degreeprogram{Mathematics and Operations Research}
 %%
 
 %% Your major
 %%
-\major{An appropriate major}
+\major{Applied Mathematics}
 %%
 
 %% Major subject code
 %%
-\code{ELEC0007}
+\code{SCI3053}
 %%
  
 %% Choose one of the three below
 %%
-\univdegree{BSc}
-%\univdegree{MSc}
+%\univdegree{BSc}
+\univdegree{MSc}
 %\univdegree{Lic}
 %%
 
 %% Your name (self explanatory...)
 %%
-\thesisauthor{Eddie Engineer}
+\thesisauthor{Tuukka Himanka}
 %%
 
 %% Your thesis title comes here and possibly again together with the Finnish or
@@ -433,6 +433,19 @@ Otaniemi, 31.8.2018
 %% This text will be translated to English soon.
 %%
 \section{Introduction}
+\input{introduction/introduction.tex}
+
+\section{Theoretical Background}
+\input{background/background.tex}
+
+\section{Model}
+\input{model/model.tex}
+
+\section{Numerical Experiments}
+\input{experiments/experiments.tex}
+
+\section{Conclusions}
+\input{conclusions/conclusions.tex}
 
 %% Leave page number of the first page empty
 %% 

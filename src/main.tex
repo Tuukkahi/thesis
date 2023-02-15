@@ -151,7 +151,7 @@
 %% * the second when you want to print your thesis to bind it, or
 %% * the third when producing a ps file and a pdf/a from it.
 %%
-\documentclass[english, 12pt, a4paper, sci, utf8, a-1b, online]{aaltothesis}
+\documentclass[UKenglish, 12pt, a4paper, sci, utf8, a-1b, online]{aaltothesis}
 %\documentclass[english, 12pt, a4paper, elec, utf8, a-1b]{aaltothesis}
 %\documentclass[english, 12pt, a4paper, elec, dvips, online]{aaltothesis}
 
@@ -177,7 +177,7 @@
 \usepackage{graphicx}
 
 %% Math fonts, symbols, and formatting; these are usually needed
-\usepackage{amsfonts,amssymb,amsbsy,amsmath}
+\usepackage{amsfonts,amssymb,amsbsy,amsmath,bm}
 
 %% Change the school field to specify your school if the automatically set name
 %% is wrong
@@ -311,7 +311,9 @@ text must be identical to the text on the abstract page.
 %% to 'false'. This allows you to write the metadata in the correct format
 %% directly into the file thesistemplate.xmpdata.
 %\setboolean{writexmpdatafile}{false}
-
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
 %% All that is printed on paper starts here
 %%
 \begin{document}
@@ -435,17 +437,6 @@ Otaniemi, 31.8.2018
 \section{Introduction}
 \input{introduction/introduction.tex}
 
-\section{Theoretical Background}
-\input{background/background.tex}
-
-\section{Model}
-\input{model/model.tex}
-
-\section{Numerical Experiments}
-\input{experiments/experiments.tex}
-
-\section{Conclusions}
-\input{conclusions/conclusions.tex}
 
 %% Leave page number of the first page empty
 %% 

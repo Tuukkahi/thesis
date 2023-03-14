@@ -1,0 +1,122 @@
+Recently artificial neural networks have made a vast comeback in research.
+As computing power has increased dramatically, more complex neural networks have became feasible for different applications.
+Much success in using neural networks has been found in e.g.\ image classification, speech and text recognition, object detection, and automation of different tasks.
+
+Originally the early concepts of neural networks were already presented in the 1940s~\cite{mcculloch, hebb} as a mathematical model for nervous activity.
+In the 1950s to 1970s the first concepts were modelled with a single neuron but the application of backpropagation enabled optimising multiple layers of neurons that started the research of modern neural networks.
+Then in to 2000's the latest wave of neural network research was made possible by powerful parallel computing performance that made it possible to train networks for learning ever more complex phenomena.
+
+Next some basics of neural networks are covered starting from the McCulloch-Pitts Neuron and training it to backpropagation to the modern convolutional neural networks needed for the purpose of this work.
+All material in this section is pretty standard neural networks basics and is not completely necessary for understanding the basic concept of the final model.
+However, a reader previously unfamiliar with neural networks basics might find e.g.~\cite{goodfellow} helpful, from which most of this material is taken from, helpful to understand the cocepts better.
+
+\subsubsection{Neurons and Activation Functions}
+The first mathematical model for neuron from~\cite{mcculloch}, known as the McCulloch-Pitts Neuron is the first building block for any neural networks.
+It consists of aggregating an input vector for the neuron, and of activation that makes the decision based on the aggregation.
+The McCulloch-Pitts Neuron is depicted in figure~\ref{fig:mccullochpittsneuron}.
+\begin{figure}\label{fig:mccullochpittsneuron}
+    \includegraphics{background/fig/mccullochpitts.png}
+    \caption{McCulloch-Pitts neuron (placeholder image)}
+\end{figure}
+The McCulloch-Pitts Neuron takes an $n$-dimensional binary vector $\mathbf{x}$ as input, and applies function $f : \R^n \rightarrow \R$, a sum of the inputs
+\begin{equation}
+    f(\mathbf{x}) = \sum_{i=1}^{n} x_{i}.
+\end{equation}
+Function $\phi$ is then the binary activation function determining the output of the neuron given some threshold $T$,
+\begin{align}
+    y = \phi(f(\mathbf{x})) & = 1 \text{ if } \phi(\mathbf{x}) \geq T \\
+                         & = 0 \text{ if } \phi(\mathbf{x}) < T. 
+\end{align}
+
+This model has the difficulty of simplicity.
+Only binary input vectors $\mathbf{x}$ are allowed, and the output is always binary.
+
+A few years later Donald Hebb~\cite{hebb} proposed that the proximity of inputs and other neurons should affect the output as well.
+This concept was applied to the neuron model by Frank Rosenblatt~\cite{rosenblatt} who developed the perceptron that is much more flexible model.
+Now the inputs can be any values and they are weighted with a weight vector $\bm{w}$, and there is also a bias term in $f$.
+So now function $f : \R^n \rightarrow \R$ is
+\begin{equation}
+    f(\mathbf{x}) = \sum_{i=1}^{n} w_{i} x_{i} + b.
+\end{equation}
+The perceptron is depicted in figure~\ref{fig:perceptron}.
+
+\begin{figure}\label{fig:perceptron}
+    \includegraphics{background/fig/mccullochpitts.png}
+    \caption{Perceptron (placeholder image)}
+\end{figure}
+
+The activation function $\phi$ can also be modified to be a more sophisticated one than the binary step function.
+Typical activation functions used in neural networks include the Rectified Linear Unit (ReLU) and the Leaky ReLU, the Sigmoid function, and the Softmax function.
+The mentioned activation functions are shown in figure~\ref{fig:activations}.
+The choice of activation function comes with technicalities that are important in training a neural networks including the possible range of values and behavior of their derivatives.
+
+\begin{figure}\label{fig:activations}
+    \includegraphics{background/fig/activations.png}
+    \caption{Activation functions (placeholder image)}
+\end{figure}
+
+The single neuron model can only be used for extremely simple tasks.
+Therefore the neurons were started to be combined as layers to create something called Multilayer Perceptron (MLP).
+MLP is nothing more than combining a number of neurons in layers and applying them sequentially as depicted in figure~\ref{fig:mlp}.
+\begin{figure}\label{fig:mlp}
+    \includegraphics{background/fig/activations.png}
+    \caption{Multilayer Perceptron (placeholder image)}
+\end{figure}
+
+Formally the MLP neuron function $f : \R^n \rightarrow \R^m$ is now
+\begin{equation}
+    f(\bm{x}; \bm{W}, \bm{b}) = \bm{W} \bm{x} + \bm{b},
+\end{equation}
+where rows of the weight matrix $\bm{W} \in \R^{n \times m}$ has now the weights and bias vector $\bm{b} \in \R^{m}$ has the bias terms of the neurons in the MLP\@
+The activation function is now applied elementwise for the outputs of $f$.
+
+MLPs are related to the important Universal Approximation Theorem presented at the turn of the 1990's~\cite{cybenko,horniketal,hornik} that states that these kinds of networks with at least one hidden layer can approximate any continuous function with a number of different activation functions.
+While the theorem might sound compelling, it is important to note that for multivariable functions the number of neurons is not necessarily bounded.
+Moreover, training a universal function approximator is not trivial and convergence is not guaranteed.
+
+In MLP all the neurons in the layers are connected to each other but for a general neural network it is not mandatory, a convolutional one that is the main interest of this work being an example of a partially connected network.
+
+\subsubsection{Convolutional Neural Networks}
+Convolutional Neural Networks (CNNs) are a type of neural networks that have been recently popular and widely studied in e.g.\ image classification tasks.
+The main power of CNNs is that they have proved to be effective in finding the essential structures especially from image data.
+While the basic concept is similar to the MLP model, CNN is quite different in its working principles, and thus presented in detail here to understand how the model of this work works.
+
+The $n$-dimensional convolution of two compactly supported functions $f, g : \R^n \rightarrow \R$ is defined by
+\begin{equation}
+    (f * g)(x) = \int_{\R^n} f(y) g(x-y) \, \mathrm{d}y.
+\end{equation}
+
+With neural networks operations need to be discretized so the convolution for compactly supported $f, g : \Z^n \rightarrow \R$ becomes
+\begin{equation}
+    (f * g)(x) = \sum_{y \in \N^{n}} f(y) g(x-y).
+\end{equation}
+And the dimension of convolution is in practice mostly at most 3 and especially with image data two-dimensional convolutions are used and thus the examples from here on concern the two-dimensional case.
+Even though with a simple change of variables it is easy to see that the convolution is commutative, in neural networks $f$ is usually thought to be some input data and $g$ a convolution kernel.
+However, practical neural network libraries implement a similar cross-correlation function~\cite{goodfellow}
+\begin{equation}
+    (f * g)(x) = \sum_{y \in \N^{n}} f(x) g(y+x),
+\end{equation}
+in which the kernel is not flipped resulting in losing the commutative property.
+This doesn't affect the end result as by flipping the convolution kernel the cross-correlation function has the same result.
+Thus this is only a technical detail and the layers are nevertheless called convolution layers instead of cross-correlation layers.
+
+In CNNs the dot-product neurons in the layers of MLP are now replaced with many small convolutions operations.
+With images the convolution kernels have often sizes of $3 \times 3$ or $9 \times 9$, and convolutions are computed with a large number of these small kernels to the image input.
+Many convolution kernels are approximated, and the input is convoluted with many convolution filters individually to increase the depth of input.
+A typical number of convolution filters would be 32, or 64.
+The idea is depicted in figure~\ref{fig:2dconv}.
+\begin{figure}\label{fig:2dconv}
+    \includegraphics{background/fig/activations.png}
+    \caption{2d convolution (placeholder image)}
+\end{figure}
+
+Between convolution layers the dimensions of the input is usually downsampled by pooling layers which combine multiple values to one usually by taking average (average pooling) or maximum (max pooling) values.
+After convolution layers there some activation functions are usually used, and also some normalisations for the data in preparation for next layers.
+Convolutions with pooling and normalisations are rarely the only type of layers in CNN architectures and typically at least the very last layers are similar fully connected dot-product layers as in the MLP\@
+
+\subsubsection{Training a Neural Network}
+
+Computing a large number of these numerical operations with arbitrary parameters have little use in practice.
+Therefore a neural network has to unergo a training process during which the parametrs are optimised for a large training data.
+
+

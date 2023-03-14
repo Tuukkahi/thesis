@@ -25,7 +25,7 @@ The McCulloch-Pitts Neuron takes an $n$-dimensional binary vector $\mathbf{x}$ a
 Function $\phi$ is then the binary activation function determining the output of the neuron given some threshold $T$,
 \begin{align}
     y = \phi(f(\mathbf{x})) & = 1 \text{ if } \phi(\mathbf{x}) \geq T \\
-                         & = 0 \text{ if } \phi(\mathbf{x}) < T. 
+                            & = 0 \text{ if } \phi(\mathbf{x}) < T. 
 \end{align}
 
 This model has the difficulty of simplicity.
@@ -70,9 +70,10 @@ Formally the MLP neuron function $f : \R^n \rightarrow \R^m$ is now
 where rows of the weight matrix $\bm{W} \in \R^{n \times m}$ has now the weights and bias vector $\bm{b} \in \R^{m}$ has the bias terms of the neurons in the MLP\@
 The activation function is now applied elementwise for the outputs of $f$.
 
-MLPs are related to the important Universal Approximation Theorem presented at the turn of the 1990's~\cite{cybenko,horniketal,hornik} that states that these kinds of networks with at least one hidden layer can approximate any continuous function with a number of different activation functions.
-While the theorem might sound compelling, it is important to note that for multivariable functions the number of neurons is not necessarily bounded.
-Moreover, training a universal function approximator is not trivial and convergence is not guaranteed.
+MLPs are related to the important Universal Approximation Theorem presented at the turn of the 1990's~\cite{cybenko,horniketal,hornik} that states that these MLP networks with at least one hidden layer and any squashing activation function can approximate any Borel measurable function between finite-dimensional spaces.
+While the theorem might sound compelling, that the the number of neurons is not necessarily bounded for all functions even though there are some boundedness results for some classes of functions.
+This property may thus lead to unfeasibly large network.
+Moreover, the theorem does not state that any suitable function can be learnt, only represented.
 
 In MLP all the neurons in the layers are connected to each other but for a general neural network it is not mandatory, a convolutional one that is the main interest of this work being an example of a partially connected network.
 
@@ -114,9 +115,80 @@ Between convolution layers the dimensions of the input is usually downsampled by
 After convolution layers there some activation functions are usually used, and also some normalisations for the data in preparation for next layers.
 Convolutions with pooling and normalisations are rarely the only type of layers in CNN architectures and typically at least the very last layers are similar fully connected dot-product layers as in the MLP\@
 
-\subsubsection{Training a Neural Network}
+\subsubsection{Optimising Neural Network Parameters}
 
 Computing a large number of these numerical operations with arbitrary parameters have little use in practice.
-Therefore a neural network has to unergo a training process during which the parametrs are optimised for a large training data.
+Therefore a neural network has to unergo a training process during which the parametrs are optimised over a large training dataset.
+
+Classically these learning tasks are divided to supervised, unsupervised, and reinforcment learning.
+As the name implies, in supervised learning tasks there is some supervision which means that the training data is labelled such that for every input there is a target output for which a prediction is compared to.
+In unsupervised learning the data is not labelled and the unsupervised model is trained to learn e.g.\ some structures from the data.
+Combinations of supervised and unsupervised learning also exist, called semi-supervised learning.
+An example would be various forms of clustering tasks.
+In reinforcment learning a model is trained to take some actions in an environment from which it gets reward or punishment based on taken actions.
+Then the goal is to maximise the cumulative reward of all actions taken.
+A semirecent example of reinforcment learning is AlphaGo, a model trained to play the board game Go.
+In this example the optimal action taken at each step of the game would be impossible to figure out so the model has to figure out the best moves against another player to win the game.
+
+But all these learning tasks with neural network come down to an optimisation problem.
+Training a neural network is related to any other numerical optimisation methods but due to the huge number of parameters needed and non-convex nature of the optimisation problems, in practice training is a long and complicated task.
+The optimisation problem of a supervised learning task can be written out as a minimisation of a real-valued const functional $J$, that is the expected value of a loss function, with respect to network parameters $\bm{\theta}$:
+\begin{equation}
+    \min_{\bm{\theta}} \, J(\bm{\theta}) = \mathbb{E}_{(\bm{x},y) \sim \hat{p}_{\text{data}}} L(f(\bm{x}; \bm{\theta}), y) = \frac{1}{n} \sum_{i=1}^{n}  L(f(\bm{x}^{(i)}; \bm{\theta}), y^{(i)}).
+\end{equation}
+Here $f$ is now the neural network function that gives some prediction given input data $\bm{x}$ coming from the empirical training data distribution, and the network parameters.
+$L$ is the loss function comparing the network prediction, and the true label $y$.
+This is easily modified to unsupervised learning by simply excluding $y$ from the equation.
+
+The choice of loss function is a detail that must be chosen for training.
+The family of loss functions suitable for neural networks is large and depends on the data values.
+While the definitions of different loss functions look very different, typically the choice is made based on how much large prediction errors should be compared to small errors.
+Perhaps the most used and well-known loss function is the mean squared error (MSE) that takes the mean of squared prediction errors,
+\begin{equation}
+    L_{\text{MSE}}(Y, \hat{Y}) = \frac{1}{n} \sum_{i=1}^{n} \left( Y_{i} - \hat{Y}_{i} \right)^{2}.
+\end{equation}
+Now $Y$ is the target value and $\hat{Y}$ the predicted value.
+
+Most optimisation algorithms with neural networks are, or are based on the Stochastic gradient descent (SGD) which is a derivative of the classic gradient descent algorithm.
+The gradient descent algorithm works simply by moving the decision variable to the direction of the gradient of the loss function multiplied by some small number called step size.
+The stochastic version primarily differs from the original one by estimating gradients from a subset of the data reducing the computational cost.
+With actual neural networks computing gradients of the objective function for the entire training dataset is not practical and therefore the gradients has to be computed for small samples from the training data.
+For a true stochastic optimisation method only one sample would be taken but it is often more practical to take a small number of sampled and this is called minibatching.
+The SGD algorithm with minibatching is laid out in detail in Algorithm~\ref{alg:sgd}.
+
+\begin{algorithm}[H]
+    \caption{Stochastic gradient descent}
+    \label{alg:sgd}
+    \begin{algorithmic}[1]
+        \State\textbf{initialise} step size $\eta > 0$, initial parameter $\bm{\theta}$
+        \While{stopping criterion not met} \Comment{E.g.\ non-decreasing losses}
+        \State Sample a minibatch from training dataset $\{ (\bm{x}^{(i)}, y^{(i)}) \}_{i=1}^{m}$
+        \State $\bm{d} = -\frac{1}{m} \nabla_{\bm{\theta}} \sum_{i=1}^{m} L(f(\bm{x}^{(i)}; \bm{\theta}), y^{(i)})$ \Comment{Compute search direction}
+        \State $\bm{\theta} = \bm{\theta} + \eta \bm{d}$ \Comment{Update parameters}
+        \EndWhile
+        \State\textbf{return} $\bm{\theta}$
+    \end{algorithmic}
+\end{algorithm}
+
+Due to the random sampling of minibatches there is some noise in the computed losses.
+Therefore in practice the step size needs to be decreased in training at some rate since that noise occurs also in the optimum.
+Many techniques exist for step size scheduling and while used also in training the model of this thesis but is mostly a technical detail and for the interested~\cite{goodfellow} provides some deeper discussions on the matter.
+
+More sophisticated optimisation algorithms are also often used in optimising neural networks.
+A simple addition to the SGD algorithm would SGD with momentum.
+Momentum addition would mean adding previous search directions to just the most recent gradients with some weights.
+Some other popular optimisation algorithms used for neural network training are RMSProp, AdaDelta, and Adam.
+Again,~\cite{goodfellow} provides detailed explanations of many other algorithms.
+The different algorithms have each some benefits, for example some don't have the issue of scheduling step sizes as with SGD but there is no universal algorithm that would be best for all cases.
+However, the idea of moving parameters towards the gradient of a loss function is the concept that unites these all.
+Therefore the next problem that rises is how to compute the gradients.
+
+\subsubsection{Backpropagation}
+
+Training a neural network starts with computing predictions of the network using some inputs from training dataset.
+This part if often called forward propagation.
+However, in all optimisation algorithms at some point the gradient of a scalar loss function.
+This part is called backpropagation.
+Numerically computing gradients in the classical way for neural networks consisting a huge number of parameters is computationally infeasible and thus some other methods are required to train a network in practise.
 
 

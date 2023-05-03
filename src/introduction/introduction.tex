@@ -1,27 +1,17 @@
-This thesis aims on developing a neural network model to solve an inverse problem posed by the advection-diffusion partial differential equation (PDE).
-The model will be applied together with Kalman filter to produce probabilistic forecasts in time with meteorological spatiotemporal data, i.e.\ data with space and time dependencies.
+Neural networks have proved themselves an important tool in the analysis of high-dimensional and complex data being able to learn patterns and relationships.
+In meteorological nowcasting, the so-called physics-free models have been extensively researched in e.g.\ percipitation forecasts.~\cite{rainnet, metnet}
+While these methods have shown some efficiency in producing realistic forecasts, in many cases it would be useful to constrain these methods to adhere to some physical models.
 
-Inverse problems is a wide field of mathematics bringing together theoretical research and the wide array of applications where the theory is used.
-Meteorological forecasting is a prime example of inverse problems where parameters for some physical processes can be solved from atmospheric measurements and used to forecast some weather conditions in the future.
+Bayesian filtering techniques including the well-known Kalman filter provide a cruical role in state estimation of dynamic systems.
+The use of neural networks in parameter estimation could offer a powerful method of parameter estimation in the Bayesian filtering framework involving advective spatio-temporal data.
 
-Inverse problems are deeply linked to the well-posedness of a problem.
-Jacques Salomon Hadamard (1865-1963) is said to have stated the three properties of a well-posed problem.
-A solution of a well-posed problem has to exists, be unique, and depend continuously on the data.
-In practice, many, if not most, probems lie in the complement of the well-posed problems which if also the case with the problem studied in this thesis.
+This thesis aims on devoloping a neural network for advection field estimation from noisy spatio-temporal data.
+The advection fields are used to model a state-space model in the Bayesian filtering framework.
+As a practical application, the model is studied on a cloud optical thickness data where the model is used to get probabilistic short-term forecasts.
 
-In recent years due to advances in computing power and methodology, neural networks have been proposed as as the method to solve many kinds of inverse problems.
-In meteorological spatiotemporal forecasting, the so-called physics-free models have been extensively researched.~\cite{rainnet, metnet}
-However, in many cases it would be useful to constrain these methods to adhere to some physical models that can be written explicitly as PDEs.
-This way when the model is used as a forecasting tool, the forecasted future states could be thought to represent physically possible outcomes in the sense of the chosen PDE constraints.
-Moreover, this approach of modelling a system through the PDE modelling would at least in principle enable training a universal model for all data that can be modelled using the chosen equation.
+The main contribution of the thesis is to integration of a neural network model to a high-dimensional Kalman filtering scheme.
+In addition, the physics-based neural network model is tested against classical methods used in advective spatio-temporal meteorological forecasting.
 
-But here lies the ill-posed nature of the real world problems.
-Measurements are often incomplete, the simple PDEs that can be used here are merely rough simplifications of the true processes behind real measurements, etc.
-So it is easy to see that the Hadamard conditions are hard to meet.
-The possible solution is quite unlikely to be unique, and most likely doesn't depend continuously on the data.
-But it doesn't mean the ill-posed problem should be ignored.
-The simplified physical model and incomplete measurements definitely contain some useful information that can be used to recover a best possible solution in some metric.
-
-Thus in practice, it is also vital to understand uncertainty related to the model outputs.
-The classical Kalman filter from the 1960s is employed therefore to capture uncertainty in the forecasts the neural network produces.
-
+The thesis unfolds as follows.
+First, the needed background material to neural networks and Bayesian filtering of spatio-temporal data are presented.
+Next, the theoretical properties of the proposed model is covered, and in the final chapter the practical application in cloud optical thickness forecasting is presented.

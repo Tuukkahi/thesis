@@ -1,0 +1,187 @@
+As is the case with many real-world problems, the quantity of interest changes in time.
+For many phenomena some kind of mathematical model for time evolution for the quantity of interest can be formulated that is a more or less accurate representation of the real underlying dynamical process.
+The quantity of interest itself can be impossible to measure directly, but typically there can be some other measureable data from which the actual quantity of interest depends on.
+As an example, it is difficult to measure cloudiness directly but remote sensing satellites can optically take measurements of the atmosphere from which two-dimensional cloudiness images can be approximately recovered.
+Then a model can be formulated to evolve the cloudiness images forward in time.
+One such model is the advection-diffusion equation.
+
+\subsubsection{Advection-diffusion equation.}
+The advection-diffusion partial differential equation (PDE) is an often used simplification for modeling data where a quantity at least appears to be moving some domain of interest.
+The advection-diffusion equation is compromised of the advection term that represents the movement, and diffusion that represent the diffusion of the quantity.
+
+Consider a function $u: \Omega \times I \rightarrow \R$ representing some quantity on spatial domain $\Omega \subset \R^n$, and temporal domain $I = (0, T)$.
+The plain advection part is defined as
+\begin{equation}\label{eq:advection}
+    \frac{\partial u}{\partial t} =  - \mathbf{F} \nabla u,
+\end{equation}
+where $\mathbf{F} = \mathbf{F}(x,t)$ is the vector-valued advection field that transport $u$ forward in time.
+Then the pure diffusion equation would be
+\begin{equation}\label{eq:diffusion}
+    \frac{\partial u}{\partial t} = \nabla \cdot (D \nabla u)
+\end{equation}
+with $D = D(x,t)$ being the diffusion coefficient.
+In many practical uses $D$ is assumed to be constant in space, and then the diffusion term $\nabla \cdot (D \nabla u)$ simplifies to $D \Delta u$ and diffusion equation~\eqref{eq:diffusion} recovers to the heat equation.
+
+Now by combining~\eqref{eq:advection} and~\eqref{eq:diffusion} gives the advection-diffusion equation
+\begin{equation}\label{eq:advectiondiffusion}
+    \frac{\partial u}{\partial t} = \nabla \cdot (D \nabla u) - \mathbf{F} \nabla u.
+\end{equation}
+
+If the advection field $\mathbf{F}$, and the diffusion coefficient $D$ were known, and the model was perfect $u$ could be solved given some initial condition $u(\cdot, 0) = u_0(\cdot)$, and a boundary condition for the values of $u$ in the Dirichlet type case or the normal derivative of $u$ along the boundary of $\Omega$ in the Neumann type case.
+However, measuring advection and diffusion parameters is often not possible and estimates $\overline{\mathbf{F}}$ and $\overline{D}$ need to be extracted e.g.\ from data.
+While many uncertainties are involved in the parameter estimation, the model~\eqref{eq:advectiondiffusion} is also not a perfect representation so the approximate model
+\begin{equation}\label{eq:advectiondiffusion_approx}
+    \frac{\partial u}{\partial t} = \nabla \cdot (\overline{D} \nabla u) - \overline{\mathbf{F}} \nabla u + e
+\end{equation}
+needs to be considered where $e = e(x,t)$ is the (hopefully small) modeling error.
+When taking real measurements, the model also needs to be discretised both in time so that each time step represents one measurement point, and in space so that $\Omega$ becomes a grid in which the measurements are taken at some resolution.
+
+In the cloudiness example the motivation for computing the estimates $\overline{\mathbf{F}}$ and $\overline{D}$ would be that assuming the real parameters change little in time, i.e.\ $\mathbf{F}(x,t_{k}) \approx \mathbf{F}(x,t_{k+1})$ and $D(x,t_{k}) \approx D(x,t_{k+1})$, the parameters can be utilised to transport cloudiness images $u$ to to future and thus producing forecasts.
+
+\subsubsection{Probabilistic state-space models.}
+The previously mentioned framework of taking measurements, estimating parameters, and producing forecasts from them can be formalised as the state-space model.
+As there are uncertainties related to the measurements, parameter estimation, and the model, instead of studying point estimates of the state it is much more fruitful to consider probability distributions.
+
+Let stochastic process $\{X_k\}_{k=0}^{\infty}$ represent the state of a system which is the quantity of interest, and another stochastic process $\{Y_k\}_{k=0}^{\infty}$ measurements or observations from the system.
+Figure~\ref{fig:statespacedependency} presents the dependency scheme of the processes needed to formulate the state-space model.
+\begin{figure}[h]
+    \begin{alignat*}{5}
+        \text{State:}& \quad && X_0 \, \rightarrow \, && X_1 \, \rightarrow \, && X_2 \,\rightarrow \cdots \rightarrow \, && X_k \, \rightarrow \cdots \\
+                     & &&  && \downarrow && \downarrow && \downarrow \\
+        \text{Observations:}& \quad && && Y_1 && Y_2 && Y_k
+    \end{alignat*}
+    \caption{\label{fig:statespacedependency}Dependency scheme of the state-space model.}
+\end{figure}
+For the dependencies to materialise, some assumptions on the processes are needed:
+\begin{enumerate}
+    \item 
+        $\{X_k\}_{k=0}^{\infty}$ satisfies the Markov property with respect to its own history, and history of the observations:
+        \begin{equation*}
+            \pi (x_{k+1} \, \vert \, x_{0:k}, y_{1:k}) = \pi (x_{k+1} \, \vert \, x_k).
+        \end{equation*}
+    \item
+        $\{Y_k\}_{k=0}^{\infty}$ satisfies the Markov property with respect to the history of the true state:
+        \begin{equation*}
+            \pi (y_k \, \vert \, x_{0:k}) = \pi (y_k \, \vert \, x_k).
+        \end{equation*}
+\end{enumerate}
+With these assumptions the following conditional probability distributions define the probabilistic state-space model:
+\begin{subequations}\label{eq:statespace}
+    \begin{align}
+        X_0 &\sim \pi (x_0)\\
+        X_{k+1} &\sim \pi (x_{k+1} \, \vert \, x_{k}), \quad k = 0,1,2,\dots \label{eq:statespace1}\\
+        Y_k &\sim \pi (y_k \, \vert \, x_k), \quad k = 1,2,\dots. \label{eq:statespace2}
+    \end{align}
+\end{subequations}
+Here~\eqref{eq:statespace1} is the model that describes the evolution of state in time, and~\eqref{eq:statespace2} is the observation model that describes the distribution of measurements conditioned on the state.
+
+If functions for the state evolution and observations are known, the same can also be written as 
+\begin{subequations}\label{eq:statespacemodel}
+    \begin{align}
+        X_{k+1} &= M_{k+1}(X_{k}, W_{k+1}), \quad k = 0,1,\dots \label{eq:statespacemodel1}\\
+        Y_{k} &= H_{k}(X_{k}, V_{k}), \quad k = 1,2,\dots. \label{eq:statespacemodel2}
+    \end{align}
+\end{subequations}
+Now~\eqref{eq:statespacemodel1} is the state evolution equation where function $M_{k+1}$ gives the next state $X_{k+1}$ given the previous state $X_{k}$ and the state noise $W_{k+1}$
+The observation equation~\eqref{eq:statespacemodel2} describes the observations $Y_{k}$ as being the output of the observation function $H_{k}$ with the true state $X_{k}$ and the observation noise $V_{k}$.
+
+With the state-space model~\eqref{eq:statespace} the Bayesian filtering problem can be discussed.
+The idea behind Bayesian filtering is to recursively update the predictions and states of the model given latest observations.
+The following theorem states the two update equations for the Bayesian filtering scheme.
+\begin{theorem}[Bayesian filtering equations]\label{thm:updateformulas}
+    Let $\{X_k\}_{k=0}^{\infty}$ be a state process and $\{Y_k\}_{k=0}^{\infty}$ an observation process in a state-space model.
+    Then the following recursive equations for Bayesian filtering steps apply:
+    \begin{enumerate}
+        \item 
+            Prediction step:
+            \begin{equation}\label{eq:predictionstep}
+                \pi (x_{k+1} \, \vert \, y_{1:k}) = \int \pi (x_{k+1} \, \vert \, x_k) \pi (x_k \, \vert \, y_{1:k}) \, d x_k.
+            \end{equation}
+        \item
+            Observation update step:
+            \begin{equation}\label{eq:updatestep}
+                \pi(x_{k+1} \, \vert \, y_{1:k+1}) = \frac{\pi (y_{k+1} \, \vert \, x_{k+1}) \pi (x_{k+1} | y_{1:k})}{\pi (y_{k+1} \, \vert \, y_{1:k})},
+            \end{equation}
+            with
+            \begin{equation*}
+                \pi (y_{k+1} \, \vert \, y_{1:k}) = \int \pi (y_k \, \vert \, x_k) \pi (x_k \, \vert \, y_{1:k-1}) \, d x_{k+1}.
+            \end{equation*}
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    In Appendix~\ref{app:proofs}.
+\end{proof}
+
+The Theorem~\ref{thm:updateformulas} provides a framwork for efficiently computing probability distributions conditioned on observations.
+The prediction step equation~\ref{eq:predictionstep} being the joint probability distribution of the current and next state conditioned on the latest observations gives a way to get a probabilistic forecast for the future.
+Then the observation update equation~\ref{eq:updatestep} is just the Bayes formula where $\pi (x_{k+1} \, \vert \, y_{1:k})$ is interpreted as the prior information of the state for statistical inversion of a new observation.
+
+Bayesian filtering refers to to the Bayesian way of deriving an optimal filtering problem of estimating the state of a nonstationary system through some observations.
+The Bayesian filtering theory emerged at the turn of the 1960s with perhaps the most famous example being the works of Rudolf E. Kálmán who published a recursive solution to a linear special case of the problem in~\cite{kalman}.
+Meanwhile in the Soviet Union Ruslan Stratonovich studied the more general nonlinear Bayesian filtering problem, see e.g.~\cite{stratonovich2, stratonovich1}.
+The simultaneous advances in digital computers allowed the theory to prove itself quickly useful in many applications, an early well-known example of which is the guidance system of the Apollo spacecraft~\cite{mcgee}.
+
+\subsubsection{Kalman filter}
+The Kalman filter provides a closed form solution for the update equations of Theorem~\ref{thm:updateformulas} in the special case of a linear state-space model with Gaussian additive noise process.
+In this special case the state-space model corresponding to~\eqref{eq:statespacemodel} becomes
+\begin{subequations}\label{eq:kalmanstatespace}
+    \begin{align}
+        X_{k+1} &= M_{k+1}X_{k}  + W_{k+1}, \quad W_{k+1} \sim \mathcal{N}(0, Q_{k+1})\\
+        Y_{k} &= H_{k}X_{k} + V_{k}, \quad V_t \sim \mathcal{N}(0, R_k)
+    \end{align}
+\end{subequations}
+with a Gaussian distribution for the initial state $X_0$.
+
+With these assumptions probability densities of the state of the model can be given by just estimates of the mean and covariance.
+Now the following theorem gives the filtering step equations of Theorem~\ref{thm:updateformulas}.
+\begin{theorem}[Kalman filter equations]
+    Assume a linear Gaussian state-space model~\eqref{eq:kalmanstatespace}.
+    Let $x_{k\,\vert\,\ell}$ and $P_{k\,\vert\,\ell}$ represent the a posteriori mean and covariance of the state at time $k$ given observations $y_{1:\ell}$.
+    Then the filterering equations of Theorem~\ref{thm:updateformulas} take closed form solutions:
+    \begin{enumerate}
+        \item 
+            Prediction step:
+            Given
+            \begin{equation*}
+                \pi (x_k \, \vert \, y_{1:k}) \sim \mathcal{N}(x_{k\,\vert\,k}, P_{k\,\vert\,k}),
+            \end{equation*}
+            a priori distribution of the next state is
+            \begin{equation*}
+                \pi (x_{k+1} \, \vert \,  y_{1:k}) \sim \mathcal{N}(\hat{x}_{k+1\,\vert\,k}, \hat{P}_{k+1\,\vert\,k}),
+            \end{equation*}
+            where parameters of the distribution are given by
+            \begin{subequations}\label{eq:kalmanpredictionstep}
+                \begin{align}
+                    \hat{x}_{k+1\,\vert\,k} &= M_{k+1}x_{k\,\vert\,k}\\
+                    \hat{P}_{k+1\,\vert\,k} &= M_{k+1}P_{k\,\vert\,k}M_{k+1}^{\top} + Q_{k+1}.
+                \end{align}
+            \end{subequations}
+        \item
+            Observation update step:
+            Given
+            \begin{equation*}
+                 \pi (x_{k+1} \, \vert \,  y_{1:k}) \sim \mathcal{N}(x_{k+1\,\vert\,k}, P_{k+1\,\vert\,k}),
+            \end{equation*}
+            a posteriori distribution of the next state is
+            \begin{equation*}
+                 \pi (x_{k+1} \, \vert \,  y_{1:k+1}) \sim \mathcal{N}(x_{k+1\,\vert\,k+1}, P_{k+1\,\vert\,k+1}).
+            \end{equation*}
+            With 
+            \begin{subequations}\label{eq:kalmanupdatestep}
+                \begin{align}
+                    v_{k+1} &= y_{k+1} - H_{k+1}x_{k+1 \, \vert \, k},\\
+                    S_{k+1} &= H_{k+1} \hat{P}_{k+1\,\vert\,k} H_{k+1}^{\top},\\
+                    K_{k+1} &= \hat{P}_{k+1\,\vert\,k}  H_{k+1}^{\top} S_{k+1}^{-1},\\
+                    x_{k+1\,\vert\,k+1} &= \hat{x}_{k+1\,\vert\,k} + K_{k+1} v_{k+1},\\
+                    P_{k+1\,\vert\,k+1} &= (I-K_{k+1}H_{k+1})\hat{P}_{k+1\,\vert\,k}.
+                \end{align}
+            \end{subequations}
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    In Appendix~\ref{app:proofs}.
+\end{proof}
+While the theorem assumes zero means for noises, the Gaussian distributions can easiliy be shifted to accomodate for non-zero means, too.
+The Kalman filter relies on the property of Gaussian distributions remaining Gaussian under affine transformations.
+However, for nonlinear state-space models one can use linear approximations in order to preserve the convenience of Gaussian densities, a method known as extended Kalman filter.
+

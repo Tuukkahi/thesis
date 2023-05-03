@@ -63,12 +63,13 @@ MLP is nothing more than combining a number of neurons in layers and applying th
     \caption{Multilayer Perceptron (placeholder image)}
 \end{figure}
 
-Formally the MLP neuron function $f : \R^n \rightarrow \R^m$ is now
+Formally the MLP function $f^{(l)} : \R^n \rightarrow \R^m$ for layer $l$ is now
 \begin{equation}
-    f(\bm{x}; \bm{W}, \bm{b}) = \bm{W} \bm{x} + \bm{b},
+    f^{(l)}(\bm{x}; \bm{W}, \bm{b}) = \bm{W} \bm{x} + \bm{b},
 \end{equation}
-where rows of the weight matrix $\bm{W} \in \R^{n \times m}$ has now the weights and bias vector $\bm{b} \in \R^{m}$ has the bias terms of the neurons in the MLP\@
-The activation function is now applied elementwise for the outputs of $f$.
+where rows of the weight matrix $\bm{W} \in \R^{n \times m}$ has now the weights and bias vector $\bm{b} \in \R^{m}$ has the bias terms of the neurons in the layer.
+The activation function is now applied elementwise for the outputs of $f^{(l)}$.
+The whole network is then a composition of all the layers in the network.
 
 MLPs are related to the important Universal Approximation Theorem presented at the turn of the 1990's~\cite{cybenko,horniketal,hornik} that states that these MLP networks with at least one hidden layer and any squashing activation function can approximate any Borel measurable function between finite-dimensional spaces.
 While the theorem might sound compelling, that the the number of neurons is not necessarily bounded for all functions even though there are some boundedness results for some classes of functions.
@@ -191,4 +192,62 @@ However, in all optimisation algorithms at some point the gradient of a scalar l
 This part is called backpropagation.
 Numerically computing gradients in the classical way for neural networks consisting a huge number of parameters is computationally infeasible and thus some other methods are required to train a network in practise.
 
+Reverse accumulation as an automatic differentiation method for MLP networks was first introduced in the 1970's and 1980's and was to be called backpropagation.
+Backpropagation was first introduces by Paul Werbos in their PhD thesis from 1974 in~\cite{werbos} but was made famous a decade later by David Rumelhart and others~\cite{rumelhartetal}.
+These breakthroughs made it now possible to efficiently train more complex networks due to the efficient gradient estimation of neural network parameters.
+But reverse accumulating gradients was studied already independently by multiple others.
+Perhaps the most notable example being the works of the Finnish mathematician Seppo Linnainmaa in their MSc thesis from 1970~\cite{linnainmaa} though the concept of reverse accumulation was studied in cumulative floating point errors.
+
+The basic principle behind the backpropagation algorithm is the recursive use of the chain rule of calculus.
+The chain rule states that for $g: \R^{m}\rightarrow \R^{n}$ and $f: \R^{n} \rightarrow \R$ with $f(g(\bm{x}))$ the partial derivatives of $f$ are given by
+\begin{equation}
+    \frac{\partial f}{\partial \bm{x}_{i}} = \sum_{j = 1}^{n} \frac{\partial f}{\partial (g(\bm{x})_{j})} \frac{\partial (g(\bm{x})_{j})}{\partial x_{i}}.
+\end{equation}
+
+Now the objective function $J$ of the optimisation problem can be thouth to be a composition of all the individual functions in the network and then the chain rule can be used to obtain the partial derivatives with respect to the trainable network parameters.
+
+As the shapes and sizes of the trainable parameters may be different for each specific network architecture, the exact formulation of the gradients might differ a bit.
+For the simple MLP case the formulas are easy to write to see what is the idea behind the backpropagation algorithm.
+Recall that the network parameters can be expressed for each layer $\ell$ as a matrix $\bm{\theta}^{(\ell)} = \begin{bmatrix} \bm{W} & \bm{b} \end{bmatrix}^{(\ell)}$. Then mark the output of layer $\ell$ as $\bm{z}^{(\ell)} = \bm{W}^{(\ell)} \bm{a}^{(\ell-1)} + \bm{b}$ where $\bm{a}^{(\ell-1)} =  \phi^{\ell-1}(\bm{z}^{(\ell-1)})$ is the output from the activation of the previous layer.
+Now the chain rule thus gives the
+\begin{equation}\label{eq:mlpchainrule}
+    \frac{\partial J}{\partial \bm{\theta}_{ij}^{(\ell)}} = \sum_{k} \frac{\partial J}{\partial \bm{z}_{k}^{(\ell)}} \frac{\partial \bm{z}_{k}^{(\ell)}}{\partial \bm{\theta}_{ij}^{(\ell)}}. 
+\end{equation}
+Now the $\bm{z}$ derivatives are easily evaluated for the weight terms to
+\begin{equation}
+    \frac{\partial J}{\partial \bm{W}_{ij}^{(\ell)}} = \frac{\partial J}{\partial \bm{z}_{j}^{(\ell)}} \bm{z}_{i}^{(\ell)},
+\end{equation}
+and for the bias terms to
+\begin{equation}
+    \frac{\partial J}{\partial \bm{b}_{j}^{(\ell)}} = \frac{\partial J}{\partial \bm{z}_{j}^{(\ell)}} 1.
+\end{equation}
+Thus~\eqref{eq:mlpchainrule} can now be written as
+\begin{equation}\label{eq:mlchainrulevec}
+    \bm{\nabla}_{\bm{\theta}^{(\ell)}} J = \begin{bmatrix} \bm{x}^{(\ell)} \\ 1 \end{bmatrix} (\nabla_{\bm{z}^{(\ell)}} J)^{\top}.
+\end{equation}
+What is left now is to find an equation for the gradient term of~\eqref{eq:mlchainrulevec} that is often called the local gradient or error is usually denoted by $\bm{\delta}^{(\ell)}$.
+By applying the chain rule once again,
+\begin{align}
+    \delta_{j}^{(\ell)} = \frac{\partial J}{\partial \bm{z}_{j}^{(\ell)}} = &\sum_{k} \underbrace{\frac{\partial J}{\partial \bm{z}_{k}^{(\ell + 1)}}}_{=\delta_{k}^{(\ell+1)}} \frac{\partial \bm{z}_{k}^{(\ell+1)}}{\partial \bm{z}_{j}^{(\ell)}} \\
+                                                                       &= \sum_{k} \delta_{k}^{(\ell+1)} \frac{\partial \bm{z}_{k}^{(\ell+1)}}{\partial \bm{z}_{j}^{(\ell)}},
+\end{align}
+from which
+\begin{align}
+    \frac{\partial \bm{z}_{k}^{(\ell+1)}}{\partial \bm{z}_{j}^{(\ell)}}  = \frac{\partial}{\partial \bm{z}_{j}^{(\ell)}} \sum_{i} \bm{W}_{ki}^{(\ell+1)} \phi^{(\ell)}(\bm{z}_{i}^{(\ell)}) + \bm{b}_{k}^{(\ell+1)} = \bm{W}_{kj}^{(\ell+1)} \phi^{(\ell)\prime} (\bm{z}_{j}^{(\ell)}).
+\end{align}
+Thus for the error is now recursively
+\begin{equation}
+    \delta_{j}^{(\ell)} =  \sum_{k} \delta_{k}^{(\ell+1)} \bm{W}_{kj}^{(\ell+1)} \phi^{(\ell)\prime} (\bm{z}_{j}^{(\ell)}).
+\end{equation}
+For the last layer $L$ the error can be given more simply,
+\begin{align}
+    \delta_{j}^{(L)} = \frac{\partial J}{\partial \bm{z}_{j}^{(L)}} &= \sum_{k} \frac{\partial J}{\partial \bm{a}_{k}^{L}} \underbrace{\frac{\partial \bm{a}_{k}^{L}}{\partial \bm{z}_{j}^{L}}}_{=0\text{ when } k \neq j} \\
+                                                                    &= \frac{\partial J}{\partial \bm{a}_{j}^{L}} \frac{\partial \bm{a}_{j}^{L}}{\partial \bm{z}_{j}^{L}}\\
+                                                                    &= \frac{\partial J}{\partial \bm{a}_{j}^{L}} \phi^{(L)\prime} (\bm{z}_{j}^{(L)}).
+\end{align}
+
+Now that the neural network can be constructed, there is a way to find the optimal network parameters with computing easily the gradients, a complete neural network can be trained.
+Typically most of these things presented are written inside the numerical neural network libraries the most well known examples being probably PyTorch and Tensorflow.
+What is left for the user is to define a network that can be used for the task in hand.
+Finding the best architecture for a specific task can be difficult and there is a lot of active research in creating the optimal networks for general tasks that can be applied when building a network.
 

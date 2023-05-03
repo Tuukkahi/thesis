@@ -177,9 +177,8 @@
 \usepackage{graphicx}
 
 %% Math fonts, symbols, and formatting; these are usually needed
-\usepackage{amsfonts,amssymb,amsbsy,amsmath,bm}
+\usepackage{amsfonts,amssymb,amsbsy,amsmath,amsthm,bm}
 \usepackage{algorithm,algpseudocode}
-
 %% Change the school field to specify your school if the automatically set name
 %% is wrong
 % \university{aalto-yliopisto}
@@ -315,6 +314,10 @@ text must be identical to the text on the abstract page.
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\N}{\mathbb{N}}
+\newtheorem{theorem}{Theorem}
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{theorem}{section}
 %% All that is printed on paper starts here
 %%
 \begin{document}
@@ -438,21 +441,27 @@ Otaniemi, 31.8.2018
 \section{Introduction}
 \input{introduction/introduction.tex}
 
+\clearpage
 \section{Theoretical Background}
 \input{background/background.tex}
 
+\clearpage
 \section{Model}
 \input{model/model.tex}
 
+\clearpage
 \section{Numerical Experiments}
 \input{experiments/experiments.tex}
 
+\clearpage
 \section{Conclusions}
 \input{conclusions/conclusions.tex}
-
+\clearpage
+\thesisappendix
+\input{appendix/appendix.tex}
 %% Leave page number of the first page empty
 %% 
-\thispagestyle{empty}
+%\thispagestyle{empty}
 
 \clearpage
 %% L\"ahdeluettelo

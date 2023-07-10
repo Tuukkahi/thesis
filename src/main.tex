@@ -312,6 +312,10 @@ text must be identical to the text on the abstract page.
 %% to 'false'. This allows you to write the metadata in the correct format
 %% directly into the file thesistemplate.xmpdata.
 %\setboolean{writexmpdatafile}{false}
+\newcommand{\inputpypgf}[1]{%
+  \InputIfFileExists{#1}{}{\typeout{No file #1.}}%
+}
+
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\N}{\mathbb{N}}

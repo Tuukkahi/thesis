@@ -4,7 +4,7 @@ The developed model is compromised of two main components:
     \item
         A neural network based model that learns the patterns and dynamics of advection fields from spatio-temporal data.
     \item
-        A Kalman filter that leverages the neural network as a state model in the state-space model to provide probabilstic state estimates.
+        An ensemble Kalman filter that leverages the neural network as a state evolution model in the state-space model to provide probabilstic state estimates.
 \end{itemize}
 
 The objective is to generate realistic deterministic state-estimates using the neural network and then utilise the Kalman filter model to assimilate observation data to improve the estimates and generate probability distributions states.
@@ -14,3 +14,5 @@ However, both of these models are trained for sea surface temperature data which
 
 \subsection{Deterministic Neural Network Model}
 \input{model/neural_network.tex}
+\subsection{Integrating ETKF with the Neural Network}
+\input{model/kalman_filter.tex}

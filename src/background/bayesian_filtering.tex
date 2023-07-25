@@ -144,13 +144,13 @@ The following theorem gives the filtering step equations of Theorem~\ref{thm:upd
             \end{equation*}
             a priori distribution of the next state is
             \begin{equation*}
-                \pi (x_{k+1} \, \vert \,  y_{1:k}) \sim \mathcal{N}(\hat{x}_{k+1\,\vert\,k}, \hat{P}_{k+1\,\vert\,k}),
+                \pi (x_{k+1} \, \vert \,  y_{1:k}) \sim \mathcal{N}(x_{k+1\,\vert\,k}, P_{k+1\,\vert\,k}),
             \end{equation*}
             where parameters of the distribution are given by
             \begin{subequations}\label{eq:kalmanpredictionstep}
                 \begin{align}
-                    \hat{x}_{k+1\,\vert\,k} &= M_{k+1}x_{k\,\vert\,k}\\
-                    \hat{P}_{k+1\,\vert\,k} &= M_{k+1}P_{k\,\vert\,k}M_{k+1}^{\top} + Q_{k+1}.
+                    x_{k+1\,\vert\,k} &= M_{k+1}x_{k\,\vert\,k}\\
+                    P_{k+1\,\vert\,k} &= M_{k+1}P_{k\,\vert\,k}M_{k+1}^{\top} + Q_{k+1}.
                 \end{align}
             \end{subequations}
         \item
@@ -167,10 +167,10 @@ The following theorem gives the filtering step equations of Theorem~\ref{thm:upd
             \begin{subequations}\label{eq:kalmanupdatestep}
                 \begin{align}
                     v_{k+1} &= y_{k+1} - H_{k+1}x_{k+1 \, \vert \, k},\\
-                    S_{k+1} &= H_{k+1} \hat{P}_{k+1\,\vert\,k} H_{k+1}^{\top},\\
-                    K_{k+1} &= \hat{P}_{k+1\,\vert\,k}  H_{k+1}^{\top} S_{k+1}^{-1},\\
-                    x_{k+1\,\vert\,k+1} &= \hat{x}_{k+1\,\vert\,k} + K_{k+1} v_{k+1},\\
-                    P_{k+1\,\vert\,k+1} &= (I-K_{k+1}H_{k+1})\hat{P}_{k+1\,\vert\,k}.
+                    S_{k+1} &= H_{k+1} P_{k+1\,\vert\,k} H_{k+1}^{\top} + R_{k+1},\\
+                    K_{k+1} &= P_{k+1\,\vert\,k}  H_{k+1}^{\top} S_{k+1}^{-1},\\
+                    x_{k+1\,\vert\,k+1} &= x_{k+1\,\vert\,k} + K_{k+1} v_{k+1},\\
+                    P_{k+1\,\vert\,k+1} &= (I-K_{k+1}H_{k+1})P_{k+1\,\vert\,k}. \label{eq:kalmanposteriorcov}
                 \end{align}
             \end{subequations}
     \end{enumerate}
@@ -187,7 +187,142 @@ The matrix update formulas of Theorem~\ref{thm:kalmanfilterupdate} cross quickly
 One way of tackling the problem is to use Ensemble Kalman filters.
 
 \subsubsection{Ensemble Kalman Filter}
-Despite the effectiveness of the original Kalman filter in optimal filtering problems, it doesn't scale well with large state and observation spaces.
-This limitation leads to the Ensemble Kalman Filter (EnKF).
+Although the original Kalman filter offers a robust solution to optimal filtering problems, it fails to efficientl scale for large state and observation spaces.
+This limitation paved the way to the development of the Ensemble Kalman Filter (EnKF).
 It was first introduced by Geir Evensen in~\cite{evensen1994} as a Monte Carlo approach to the Kalman filter.
-EnKF circumvents the large covariance matrices by representing a state of an state-space model by Monte Carlo samples from which sample covariances are computed.
+EnKF circumvents the need for large covariance matrices by representing both a state and its uncertainty via an ensemble of state samples.
+
+Formally the filtering distribution at time $k$ is represented as an ensemble $x_{k \, \vert \, k}^{(1)}, \dots , x_{k \, \vert \, k}^{(N)}$ where each $x_{k \, \vert \, k}^{(i)} \sim \mathcal{N}(x_{k\,\vert\,k}, P_{k\,\vert\,k})$.
+The the prior distribution for the next state in prediction step is obtained by simply propagating the ensemble using the state evolution operator,
+\begin{equation*}
+    x_{k+1\,\vert\,k}^{(i)} = M_{k+1} x_{k\,\vert\,k}^{(i)} + W_{k+1}, \quad W_{k+1} \sim \mathcal{N}(0, Q_{k+1}), \quad i = 1,\dots , N.
+\end{equation*}
+
+The observation update step of the EnKF has multiple formulations typically categorised into stochastic and deterministic versions, both of which are introduced here following~\cite{enkfbook} with focus on the deterministic EnKF.
+However, all variants derive an estimate of the Kalman gain matrix
+\begin{equation*}
+    \hat{K}_{k+1} = \hat{P}_{k+1\,\vert\,k} H_{k+1}^{\top} (H_{k+1}\hat{P}_{k+1\,\vert\,k}H_{k+1}^{\top} + R_{k+1})^{-1}
+\end{equation*}
+from the ensemble statistics.
+$\hat{P}_{k+1\,\vert\,k}$ estimates the state forecast error covariance $P_{k+1\,\vert\,k}$ that can be obtained from the ensemble forecast error as
+\begin{subequations}
+    \begin{align*}
+        \hat{P}_{k+1\,\vert\,k} &= \frac{1}{N-1} \sum_{i=1}^{N} (x_{k+1 \, \vert \, k}^{(i)} - \mean{x}_{k+1\,\vert\,k}) (x_{k+1 \, \vert \, k}^{(i)} - \mean{x}_{k+1\,\vert\,k})^{\top}\\
+                                &= X_{k+1 \, \vert \, k} X_{k+1 \, \vert \, k}^{\top},
+    \end{align*}
+\end{subequations}
+where $\mean{x}$ represents the ensemble mean
+\begin{equation*}
+    \mean{x} = \frac{1}{N} \sum_{i=1}^{N} x^{(i)},
+\end{equation*}
+and columns of $X_{k+1 \, \vert \, k}$ are normalised ensemble anomalies to the mean.
+Thus, $\hat{K}$ may be expressed as
+\begin{subequations}
+    \begin{align}
+        \hat{K}_{k+1} &= X_{k+1 \, \vert \, k} X_{k+1 \, \vert \, k}^{\top} H_{k+1}^{\top} (H_{k+1}  X_{k+1 \, \vert \, k} X_{k+1 \, \vert \, k}^{\top} H_{k+1}^{\top} + R_{k+1})^{-1}\\
+                      &= X_{k+1 \, \vert \, k} Y_{k+1 \, \vert \, k}^{\top} (Y_{k+1} Y_{k+1}^{\top} + R_{k+1})^{-1}.
+    \end{align}
+\end{subequations}
+
+The stochastic variant produces a simulated ensemble of observations $\left\{ y_{k+1}^{(i)} \right\}_{i=1}^{N}$ by introducing gaussian noise to form the updated filtering distribution.
+Specifically, the observation update step equations~\eqref{eq:kalmanupdatestep} of Theorem~\ref{thm:kalmanfilterupdate} for each ensemble member become
+\begin{subequations}\label{eq:enkalmanstochasticupdatestep}
+    \begin{align}
+        v_{k+1}^{(i)} &= (H_{k+1}x_{k+1 \, \vert \, k}^{(i)} - u_{k}^{(i)}), \quad u_{k}^{(i)} \sim \mathcal{N}(0, R_{k+1}),\\
+        x_{k+1\,\vert\,k+1}^{(i)} &= x_{k+1\,\vert\,k}^{(i)} + \hat{K}_{k+1}(y_{k+1} - v_{k+1}^{(i)}).
+    \end{align}
+\end{subequations}
+
+In the deterministic EnKF versions the update step works by deterministically shifting prior ensemble forecasts avoiding stochastic noise.
+Instead of performing the observation update for each ensemble member, a posterior mean is created on which a new ensemble created.
+Before deriving the deterministic EnKF equations, a matrix inversion lemma is needed:
+\begin{lemma}[Woodbury matrix identity]
+    Assume $A \in \R^{n \times n}, C \in \R^{k \times k}, U \in \R^{n \times k}, V \in \R^{k \times n}$.
+    Then
+    \begin{equation*}
+        (A + UCV)^{-1} = A^{-1} - A^{-1}U(C^{-1} + VA^{-1}U)^{-1}VA^{-1}.
+    \end{equation*}
+\end{lemma}
+\begin{proof}
+    In Appendix~\ref{app:proofs}.
+\end{proof}
+
+Now posterior mean is created using prior ensemble forecast means:
+\begin{equation*}
+    \mean{x}_{k+1\,\vert\,k+1} = \mean{x}_{k+1\,\vert\,k} + \hat{K}_{k+1}\left(y_{k+1} - H_{k+1}\left(\mean{x}_{k+1\,\vert\,k}\right) \right).
+\end{equation*}
+The same may now be formulated with some vector $w$ as 
+\begin{equation*}
+    \mean{x}_{k+1\,\vert\,k+1} = \mean{x}_{k+1\,\vert\,k} + X_{k+1 \, \vert \, k} w_{k+1},
+\end{equation*}
+and from these with denoting $v_{k+1}= \left(y_{k+1} - H_{k+1}\left(\mean{x}_{k+1\,\vert\,k}\right) \right)$,
+\begin{subequations}
+    \begin{align*}
+        w_{k+1} &= X_{k+1 \, \vert \, k}^{-1} \hat{K}_{k+1}\\
+                &= X_{k+1 \, \vert \, k}^{-1} \hat{P}_{k+1\,\vert\,k} H_{k+1}^{\top} (H_{k+1}\hat{P}_{k+1\,\vert\,k}H_{k+1}^{\top} + R_{k+1})^{-1}\\
+                &= Y_{k+1 \, \vert \, k}^{\top}(Y_{k+1} Y_{k+1}^{\top} + R_{k+1})^{-1} v_{k+1}\\
+                &= (I + Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1} Y_{k+1 \, \vert \, k})^{-1} Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1}  v_{k+1}.
+    \end{align*}
+\end{subequations}
+With this the mean can be computed in the ensemble space dimensions reducing computational cost significantly when the ensemble is smaller than the number of observations.
+
+There exists multiple algorithms to create an ensemble around the posterior mean but the Ensemble transform Kalman filter (ETKF) variant is presented and used here.
+To create the posterior ensemble, the posterior mean has to be perturbed with estimate of posterior uncertainty $P_{k+1\,\vert\,k+1}$.
+
+Starting from the original Kalman filter posterior covariance~\eqref{eq:kalmanposteriorcov} with the ensemble Kalman gain estimate
+\begin{subequations}
+    \begin{align*}
+        \hat{P}_{k+1\,\vert\,k+1} &= (I - \hat{K}_{k+1}H_{k+1}) \hat{P}_{k+1\,\vert\,k}\\
+                                  &= \left(I - X_{k+1 \, \vert \, k} Y_{k+1 \, \vert \, k}^{\top} (Y_{k+1} Y_{k+1}^{\top} + R_{k+1})^{-1} H_{k+1}\right) X_{k+1 \, \vert \, k} X_{k+1 \, \vert \, k}^{\top}\\
+                                  &= X_{k+1 \, \vert \, k} \left(I - Y_{k+1 \, \vert \, k}^{\top} (Y_{k+1} Y_{k+1}^{\top} + R_{k+1})^{-1} Y_{k+1 \, \vert \, k} \right)  X_{k+1 \, \vert \, k}^{\top}\\
+                                  &= X_{k+1 \, \vert \, k} \left(I - (I + Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1} Y_{k+1} )^{-1} Y_{k+1}^{\top} R_{k+1}^{-1} Y_{k+1} \right) X_{k+1 \, \vert \, k}^{\top}\\
+%                                  &= X_{k+1 \, \vert \, k} \left( ((I + Y_{k+1}^{\top} R_{k+1}^{-1} Y_{k+1}) - Y_{k+1}^{\top} R_{k+1}^{-1} Y_{k+1}) (I + Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1} Y_{k+1} )^{-1} \right) X_{k+1 \, \vert \, k}^{\top}\\
+                                  &=  X_{k+1 \, \vert \, k} (I + Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1} Y_{k+1} )^{-1} X_{k+1 \, \vert \, k}^{\top},
+    \end{align*}
+\end{subequations}
+and writing $T = (I + Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1} Y_{k+1 \, \vert \, k})$ the expression can be written as
+\begin{equation*}
+    \hat{P}_{k+1\,\vert\,k+1} = (X_{k+1 \, \vert \, k} T^{\frac{1}{2}} U)  (X_{k+1 \, \vert \, k} T^{\frac{1}{2}} U)^{\top}
+\end{equation*}
+for any unitary $U$.
+And now the posterior ensemble may be given as
+\begin{align*}
+    x_{k+1\,\vert\,k+1}^{(i)} &= \mean{x}_{k+1\,\vert\,k+1} + \sqrt{m-1}  X_{k+1 \, \vert \, k} (T^{\frac{1}{2}} U)_{i}\\
+                              &= \mean{x}_{k+1\,\vert\,k} + X_{k+1 \, \vert \, k} w_{k+1} +  \sqrt{m-1}  X_{k+1 \, \vert \, k} (T^{\frac{1}{2}} U)_{i}\\
+                              &= \mean{x}_{k+1\,\vert\,k} + X_{k+1 \, \vert \, k} \left( w_{k+1} + \sqrt{m-1} (T^{\frac{1}{2}} U)_{i} \right).
+\end{align*}
+
+This proceeding is presented in Algorithm~\ref{alg:etkf} with one final step being the propagation of the updated state estimate to the next time step.
+The algorithm may thus be executed in loop to create a complete filtering distribution for some time series.
+
+\begin{algorithm}[H]
+    \caption{\label{alg:etkf}Ensemble transform Kalman filter (ETKF)}
+    \begin{algorithmic}[1]
+        \State\textbf{initialise} observation and model operators $H$ and $M$, forecast ensemble $X_{ens}=\begin{bmatrix} x^{(1)} & \cdots & x^{(N)} \end{bmatrix}$, observation $y$, orthogonal matrix $U$, error covariance matrix $R$  
+        \State $\mean{X}_{ens} = \frac{1}{N}X_{ens} \mathbf{1}^{\top}$
+        \State $X = (X_{ens} -  \mean{X}_{ens}) / \sqrt{N-1}$
+        \State $Y = H(X)$
+        \State $\mean{Y} =  \frac{1}{N} Y \mathbf{1}^{\top}$
+        \State $C = R^{-\frac{1}{2}}(Y - \mean{Y}) / \sqrt{N-1}$
+        \State $v = R^{-\frac{1}{2}}(y - \mean{Y})$
+        \State $T = (I + C^{\top}C)^{-1}$
+        \State $w = T C^{\top} v$
+        \State $W = w + \sqrt{N-1} T^{\frac{1}{2}}$
+        \State $X_{ens} = \mean{X}_{ens} + XW$
+        \State\textbf{return} $M(X_{ens})$
+    \end{algorithmic}
+\end{algorithm}
+
+While the EnKF methods are computationally tempting, the estimates of full high-dimensional covariance matrices cannot be exact especially with smaller ensemble sizes compared to observations.
+To overcome the issues related to sampling errors of smaller ensembles, localisation and inflation are used to enhance the performance of EnKFs.
+
+Localisation is employed to mitigate spurious correlations among distant observations caused by small sample sizes.
+As distant observations tend to be independent over short time scales, localisation techniques can be used to filter out interdependence of distant observations during the analysis.
+Localisation can be performed by domain localisation where the observations are assimilated to state estimates at smaller areas, or by covariance localisation where the forecast error covariance matrix is filtered for distant correlations.
+
+With smaller ensemble sizes forecast errors are easily underestimated.
+By inflating the ensemble spread, overly optimistic uncertainty estimates can be adjusted.
+
+The usage of these Kalman filter methods is not without complexity.
+It involves selecting multiple parameters that significantly impact the filtering results but are often not trivial to choose.
+Consequently, to benefit from these methods, a range of adjustments to the parameters should be tested in order to achieve optimal results.

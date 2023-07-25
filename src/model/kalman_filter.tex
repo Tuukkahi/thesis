@@ -1,0 +1,27 @@
+The neural network is trained to produce advection fields from spatio-temporal advective data but is only able to work with complete data and can only produce deterministic forecasts.
+As real-world measurements of any process are rarely complete or without uncertainties, the neural network is used in the Bayesian filtering context to treat spatio-temporal data in the state-space model.
+
+Due to the high dimensionality of image data, the ensemble transform Kalman filter of Algorithm~\ref{alg:etkf} is used to generate optimal state estimates from observations.
+The concept of using the neural network model as a state evolution operator in an EnKF takes influence from~\cite{deepide} but here a slightly different approach is taken to accomodate for even larger state vectors and more realistic uncertainty estimates.
+
+\subsubsection{State-Space Model Operators}
+For analysis of the state-space model~\eqref{eq:statespacemodel}, observation and state evolution operators $H$ and $M$ are needed.
+While the nonstationary inverse problem related to generating state estimates of measurements presents an important challenge in many problems, the main contribution of this work is in the incorporation of the neural network in the state evolution operator.
+Therefore, the state and observation spaces are assumed to be of same dimension, and the observation operator is is simplified to be a linear identity mapping modified to filter out missing observations.
+
+As the neural network models data through the advection equation by just generating advection fields, the state evolution operator is the linear warping function that transforms a state vector to the next time step
+\begin{equation}
+    M_{k+1}x_k = 
+    \begin{cases}
+        x_{k (i-\mathbf{F}_{u_{ij}}) ( j - \mathbf{F}_{vij})} & \text{if } \lvert i-\mathbf{F}_{u_{ij}} \rvert \leq n_x, \text{ and }  \lvert j-\mathbf{F}_{v_{ij}} \rvert \leq n_y
+    \end{cases}
+\end{equation}
+Figure~\ref{fig:warping} depicts how the warping operator works.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=5cm]{example-image-a}
+    \caption{\label{fig:warping}The warping operator takes the pixel values and moves them to new pixels corresponding to an advection field.}
+\end{figure}
+
+\subsubsection{ETKF tuning}

@@ -315,16 +315,18 @@ text must be identical to the text on the abstract page.
 \newcommand{\inputpypgf}[1]{%
   \InputIfFileExists{#1}{}{\typeout{No file #1.}}%
 }
-
+\newcommand*\mean[1]{\overline{#1}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\N}{\mathbb{N}}
 \newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
 \newtheorem{definition}{Definition}
 \numberwithin{equation}{section}
 \numberwithin{figure}{section}
 \numberwithin{theorem}{section}
 \numberwithin{definition}{section}
+\numberwithin{lemma}{section}
 %% All that is printed on paper starts here
 %%
 \begin{document}

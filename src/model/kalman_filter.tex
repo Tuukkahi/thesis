@@ -9,19 +9,28 @@ For analysis of the state-space model~\eqref{eq:statespacemodel}, observation an
 While the nonstationary inverse problem related to generating state estimates of measurements presents an important challenge in many problems, the main contribution of this work is in the incorporation of the neural network in the state evolution operator.
 Therefore, the state and observation spaces are assumed to be of same dimension, and the observation operator is is simplified to be a linear identity mapping modified to filter out missing observations.
 
-As the neural network models data through the advection equation by just generating advection fields, the state evolution operator is the linear warping function that transforms a state vector to the next time step
+As the neural network models data through the advection equation by just generating advection fields, the state evolution operator is the linear warping function that transforms a state vector to the next time step.
+So the state operator is then the warping operator that just transforms the coordinate space of the image states, i.e.
 \begin{equation}
-    M_{k+1}x_k = 
-    \begin{cases}
-        x_{k (i-\mathbf{F}_{u_{ij}}) ( j - \mathbf{F}_{vij})} & \text{if } \lvert i-\mathbf{F}_{u_{ij}} \rvert \leq n_x, \text{ and }  \lvert j-\mathbf{F}_{v_{ij}} \rvert \leq n_y
-    \end{cases}
+    M_{k+1}x_k[i,j] = 
+        x_{k}[i-\mathbf{F}_{u}[i,j], \, j - \mathbf{F}_{v}[i,j]],
 \end{equation}
+when the $i-\mathbf{F}_{u}[i,j]$ and $j - \mathbf{F}_{v}[i,j]$ are inside the image domain, and otherwise the border values are used. 
 Figure~\ref{fig:warping} depicts how the warping operator works.
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
-    \includegraphics[width=5cm]{example-image-a}
-    \caption{\label{fig:warping}The warping operator takes the pixel values and moves them to new pixels corresponding to an advection field.}
+    \inputpypgf{model/fig/warping.pypgf}
+    \caption{\label{fig:warping}The warping operator takes the pixel values and moves them to new pixels corresponding to an advection field.
+    Here the black square moves at each time step one one pixel up and one right.}
 \end{figure}
 
 \subsubsection{ETKF tuning}
+In using ensemble Kalman filter methods, an initial ensemble is needed before running the algorithm and often it needs to be created from just one sample.
+Kalman filters provide an efficient way to represent uncertainty in state estimations but due to efficient formulations the uncertainties are assumed to be additive and gaussian.
+However, for the data considered here, uncertainties are known to be higher in the spatial areas of the data where there are some objects.
+In addition, there are uncertainties related to the locations of the objects in the data.
+
+Therefore, while not theoretically consistent with the Kalman filter assumptions, the initial ensemble is created with gaussian noise of varying intensity and applying small uniform warps to the first state estimate.
+The same methods are also applied to ensemble forecasts before assimilating observations in the ETKF algorithm~\ref{alg:etkf} as an inflation technique.
+This ensures spatial localisation of ensemble variance to represent better uncertainty related to the state estimates.

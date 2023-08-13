@@ -1,0 +1,48 @@
+The neural network presented in~\ref{subsec:nnmodel} was trained and tested on COT data.
+\subsubsection{COT Data Preprocessing}
+Advection modelling within the proposed neural network necessitates complete spatio-temporal data in Euclidean coordinates.
+The preprocessing of the raw COT data is therefore a vital step before training the network.
+As the network is relatively simple but preprocessing is computationally demanding, the data was spatially constrained to an area around southern Finland, and temporally to the months from April to October of 2021.
+
+The spatial resolution of the data was artificially increased to have a pixel cover of approximately \SI{2}{\kilo\metre\squared}, thereby allowing clouds to occupy a larger image area and increasing the observable velocities.
+To accomodate for the neural network's square image inputs, the data was segmented into four $128 \times 128$ image regions.
+Figure~\ref{fig:trainingdata_area} illustrates the image area used for training the network.
+\begin{figure}[h]
+    \centering
+    \inputpypgf{experiments/fig/traindata.pypgf}
+    \caption{\label{fig:trainingdata_area}The area selected for neural network training over southern Finland and the Gulf of Finland.
+    The entire image area is $512 \times 512$ pixels from which four $128 \times 128$ subimages were taken.
+    One pixel covers roughly \SI{2}{\kilo\metre} in longitude and \SI{1}{\kilo\metre} in latitude.}
+\end{figure}
+
+Satellite data often contain missing values and thus interpolation was needed.
+Given the computational cost of interpolation, a simple nearest valid value approach was employed.
+As the dataset's quality is heavily influenced by the sun's elevation angle, interpolation was restricted to images when the elevation angle exceeded \ang{15}.
+
+The processed data were then normalised to standard scores, narrowing the range of values to better align with preferences of convolutional neural networks.
+Images with minimal COT values, indicating an absence of clouds, were subsequently filtered out from the dataset.
+
+The finalised dataset was temporally segmented into distinct training, validation, and test sets laying the groundwork for subsequent neural network training.
+
+\subsubsection{Training the Neural Network With COT Data}
+The training process was tailored to the characteristics of the COT data while keeping in mind the underlying physical interpretation of advection fields.
+The following choices were guided by performance of the model against the test dataset.
+
+The preciously described architecture was chosen through extensive experimentations guided by performance, interprability, and model simplicity.
+Within the ResNet model increasing the network depth provided little benefits and thus the network was kept quite simple.
+The advection fields were produced using varioud basis types including Fourier, wavelet, and polynomial basis with different numbers of basis vectors.
+The described second degree polynomials provided the best results in terms of advection field properties.
+Furthermore, the image coordinates were placed within the positive real axes from 0 to 1 for evaluation of the polynomial functions.
+
+Various loss functions were examined, including the MSE loss along with physics-based parameters accounting to the advection field properties such as gradient, curl, and divergence inspired by~\cite{debezenac}.
+Also structural similarity (SSIM), multi-scale SSIM (MS-SSIM), logarithic cosh loss functions were tested.
+Due to the small effect of the loss function in the results and no required parameters, the MSE loss was used for training the final model.
+
+Three latest images proved to be the optimal amount of information for the network to produce advection fields.
+The average loss was then computed over four future time steps.
+Given the noisy nature of the data, a highest possible mini-batch size limited by GPU memory constraints was chosen so that bad training data examples wouldn't affect the training process.
+
+Taking advantage of the advection fields' equivariance to rotations, the data was augumented by applying random rotations to the mini-batches.
+With this, overfitting to the training data was avoided while permitting a smaller training dataset and shorter training times.
+
+

@@ -181,7 +181,7 @@
 \RequirePackage{inputenc}% For scands in both Finnish and English input docs
 \RequirePackage[swedish, finnish, english]{babel}%
 \RequirePackage{lmodern}%
-\RequirePackage[kerning, spacing, babel]{microtype}%
+%\RequirePackage[kerning, spacing, babel]{microtype}%
 %
 \RequirePackage{calc}%
 \RequirePackage{chngcntr}% Allows counter dependencies to be changed for appendix

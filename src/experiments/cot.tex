@@ -1,0 +1,15 @@
+While the described model is designed to be data-independent, it was primarily developed for the Cloud Optical Thickness (COT) data retreived from the European Organisation for the Exploitation of Meteorological Satellites' (EUMETSAT) geostationary satellites.
+COT observations provide a consistent data source suitable for the model.
+The choice of using COT data is motivated by two key factors; (1) it is easiliy available with regular capturing suitable for short-term forecasting applications, (2) the nature of the COT data makes it suitable for the studied advection modelling.
+
+COT, as a measure of a cloud's ability to absorb and scatter light at visible wavelengths is an essential parameter in satellite observations of clouds.
+Within the EUMETSAT data, it is a part of the Optimal Cloud Analysis (OCA) product, derived from optical Flexible Combined Imager instruments measuring 16 channels of visible and infrared spectrum of light~\cite{oca, fci}.
+The OCA algorithm defines a state of a cloudy atmosphere as a state of six parameters of which COT is one that measures a cloud's ability to absorb and scatter mostly at visible wavelengths of light at daytime.
+The COT data range is 0.063 to 256 limited by the lookup table used by the OCA algorithm.
+
+The data is captured by EUMETSAT's geostationary satellites at 36000 km above the equator, which remain at a constant position relative to the Earth.
+The stationarity enables continuous observations of the same geographical region, which is indispensable for retrieving coherent spatio-temporal data.
+However, due to the geostationary orbit above the equator, the resolution of the data varies and the quality of the data is poorer at higher latitudes.
+This dataset has a temporal resolution of 15 minutes, enabling accurate tracking of the evolution of clouds.
+
+For a comprehensive understanding of the algorithmic principles behind retrieval of the COT data, readers are referred to~\cite{oca}.

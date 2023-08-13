@@ -12,7 +12,7 @@ The objective is to generate realistic deterministic state-estimates using the n
 The advection field estimation model is similar to the one laid out in~\cite{debezenac}, and application of the model in the Bayesian filtering setting draws inspiration from~\cite{deepide}.
 However, both of these models are trained for sea surface temperature data which is substantially different from the data considered in this thesis. 
 
-\subsection{Deterministic Neural Network Model}
+\subsection{Deterministic Neural Network Model\label{subsec:nnmodel}}
 \input{model/neural_network.tex}
 \subsection{Integrating ETKF with the Neural Network}
 \input{model/kalman_filter.tex}

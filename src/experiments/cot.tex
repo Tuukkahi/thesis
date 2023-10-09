@@ -1,15 +1,50 @@
-While the described model is designed to be data-independent, it was primarily developed for the Cloud Optical Thickness (COT) data retreived from the European Organisation for the Exploitation of Meteorological Satellites' (EUMETSAT) geostationary satellites.
-COT observations provide a consistent data source suitable for the model.
-The choice of using COT data is motivated by two key factors; (1) it is easiliy available with regular capturing suitable for short-term forecasting applications, (2) the nature of the COT data makes it suitable for the studied advection modelling.
+While the described model is designed to be data-independent, in the development of it, Cloud Optical Thickness (COT) data retreived from satellites was used.
+COT observations provide a consistent data source suitable for the model while really testing the capabilities of the model due to its qualities.
+The choice of using COT data is motivated by two key factors; (1) it is easiliy available with regular capturing suitable for short-term forecasting applications, (2) the nature of the COT data makes it more or less suitable for the studied advection modelling.
 
-COT, as a measure of a cloud's ability to absorb and scatter light at visible wavelengths is an essential parameter in satellite observations of clouds.
-Within the EUMETSAT data, it is a part of the Optimal Cloud Analysis (OCA) product, derived from optical Flexible Combined Imager instruments measuring 16 channels of visible and infrared spectrum of light~\cite{oca, fci}.
-The OCA algorithm defines a state of a cloudy atmosphere as a state of six parameters of which COT is one that measures a cloud's ability to absorb and scatter mostly at visible wavelengths of light at daytime.
-The COT data range is 0.063 to 256 limited by the lookup table used by the OCA algorithm.
+Optical thickness is a quantity that is defined by the ratio of light passing through a material in logarithm, given by
+\begin{equation*}
+    \tau = \ln \left(\frac{I}{I_0}\right),
+\end{equation*}
+where $I$ is the transmitted light through the material and $I_0$ is the received light.
+And in the cloud context, COT is a measure of a cloud's ability to absorb and scatter light, and it is an important parameter in satellite observations of clouds.
 
-The data is captured by EUMETSAT's geostationary satellites at 36000 km above the equator, which remain at a constant position relative to the Earth.
+The data used for testing this model is computed using the EUMETSAT Nowcasting and Very Short Range Forecasting Satellite Application Facility (NWC SAF) cloud microphysics algorithms at the Finnish Meteorological Institute.
+The algorithm computes the COT values using optical measurements from satellites on different wavelengths and a number of other parameters including atmosphere quantities computed using numerical weather prediction models.
+For deeper understanding of the algorithmic principles behind the computation of the COT data, readers are referred to~\cite{nwcsaf}.
+
+The data is captured with geostationary satellites that orbit 36000 km above the equator at a point where they remain at a constant position relative to the Earth.
 The stationarity enables continuous observations of the same geographical region, which is indispensable for retrieving coherent spatio-temporal data.
-However, due to the geostationary orbit above the equator, the resolution of the data varies and the quality of the data is poorer at higher latitudes.
+However, due to the geostationary orbit above the equator, the spatial resolution of the data varies due to curvature of the earth and angle to the satellites.
+Right under the satellite the spatial resolution is about \SI{3}{\kilo\metre}.
 This dataset has a temporal resolution of 15 minutes, enabling accurate tracking of the evolution of clouds.
 
-For a comprehensive understanding of the algorithmic principles behind retrieval of the COT data, readers are referred to~\cite{oca}.
+\subsubsection{COT Data Preprocessing}
+In order to get usable COT data for the neural network, extensive preprocessing was required.
+Advection modelling within the presented neural network necessitates complete spatio-temporal data in Euclidean coordinates.
+The preprocessing of the incomplete raw COT data in a satellite projection is therefore a vital step before training the network.
+As the network is relatively simple and should be trainable with a small dataset by its design, but preprocessing is computationally demanding, the data was spatially constrained to an area around southern Finland, and temporally to the months from April to October of 2021.
+
+The spatial resolution of the data was artificially increased to have a pixel cover of approximately \SI{2}{\kilo\metre\squared}, thereby allowing clouds to occupy a larger image area and increasing the observable velocities for the network.
+To accomodate for the neural network's square image inputs, the data was segmented into four $128 \times 128$ image regions.
+Figure~\ref{fig:trainingdata_area} illustrates the image area and the four segments used for training the network.
+\begin{figure}[h]
+    \centering
+    \inputpypgf{experiments/fig/traindata.pypgf}
+    \caption{\label{fig:trainingdata_area}The area selected for neural network training over southern Finland and the Gulf of Finland.
+    The entire image area is $512 \times 512$ pixels from which four $128 \times 128$ subimages were taken.
+    One pixel covers roughly \SI{2}{\kilo\metre} in longitude and \SI{1}{\kilo\metre} in latitude.}
+\end{figure}
+
+Satellite data often contain a considerable number of missing values and thus interpolating the missing pixel values was needed.
+Given the computational cost of advanced interpolation, a simple nearest valid value approach was employed.
+While this crude method results in interpolation artefacts, for the purposes of the model training this is not necessarily a problem. 
+As the dataset's quality is heavily influenced by the sun's elevation angle, interpolation was restricted to daytime images when the elevation angle exceeded \ang{15}.
+As a last filter for the data, images with minimal COT values, indicating an absence of clouds, were subsequently filtered out from the dataset.
+In this stage the data values were not yet normalised in any way to allow for quick experimentation within the neural network itself.
+The finalised dataset was temporally segmented into distinct training, validation, and test sets laying the groundwork for subsequent neural network training.
+
+A major difficulty posed by the COT data with regards to the advection modelling is the varying nature of its behaviour.
+Large chunks of the finalised data consists of data that hardly evolves according to the simple advection equation.
+While this could in principle have been bypassed by selecting only sequences of the data that evolve according to the advection model, it would have been difficult to achieve in practise and computationally restrictive.
+However, the mixed quality of the training data tests the ability of the neural network to actually capture and learn the relevant information.

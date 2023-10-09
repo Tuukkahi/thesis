@@ -1,3 +1,6 @@
+In this subsection, the very basics of neural networks are covered starting from the McCulloch-Pitts Neuron and training it to backpropagation to the modern convolutional neural networks.
+As the material of this subsection covers also the elementary underlying principles of neural networks, it is also above the bare minimum needed for understanding the results of this work but provides still some context to later discussions.
+
 Artificial neural networks drawing inspiration from the neural structures found in the human brain are a prominent part of modern machine learning methods.
 With the dramatic increase in computing capabilities, more complex neural networks have became feasible for a variety of applications.
 Substantial success in using neural networks has been found in various domains such as image classification, speech and text recognition, object detection, and automation of diverse tasks.
@@ -10,15 +13,14 @@ In this thesis neural networks are employed as a tool to estimate advection fiel
 Given the nonlinear and dynamic nature of the underlying process, the task is inherently complex.
 Nevertheless, eural networks provide a flexible framework for modelling these dynamics.
 
-In the following parts basics of neural networks are covered starting from the McCulloch-Pitts Neuron and training it to backpropagation to the modern convolutional neural networks, which are central to this thesis.
-
 \subsubsection{Neurons and Activation Functions}
 The first mathematical model for neuron from~\cite{mcculloch}, known as the McCulloch-Pitts Neuron is the fundamental building block for any neural networks.
 It consists of two principal components: an aggregation unit that processes the input vector, and an activation function that generates an output based on this aggregation.
 The operational structure of the McCulloch-Pitts Neuron is illustrated in figure~\ref{fig:mccullochpittsneuron}.
-\begin{figure}\label{fig:mccullochpittsneuron}
-    \includegraphics{background/fig/mccullochpitts.png}
-    \caption{McCulloch-Pitts neuron (placeholder image)}
+\begin{figure}
+    \centering
+    \input{background/fig/mccullochpitts.tex}
+    \caption{\label{fig:mccullochpittsneuron}McCulloch-Pitts Neuron takes a binary input vector evaluates their sum, and determines the binary output by comparing the sum to a given threshold.}
 \end{figure}
 The McCulloch-Pitts Neuron operates by taking an $n$-dimensional binary input vector $\mathbf{x}$ and applies function $f : \R^n \rightarrow \R$ that computes the sum of the inputs
 \begin{equation}
@@ -27,8 +29,8 @@ The McCulloch-Pitts Neuron operates by taking an $n$-dimensional binary input ve
 
 The activation function $\phi$ subsequently determines the neuron's output based on a threshold $T$,
 \begin{align}
-    y = \phi(f(\mathbf{x})) & = 1 \text{ if } \phi(\mathbf{x}) \geq T \\
-                            & = 0 \text{ if } \phi(\mathbf{x}) < T. 
+    y = \phi(f(\mathbf{x}))  = \mathbf{1}_{\leq T} (f(\mathbf{x})) & = 1 \quad \text{if } f(\mathbf{x}) \geq T \\
+                            & = 0 \quad \text{if } f(\mathbf{x}) < T. 
 \end{align}
 
 While this is an attractive model in its simplicity, it has a major limitation.
@@ -44,9 +46,9 @@ Thus, the function $f : \R^n \rightarrow \R$ becomes
 \end{equation}
 The structure of the perceptron is depicted in figure~\ref{fig:perceptron}.
 
-\begin{figure}\label{fig:perceptron}
-    \includegraphics{background/fig/mccullochpitts.png}
-    \caption{Perceptron (placeholder image)}
+\begin{figure}
+    \input{background/fig/perceptron.tex}
+    \caption{\label{fig:perceptron}Perceptron (placeholder image)}
 \end{figure}
 
 The activation function $\phi$ can also be refined to be a more sophisticated one than just the binary step function.
@@ -114,13 +116,14 @@ Hence, these layers are referred as convolution layers, despite technically impl
 
 CNNs employ many small convolutions as a replacement for the dot product neurons found in the MLP layers.
 With image inputs, the convolution kernels have often sizes of $3 \times 3$ or $9 \times 9$.
+In Figure~\ref{fig:2dconv}, a convolution of larger matrix with a $3 \times 3$ kernel is visualised.
 The smaller kernels are usually preferred  due to reduces model parameters and computational cost while still retaining the capacity of learning patterns from data.
 The input is convoluted with a large number of these small kernels individually, and thus increasing the depth of the input.
 A typical number of convolution filters in the initial layer could be 32 or 64, with increasing the number of filters when going deeper to the network to allow the model to learn more complex representations.
-The idea is depicted in figure~\ref{fig:2dconv}.
-\begin{figure}\label{fig:2dconv}
-    \includegraphics{background/fig/activations.png}
-    \caption{2d convolution (placeholder image)}
+\begin{figure}
+    \centering
+    \input{background/fig/conv2d.tex}
+    \caption{\label{fig:2dconv}Two-dimensional convolution with a $3 \times 3$ kernel.}
 \end{figure}
 
 CNNs typically employ pooling layers for downsampling the spatial dimensions of the input by combining multiple values into one, usually by taking the average (average pooling) or maximum (max pooling) values.
@@ -152,11 +155,12 @@ This is easily modified to unsupervised learning by simply excluding $y$ from th
 Choosing an appropriate loss function is a crucial part of model training.
 The family of loss functions suitable for neural networks is large and dependent of the type of data.
 While the definitions of different loss functions look very different, typically the choice is made based on how much large prediction errors should be compared to small errors.
-Perhaps the most commonly used and well-known loss function is the mean squared error (MSE), which computes the mean of squared prediction errors:
+Perhaps the most commonly used and well-known loss function is the mean squared error (MSE), which computes the mean of squared prediction errors between a target value $Y$ and predicted value $\hat{Y}$:
 \begin{equation}
     L_{\text{MSE}}(Y, \hat{Y}) = \frac{1}{n} \sum_{i=1}^{n} \left( Y_{i} - \hat{Y}_{i} \right)^{2}.
 \end{equation}
-In this equation, $Y$ represents the target value, and $\hat{Y}$ the predicted value.
+Depending on the application, the standard loss functions are sometimes augumented with application-specific values.
+For instance in the realm of the physics-informed neural networks, it is customary to add to the used loss functions some physical quantities to be minimised. 
 
 Many optimisation algorithms with neural networks are, or are based on the Stochastic gradient descent (SGD).
 SGD, an adaptation of the classic gradient descent algorithm, functions by adjusting the decision variable in the direction of the loss function's gradient, scaled by a small constant called the step size, or learning rate.
@@ -259,4 +263,4 @@ For the last layer $L$ the error can be given more simply,
 \end{align}
 
 Now that the neural network can be constructed, there is a way to find the optimal network parameters with computing easily the gradients, a complete neural network can be trained.
-Typically most of these things presented are encapsulated inside the numerical neural network libraries the most-well known examples being PyTorch and Tensorflow.
+Typically most of these things presented are encapsulated inside the numerical neural network libraries the most-well known examples being the Python libraries PyTorch and Tensorflow.

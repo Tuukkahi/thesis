@@ -31,5 +31,8 @@ plt.plot(x, leaky_relu(x), 'k-', alpha=0.7, label='Leaky ReLU')
 plt.legend(loc='upper left', bbox_to_anchor=(1.05, 1))
 plt.xlabel('Input')
 plt.ylabel('Output')
+plt.ylim([-1.0,1.5])
+plt.xlim([-1.5,1.5])
+plt.grid(color='grey', linewidth=1, linestyle='-', alpha=0.2)
 
 save()

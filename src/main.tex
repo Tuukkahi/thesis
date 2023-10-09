@@ -175,7 +175,7 @@
 %\documentclass[finnish, 12pt, a4paper, elec, dvips, online]{aaltothesis}
 
 \usepackage{graphicx}
-
+\usepackage{mathtools}
 %% Math fonts, symbols, and formatting; these are usually needed
 \usepackage{amsfonts,amssymb,amsbsy,amsmath,amsthm,bm}
 \usepackage{algorithm,algpseudocode}
@@ -245,14 +245,14 @@
 %% slightly longer space follows, but what is desired is a regular interword
 %% space.
 %%
-\supervisor{Prof.\ Pirjo Professor}
+\supervisor{Sen.\ Lec.\ Harri Hakula}
 %%
 
 %% Advisor(s)---two at the most---of the thesis. Check with your supervisor how
 %% many official advisors you can have.
 %%
-\advisor{Dr Alan Advisor}
-%\advisor{MSc Sarah Scientist}
+\advisor{Prof.\ Marko Laine}
+\advisor{PhD Olle Räty}
 %%
 
 %% Aaltologo: syntax:
@@ -329,6 +329,10 @@ text must be identical to the text on the abstract page.
 \numberwithin{definition}{section}
 \numberwithin{lemma}{section}
 
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning}
+\def\inputArray{{1,2,5,4,5,2,4,3,2,1,6,1,0,1,5,3,1,4,1,2,5,3,1,3,5}}
+\def\kernelArray{{1,1,0,0,1,1,0,1,0}}
 %\usepackage{pgfplots}
 %\usepgfplotslibrary{external} 
 %\tikzexternalize
@@ -469,7 +473,7 @@ Otaniemi, 31.8.2018
 \input{experiments/experiments.tex}
 
 \clearpage
-\section{Conclusions}
+\section{Concluding Remarks}
 \input{conclusions/conclusions.tex}
 \clearpage
 \thesisappendix

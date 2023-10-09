@@ -1,17 +1,34 @@
 Neural networks have proved themselves an important tool in the analysis of high-dimensional and complex data being able to learn patterns and relationships.
-In meteorological nowcasting, the so-called physics-free models have been extensively researched in e.g.\ percipitation forecasts.~\cite{rainnet, metnet}
-While these methods have shown some efficiency in producing realistic forecasts, in many cases it would be useful to constrain these methods to adhere to some physical models.
+In many physical modelling problems, existing mathematical models exist that characterise the evolution of a system but the models require parameters.
+Direct observations of these model parameters often do not exist and must therefore be estimated from data.
+For that challenge, neural networks could be constrained to learn the physical laws of a system to estimate parameters for the mathematical models.
+These physics-informed neural networks are designed to leverage the prior information concerning a systems evolution to capture the essential patterns of even low amount of data.
 
-Bayesian filtering techniques including the well-known Kalman filter provide a cruical role in state estimation of dynamic systems.
-The use of neural networks in parameter estimation could offer a powerful method of parameter estimation in the Bayesian filtering framework involving advective spatio-temporal data.
+However, in many problems, direct measurements from the quantity of interest are not available.
+But even then, there may be partial measurements or measurments from one or more related quantities that provide useful information.
+In these situtations, Bayesian filtering techniques such as the well-known Kalman filter provide a powerful method to probabilistically estimate the dynamic state of a system in terms of the actual quantity of interest.  
 
-This thesis aims on devoloping a neural network for advection field estimation from noisy spatio-temporal data.
-The advection fields are used to model a state-space model in the Bayesian filtering framework.
-As a practical application, the model is studied on a cloud optical thickness data where the model is used to get probabilistic short-term forecasts.
+In this thesis, a neural network is constructed to predict advection fields from two-dimensional data, and it is used as a state model operator in an ensemble based Kalman filter.
+The work is done as a part of a research project in the Meteorological Research Applications group at the Finnish Meteorological Institute.
+Consequently, the model is trained and tested on meteorological satellite data of physical properties of clouds but the general model is designed to be independent of the used data.
 
-The main contribution of the thesis is to integration of a neural network model to a high-dimensional Kalman filtering scheme.
-In addition, the physics-based neural network model is tested against classical methods used in advective spatio-temporal meteorological forecasting.
+In meteorological short-term forecasting, or nowcasting, the so-called physics-free models have been extensively researched in e.g.\ percipitation forecasts.~\cite{rainnet, metnet}
+While these methods have shown some efficiency in forecasting applications, the neural networks often lack of interpretability and require large amounts of training data.
+As actual physical numerical weather prediction models lack the ability to generate instanteneous high-resolution predictions, the currently used methods are crude mathematical models such as the advection based model studied in this thesis.
+As a combination of the physics-free neural networks and the current advection based models, informing the neural network with the advection equation is explored. 
+Similar work on physics-informed advection based neural networks have previously been done in~\cite{deepide, debezenac} with sea surface temperature data but in this work the objective is to generate smooth advection fields to better meet the requirements of small-scale cloud data. 
+As already tested in~\cite{deepide}, the neural network model is integrated with the Kalman filter model but instead of the goal of probabilistic forecasting, the emphasis is on filling incomplete observations.
+
+The main contributions of this thesis is the repurposing of an existing image recognition neural network architecture to a physics-informed neural network learning to produce smooth advection fields, and the integration of it to a high-dimensional ensemble based Kalman filtering scheme.
+The scope of this work is primarily on the exploration and quick validation of new and alternative methods.
+Consequently, the neural network development is mostly motivated by general data independent physical interpretability with less focus on performance based tuning.
+Moreover, the Kalman filter is set up in an artificial setting in order to provide visually appropriate validation.  
+Nevertheless, the neural network model is benchmarked against a well-used classical method used in advective meteorological nowcasting using a test partition of the used training dataset.
 
 The thesis unfolds as follows.
-First, the needed background material to neural networks and Bayesian filtering of spatio-temporal data are presented.
-Next, the theoretical properties of the proposed model is covered, and in the final chapter the practical application in cloud optical thickness forecasting is presented.
+First, some background material on the theory behind the used methods is presented.
+Due to the wide range of the used methods and the theory behind them, naturally a complete primer is outside of the scope of this work.
+As a compromise based on the spirit of this work, the background section is divided to three parts consisting of characteristics of spatio-temporal data, neural network basics, and Bayesian filtering theory. 
+Even though the model was constructed hand in hand with the used dataset, due to it having been designed for general advective spatio-temporal data the proposed model is presented next independently. 
+Finally, numerical experiments and verification of the trained model is presented with both the cloud data and synthetic test images separately for the neural network model and the Kalman filter application.
+In the very last section, an overall summary of the work is discussed along with possible directions for further research from the basis of this work.

@@ -40,10 +40,10 @@ av = np.array([-8, -1, -1, 0.2, 0.5, 0.1])
 u = (V @ au).reshape(128,128)
 v = (V @ av).reshape(128,128)
 
-image = 0.5 * np.exp(-0.004 * ((mx.ravel() - 30)**2 + (my.ravel() - 100)**2))
-image[image<0.04] = 0.0
-image += 0.5 * np.exp(-0.002 * ((mx.ravel() - 80)**2 + (my.ravel() - 60)**2))
-image[image<0.04] = 0.0
+image = 6 * np.exp(-0.004 * ((mx.ravel() - 30)**2 + (my.ravel() - 100)**2))
+image[image<0.5] = 0.0
+image += 5 * np.exp(-0.002 * ((mx.ravel() - 80)**2 + (my.ravel() - 60)**2))
+image[image<0.5] = 0.0
 image = image.reshape((ny,nx))
 
 mx = mx/127

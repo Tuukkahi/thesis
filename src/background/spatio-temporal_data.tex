@@ -1,7 +1,7 @@
+This subsection covers some basic principles of spatio-temporal data and dynamic modelling such data through the advection-diffusion equation. 
 The analysis of spatio-temporal data is an important part of research across many disciplines.
 Spatio-temporal data is characterised by having both spatial, and temporal components that carry information across space, and over time.
 Modelling these datasets requires thus observing and understanding how the phenomenon of interests evolves over time in many locations.
-This subsection covers some basic principles of spatio-temporal data and dynamic modelling such data through the advection equation. 
 
 \subsubsection{Defining Spatio-Temporal Data}
 As to dismiss the Einstenian physics where space and time is interdependent, the classical way of separating the real spatial and temporal dimensions shall be considered here.
@@ -21,7 +21,8 @@ A concrete example of spatio-temporal data could be air pollution data that trac
 Dynamical modelling of spatio-temporal data refers to creating mathematical and computational models that explain changes of the observed variables in time.
 Often some prior scientific information of the process is used to motivate the model.
 This information is usually described with some partial differential equations (PDE).
-At the core of the model of this thesis is the advection-diffusion equation describing the transportation and diffusion of the observed variable along some advection field in time.
+At the core of the model of this thesis is the advection equation describing the temporal transportation of data according to an advection field.
+As a natural extension to the pure advective process, it is often also fruitful to consider also diffusion as an advection-diffusion process.
 In the air pollution example, the pollutants would be advected by winds, and diffused outwards of high concentrations.
 A simplified example of data evolving through the advection-diffusion process is in Figure~\ref{fig:advection_diffusion}.
 
@@ -57,7 +58,7 @@ While many uncertainties are involved in the parameter estimation, the model~\eq
 \begin{equation}\label{eq:advectiondiffusion_approx}
     \frac{\partial u}{\partial t} = \nabla \cdot (\overline{D} \nabla u) - \overline{\mathbf{F}} \nabla u + e
 \end{equation}
-needs to be considered where $e = e(x,t)$ is the (hopefully small) modeling error.
+needs to be considered where $e = e(x,t)$ is the (hopefully small) modelling error.
 When taking real measurements, the model also needs to be discretised both in time so that each time step represents one measurement point, and in space so that $\Omega$ becomes a grid in which the measurements are taken at some resolution.
 
 In the air pollution example the motivation for computing the estimates $\overline{\mathbf{F}}$ and $\overline{D}$ would be that assuming the real parameters change little in time, i.e.\ $\mathbf{F}(x,t_{k}) \approx \mathbf{F}(x,t_{k+1})$ and $D(x,t_{k}) \approx D(x,t_{k+1})$, the parameters can be utilised to transport air pollution images $u$ to to future and thus producing forecasts.

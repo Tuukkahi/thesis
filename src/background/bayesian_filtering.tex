@@ -1,6 +1,8 @@
+This subsection covers the mathematical theory of Bayesian filtering.
+The Kalman filter is presented as an optimal state estimation algorithm under certain assumptions and extends it to an ensemble based version able to efficiently handle larger observation and state vectors.
+
 Bayesian filtering refers to to the Bayesian way of deriving an optimal filtering problem of estimating the state of a nonstationary system through some observations.
 This approach becomes valuable when dealing with real-world phenomena where a mathematical model can approximate the temporal evolution of some process and measurements of the system may be uncertain.
-
 
 A key application of Bayesian filtering is state estimation which emerges in many disciplines.
 It involves estimating a hidden state of a system based on some available indirect and noisy measurements.
@@ -187,7 +189,7 @@ The matrix update formulas of Theorem~\ref{thm:kalmanfilterupdate} cross quickly
 One way of tackling the problem is to use Ensemble Kalman filters.
 
 \subsubsection{Ensemble Kalman Filter}
-Although the original Kalman filter offers a robust solution to optimal filtering problems, it fails to efficientl scale for large state and observation spaces.
+Although the original Kalman filter offers a robust solution to optimal filtering problems, it fails to efficiently scale for large state and observation spaces.
 This limitation paved the way to the development of the Ensemble Kalman Filter (EnKF).
 It was first introduced by Geir Evensen in~\cite{evensen1994} as a Monte Carlo approach to the Kalman filter.
 EnKF circumvents the need for large covariance matrices by representing both a state and its uncertainty via an ensemble of state samples.

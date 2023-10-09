@@ -1,6 +1,4 @@
-The neural network model is devloped to predict advection fields from two-dimensional spatio-temporal data.
-Departing from the previous research of the problem, a distinctive aspect of the model of this work is the generation of smooth advection fields as opposed to pixel-wise advection vector estimation.
-The chosen approach is better suited especially for the high resolution meteorological applications in mind as small-scale differences in the data are mostly random given the available measurements, and features in the data mostly move to the same direction.
+In this subsection the neural network model predicting advection fields from two-dimensional spatio-temporal data is described.
 
 The data the network is designed to work with is assumed to follow the discrete advection equation in two spatial dimensions of same length:
 \begin{equation*}
@@ -17,20 +15,29 @@ The neural network approach has also been studied but mostly focusing on differe
 They are often trained with ground truth flows and with datasets where motion only applies to small objects in images most notably with the KITTI~\cite{kitti}, and Sintel~\cite{sintel} datasets.
 Contrary to this, the model used for this thesis has to be trained in an unsupervised fashion as the ground truth advection fields are not available, and the data for which the model is intended to be used with is very different from the usual ones used in the neural network optical flow context.
 
-In order to tackle the needs of the much lower-dimensional data similar to the one described in Section~\ref{subsubsection:dynamicmodellingspatiotemporaldata} and in Figure~\ref{fig:advection_diffusion}, a different kind of approach to the neural network structure is needed.
-Basis vectors are utilised here akin to the method used in~\cite{deepide}, but a simple second degree polynomial is opted as opposed to a high-dimensional radial basis for the advection field.
-The choice of outputting a low-dimensional polynomial basis from the neural network guarantees smooth advection fields. 
+A similar unsupervised approach, from where much of the inspiration to the main principles of the neural network model can be attributed, to is explored in~\cite{debezenac} and~\cite{deepide}.
+In these works an advection field neural network was used with much more complex sea surface temperature data with the attempt to generate pixel-wise advection vector estimates.
+Moreover, these works also modelled the diffusion parameter,~\cite{debezenac} by a hardcoded value and~\cite{deepide} by a separate neural network.
+The choice of leaving out diffusion from this model primarily stems from the fact that the cloud data with which the model was developed does not exhibit diffusion and thus lack physical interpretation.
+Also in using a neural network for diffusion modelling specific care must be given to the loss function selection as diffusion is easily overestimated if minimising average prediction errors.
+Nevertheless, for incorporating a diffusion parameter to this model, both methods could be added without changing the advective model. 
+
+In order to tackle the needs of the much lower-dimensional data similar to the one described in Section~\ref{subsubsection:dynamicmodellingspatiotemporaldata} and in Figure~\ref{fig:advection_diffusion} but without diffusion, a different approach to the neural network structure is required.
+As a consequent, the underlying neural network architecture is also designed differently.
+Basis vectors are utilised here akin to the method used in~\cite{deepide}, but with two key differences.
+A simple second degree polynomial is opted as opposed to a high-dimensional radial basis for the advection field which guarantees smooth advection fields.
+Furthermore, instead of predicting the basis vector coefficients directly, the neural network predicts advection at fixed nodes from which a polynomial can be interpolated throughout the domain.
+This chosen approach is better suited especially for the high resolution meteorological applications in mind as small-scale differences in the data behave mostly randomly, and the main features of the data mostly advect uniformly according to winds.
 
 \subsubsection{Model Architecture}
-The model architecture is similar to the well-known Residual Network (ResNet) that is deep yet computationally efficient.
-The model compromises of two separate ResNet models, each trained to predict a single of the two-dimensional advection field: one for the u-component, and the other for the v-component.
+The proposed model architecture is similar to the well-known Residual Networks (ResNet) that are deep yet computationally efficient.
+To create two-dimensional advection vectors, two separate ResNet models are employed, each trained to predict a single component of the two-dimensional advection field: one for the u-component, and the other for the v-component.
 
-\subsubsection{ResNet Architecture}
 Residual Networks are characterised by the use of skip connections, which allow the gradient to be directly backpropagated to earlier layers.
 The ‘residual’ term comes from the learning process of these networks where they learn the residual mappings relative to the layer inputs, alleviating the common vanishing gradient problem in deep neural networks.
 While residual connections are utilised in a wide array of neural network architectures, they were first formally developed for image recognition tasks in~\cite{resnet}.
-The task of learning basis function coefficients in this thesis bears resemblance to these image recognition tasks.
-However, instead of outputting classes from multi-channel images, in this thesis, the network is interpreted as outputting basis function coefficients of advection field from spatio-temporal data.
+The task of learning advection parameters at fixed nodes in this work bears resemblance to the image recognition tasks.
+However, instead of outputting classes from multi-channel images, in this thesis, the network is interpreted as outputting advection field values at nodes from spatio-temporal data.
 
 A key component of the ResNet architecture is the residual block.
 Residual blocks have the general form
@@ -69,39 +76,84 @@ The specific layer architecture of the used network is shown in Figure~\ref{fig:
 \end{figure}
 
 \subsubsection{Producing Advection Fields}
-While the described architecture generated the low-dimensional basis vector coefficients, the primary objective is to produce the complete advection fields.
-To this end, the basis vectors are constructed as second-degree polynomials across the spatial data domain.
-The choice of second-degree polynomials are chosen to strike a balance between capturing a majority of the underlying advection process and maintaining sufficient flexibility to span over multiple time steps.
+While the described architecture generates the low-dimensional vector of advection field values at only a few points, the primary objective is to produce the complete advection fields.
+To this end, the basis vectors are constructed as polynomials across the spatial data domain using Lagrange polynomial interpolation.
+The method of prediicting advection values from which the polynomial coefficients are then computed gives stability to optimising the network as changes to the output have a predictable change in the loss function value.
+
+Second-degree polynomials are chosen as a strike between capturing a majority of the underlying advection process and maintaining sufficient flexibility to span the same advection field over multiple time steps.
 Thus the advection fields are now of the form
-\begin{equation}
+\begin{equation*}
     \mathbf{F}(x,y) = 
+    \begin{bmatrix}
+        \mathbf{F}_{u}(x,y)\\
+        \mathbf{F}_{v}(x,y)\\
+    \end{bmatrix} =
     \begin{bmatrix}
         a_{u_0} + a_{u_1} x + a_{u_2} y + a_{u_3} x^2 + a_{u_4} xy + a_{u_5} y^2\\
         a_{v_0} + a_{v_1} x + a_{v_2} y + a_{v_3} x^2 + a_{v_4} xy + a_{v_5} y^2\\
     \end{bmatrix}.
-\end{equation}
+\end{equation*}
 
-Employing two separate ResNet models, the coefficient vectors $a_u$, and $a_v$ can be obtained from data.
-Assuming a square spatial domain $\R^{n \times n}$, the Vandermonde matrix for the two-dimensional second-degree polynomials can be constructed as
-\begin{equation}
-    V = V((x_0,y_0),(x_1,y_1),\dots,(x_{nx}, y_{ny})) =
+Employing two separate ResNet models configured to output at six different nodes $\{ (x_i, y_i) \}_{i=0}^{5}$ the advection field polynomial values, a Vandermonde matrix can be constructed at the same set nodes as.
+\begin{equation*}
+    V((x_0,y_0),(x_1,y_1),\dots,(x_{5}, y_{5})) =
     \begin{bmatrix}
         1 & x_0 & y_0 & x_{0}^2 & x_{0}y_{0} & y_{0}^2\\
         1 & x_1 & y_1 & x_{1}^2 & x_{1}y_{1} & y_{1}^2\\
         \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
-        1 & x_{n} & y_{n} & x_{n}^2 & x_{n}y_{n} & y_{n}^2
+        1 & x_{5} & y_{5} & x_{5}^2 & x_{5}y_{5} & y_{5}^2
     \end{bmatrix}.
-\end{equation}
-Given this, the advection field can be expressed as:
-\begin{equation}
-    \mathbf{F} = 
-    \begin{bmatrix}
-        Va_u \\
-        Va_v
-    \end{bmatrix}.
-\end{equation}
+\end{equation*}
+Given this, the polynomial coefficients $a_u$ can now be solved uniquely by inverting the Vandermonde polynomial:
+\begin{align*}
+        \begin{bmatrix}
+            1 & x_0 & y_0 & x_{0}^2 & x_{0}y_{0} & y_{0}^2\\
+            1 & x_1 & y_1 & x_{1}^2 & x_{1}y_{1} & y_{1}^2\\
+            \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+            1 & x_{5} & y_{5} & x_{5}^2 & x_{5}y_{5} & y_{5}^2
+        \end{bmatrix}
+        \begin{bmatrix}
+            a_{u_0}\\
+            a_{u_1}\\
+            \vdots \\
+            a_{u_5}\\
+        \end{bmatrix} &= 
+        \begin{bmatrix}
+            \mathbf{F}_{u}(x_0,y_0) \\
+            \mathbf{F}_{u}(x_1,y_1) \\
+            \vdots \\
+            \mathbf{F}_{u}(x_5,y_5)
+        \end{bmatrix}\\
+        \begin{bmatrix}
+            a_{u_0}\\
+            a_{u_1}\\
+            \vdots \\
+            a_{u_5}\\
+        \end{bmatrix} &=
+        \begin{bmatrix}
+            1 & x_0 & y_0 & x_{0}^2 & x_{0}y_{0} & y_{0}^2\\
+            1 & x_1 & y_1 & x_{1}^2 & x_{1}y_{1} & y_{1}^2\\
+            \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
+            1 & x_{5} & y_{5} & x_{5}^2 & x_{5}y_{5} & y_{5}^2
+        \end{bmatrix}^{-1}
+        \begin{bmatrix}
+            \mathbf{F}_{u}(x_0,y_0) \\
+            \mathbf{F}_{u}(x_1,y_1) \\
+            \vdots \\
+            \mathbf{F}_{u}(x_5,y_5)
+        \end{bmatrix},
+\end{align*}
+and similarly for $a_v$.
+As the Vandermonde polynomial is notorius for having a large condition number, the nodes need to be selected carefully to ensure stable invertibility.
+Hence, the image domain is set to be $[-1, 1] \times [-1,1]$, and the first node set at the origin and five nodes at non-symmetric points on the unit circle as depicted in figure~\ref{fig:testpoints}.
+\begin{figure}[h]
+    \centering
+    \input{model/fig/testpoint.pypgf}
+    \caption{\label{fig:testpoints}The six nodes at which the neural network approximated advection field values. In order to ensure stable inversibility of the two-dimensional Vandermonde matrix, the location of the nodes must be selected carefully.}
+\end{figure}
+After solving the polynomial coefficients, the advection vectors may then be interpolated over the entire domain by evaluating the Vandermonde matrix at every pixel and right-multiplying it by the coefficient vectors.  
 
-Since the basis vectors remain constant, the model complexity is effectively controlled by the dimensionality of the basis.
+Since the basis vectors are constant, the model complexity is effectively controlled by the dimensionality of the basis.
 Consequently, the selection of the basis represents a trade-off between smoothness of the advection fields and the ability to fit more complex patterns in the advection fields.
 
 \subsubsection{Training the Neural Network}
@@ -117,7 +169,7 @@ Consequently, a simpler nearest-point interpolation method is used in inference.
 The network is trained by minimising the average MSE loss between warped images, and the target images over a predetermined number of time steps.
 For each iteration, the network predicts the advection fields from a batch of $\tau$ consecutive data samples, and the latest image from this batch is warped using the aforementioned warping scheme.
 The warping is done over several subsequent time steps to compute an average loss between actual images, and the warped images.
-Due to the lack of exterior information beyound the image boundaries, the model cannot predict the edge values.
+Due to the lack of exterior information beyond the image boundaries, the model cannot predict the edge values.
 Therefore, the edge values are discarded when computing the MSE loss.
 The selection of the $\tau$ and the number of time steps to warp in training depend on the temporal characteristics of the training data.
 

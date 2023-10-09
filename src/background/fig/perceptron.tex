@@ -1,0 +1,21 @@
+\begin{tikzpicture}[>=stealth', auto, node distance=10cm]
+
+    \node (I1) at (0,4.5) {$x_1$};
+    \node (I2) at (0,3.3) {$x_2$};
+    \node (I-dots) at (0, 2.5) {$\vdots$};
+    \node (In) at (0,1.5) {$x_n \in \R$};
+    
+
+    \node[draw, circle, minimum size=1.5cm] (S) at (4, 3) {$\displaystyle \begin{aligned} \sum_{i=1}^{n} &w_i x_i\\ &+ b \end{aligned}$};
+    
+    \node[draw, circle, minimum size=2.0cm] (A) at (7, 3) {$\phi$};
+
+    \node (O) at (11, 3) {$y \in \R$};
+    \path[-] (S) edge node {} (A); 
+    \path[->] (I1) edge node {$w_1$} (S);
+    \path[->] (I2) edge node {$w_2$} (S);
+    \path[->] (In) edge node {$w_n$} (S);
+    
+    \path[->] (A) edge node {} (O);
+
+\end{tikzpicture}

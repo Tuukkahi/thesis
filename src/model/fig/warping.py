@@ -25,13 +25,13 @@ x = np.arange(1,nx)
 y = np.arange(1,ny)
 mx, my = np.meshgrid(x,y)
 
-d = np.zeros((ny,nx))
+d1 = np.zeros((ny,nx))
 u = np.ones((ny,nx))
 v = np.ones((ny,nx))
-d[2:4,2:4] = 1
-d = d + 0.2*warp(d,2*u,2*v)
-d = d + 0.4*warp(d,2*u,2*v)
-plt.pcolormesh(d, cmap='binary')
+d1[2:4,2:4] = 1
+d2 = 1.5*warp(d1,2*u,2*v)
+d3 = 1.5*warp(d2,2*u,2*v)
+plt.pcolormesh(d1+d2+d3, cmap='binary')
 
 plt.gca().xaxis.set_major_formatter(FuncFormatter(formatter))
 plt.gca().yaxis.set_major_formatter(FuncFormatter(formatter))

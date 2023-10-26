@@ -1,0 +1,30 @@
+\begin{tikzpicture}[>=stealth', auto, node distance=10cm]
+
+    \node (B) at (0,5.4) {$b_1$};
+    \node (I1) at (0,4.2) {$x_1$};
+    \node (I2) at (0,3.0) {$x_2$};
+    \node (I-dots) at (0, 2.0) {$\vdots$};
+    \node (In) at (0,1.2) {$x_n \in \R$};
+    \node (B1) at (0,0.0) {$b_2$};
+    
+
+    \node[draw, circle, minimum size=2.5cm] (S) at (4.5, 4.2) {$\displaystyle \phi \left(W_{1*} x + b_1 \right)$};
+    \node[draw, circle, minimum size=2.5cm] (S1) at (4.5, 1.2) {$\displaystyle \phi \left(W_{2*} x + b_2 \right)$};
+
+    \node (O) at (8.5, 4.2) {$y_1 \in \R$};
+    \node (O1) at (8.5, 1.2) {$y_2 \in \R$};
+
+    \path[->] (B) edge node {} (S);
+    \path[->] (I1) edge node{} (S);
+    \path[->] (I2) edge node{} (S);
+    \path[->] (In) edge node{} (S);
+
+    \path[->] (I1) edge node{} (S1);
+    \path[->] (I2) edge node{} (S1);
+    \path[->] (In) edge node{} (S1);
+    \path[->] (B1) edge node {} (S1);
+    
+    \path[->] (S) edge node {} (O);
+    \path[->] (S1) edge node {} (O1);
+
+\end{tikzpicture}

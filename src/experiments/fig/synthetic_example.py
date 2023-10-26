@@ -36,7 +36,7 @@ def plot_time_steps(actual, predict, flow_vectors, ax, fig):
 
   for i in range(actual.shape[0]):
     ax[0, i].set_box_aspect(1)
-    ax[0, i].contourf(grid_x, grid_y, actual[i], cmap='binary', extend='both')
+    ax[0, i].contourf(grid_x, grid_y, actual[i], cmap='bone_r', extend='both')
     ax[0, i].set_yticks([])
     ax[0, i].set_xticks([])
     add_grid_lines(ax[0, i])
@@ -55,7 +55,7 @@ def plot_time_steps(actual, predict, flow_vectors, ax, fig):
       ax[1, i].set_xticks([])
       ax[1, i].set_box_aspect(1)
       ax[1, i].set_title("$\widehat{x}_{t+" + str(i - lags + 1) + "}$")
-      ax[1, i].contourf(grid_x, grid_y, predict[i - lags], cmap='binary', extend='both')
+      ax[1, i].contourf(grid_x, grid_y, predict[i - lags], cmap='bone_r', extend='both')
       add_grid_lines(ax[1, i])
       if flow_vectors is not None:
         ax[1, i].quiver(grid_x[::16,::16], grid_y[::16,::16], flow_vectors[i - lags, 0][::16,::16],

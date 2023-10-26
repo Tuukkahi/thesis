@@ -1,6 +1,6 @@
 In this subsection the neural network training process with the processed COT dataset is described and the performance evaluated.
 
-Even though the neural network presented in~\ref{subsec:nnmodel} is designed to be data independent, it was developed and tested mostly with the COT data.
+Even though the neural network presented in~\ref{subsec:nnmodel} is designed to be data-independent, it was developed, trained, and tested mostly for the COT data.
 On top of the presented architecture, some model tuning with the COT data in mind was done.
 
 \subsubsection{Tuning the Neural Network With COT Data}
@@ -34,31 +34,34 @@ The efficiency of the training process can be attributed to the simplicity of th
 
 To validate the model's capability to generalise, it was applied to simple synthetic data patterns not similar to the training data.
 Despite the immense differences to the actual cloud images, the model is able to successfully capture correct advection patterns given similar scaling of the data to the training dataset.
+This promising result suggests that the model works as designed by learning the advection equation dynamics instead of some particular training data.
+Moreover, this property of model could be advantageous with similar physics-based moelling problems with insufficient training data as it could be extended with other similar data sources or even simulated data.
 Figure~\ref{fig:synthetic_example} shows model predictions for a Gaussian circle and squares.
 
 \begin{figure}[h]
     \centering
     \inputpypgf{experiments/fig/synthetic_example.pypgf}
-    \caption{\label{fig:synthetic_example}Synthetic data predictions using the neural network trained with COT data.
+    \caption{\label{fig:synthetic_example}Synthetic data predictions using the neural network trained with the COT dataset.
     The first rows show the `observed' data and the second rows predictions for two time steps.
 The predictions are computed with neural network generated advection fields from the first three observations.}
 \end{figure}
 
-To place the mode's performance in a broader context, it was compared against two prediction methods with the test part of the dataset: the well established Lucas-Kanade technique for optical flow estimation implemented in the PySteps library~\cite{lucaskanade}, and a naive prediction using the most recent observation as the forecast.
+To place the mode's performance in a broader context, it was compared against two prediction methods with the test part of the dataset: the well established Lucas-Kanade technique for optical flow estimation, and a naive prediction using the most recent observation as the forecast.
 As predictability for the data especially over multiple time steps is known to be poor, the naive prediction serves as a rudimentary way to assess whether the advective models are able to capture any meaningful dynamics in the data.
 The Lucas-Kanade method provides a good baseline for an advective model as it is a commonly used computational method in similar meteorological applications.
-It assumes a locally constant advection field that is solved using least squares approximation at each pixel using local spatial and temporal gradients.
+The general Lucas-Kanade algorithm assumes a locally constant advection field that is solved using least squares approximation at each pixel using local spatial and temporal gradients.
+The used Lucas-Kanade version from the PySteps Python library~\cite{lucaskanade} uses a pyramidal implementation presented in~\cite{pyramidallk} that captures the general motion of images by upscaling the images to varying resolutions.
 
 In addition to visual estimations of results, qualitative evaluations were done based three metrics: mean absolute error (MAE), root mean squared error (RMSE), and fractions skill score (FSS).
 MAE computes the mean of the absolute deviations of the predicted value $\hat{y}$ from the target $y$:
 \begin{equation*}
-    MAE = \frac{1}{N} \sum_{i=1}^{N} \vert \hat{y}_i - y_i \vert,
+    MAE = \frac{1}{n} \sum_{i=1}^{n} \vert y_i - \hat{y}_i \vert,
 \end{equation*}
-and the RMSE computes the square root of the square deviations and thus gives more emphasis on larger errors: 
+and the RMSE computes the square root of the MSE error returning the value to the original units:
 \begin{equation*}
-    RMSE = \sqrt{\frac{1}{N} \sum_{i=1}^{N} \vert \hat{y}_i - y_i \vert^2}.
+    RMSE = \sqrt{MSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}.
 \end{equation*}
-Hence these two metrics give insight to the average predictive performance across the entire image domain.
+Hence these two metrics give insight to the average predictive performance across the entire image domain with different emphasis on smaller and larger prediction errors.
 Due to the averaging the one-dimensional indexing can be thought here as flattening multidimensional data.
 But as the neural network was trained to minimise MSE loss and the Lucas-Kanade method computationally minimises least squares, it is also important to use other metrics to get a less biased perspective on the performance.
 
@@ -120,17 +123,23 @@ This is partly demonstrated by the close performance to the Lucas-Kanade method 
 \begin{figure}[h]
     \centering
     \inputpypgf{experiments/fig/mae_loss.pypgf}
-    \caption{\label{fig:mae_loss}Mean absolute error of predictions over two hours.}
+    \caption{\label{fig:mae_loss}Mean absolute error of predictions over two hours.
+    Lower value is better.
+    The Lucas-Kanade method overperforms the neural network by a small factor.}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \inputpypgf{experiments/fig/rmse_loss.pypgf}
-    \caption{\label{fig:rmse_loss}Root mean squared error of predictions over two hours.}
+    \caption{\label{fig:rmse_loss}Root mean squared error of predictions over two hours.
+    Lower RMSE value is better.
+    The Lucas-Kanade is again just a little better.}
 \end{figure}
 
 \begin{figure}[h]
     \centering
     \inputpypgf{experiments/fig/fss_05.pypgf}
-    \caption{\label{fig:fss}Fractions skill score of predictions over two hours.}
+    \caption{\label{fig:fss}Fractions skill score of predictions over two hours with two different window size and threshold settings.
+        Higher value is better.
+    The relative performances of the model appears to be same across all the computed metrics.}
 \end{figure}

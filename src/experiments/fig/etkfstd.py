@@ -1,10 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib as mpl
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from pgfutils import setup_figure, save
 setup_figure(width=1, height=0.2)
 
-fig, ax = plt.subplots(1,5)
+fig, ax = plt.subplots(1, 6, gridspec_kw={'width_ratios': [1, 1, 1, 1, 1, 0.18]})
+ax[-1].axis("off")
 
 def add_grid_lines(ax, x_num=5, y_num=5):
     xlim = ax.get_xlim()
@@ -21,7 +23,6 @@ def plot_time_steps(data, ax, fig):
   vmin = np.min(data)
   vmax = np.min(data)
 
-
   for i in range(data.shape[0]):
     ax[i].set_box_aspect(1)
     im = ax[i].pcolormesh(data[i], cmap='bone_r', vmin=0, vmax=1)
@@ -31,11 +32,12 @@ def plot_time_steps(data, ax, fig):
     add_grid_lines(ax[i])
     ax[i].set_title('t+' + str(i*15) + ' min')
 
-  return fig, ax, im
+  cbar_ax = fig.add_axes([0.94, 0.2, 0.01, 0.6])
+  plt.colorbar(im, cax=cbar_ax)
+  return fig, ax,
 
 xout_std = np.load('experiments/fig/etkf_cot_mean_out_std_NN.npy')
 xout_std = xout_std[:5,::3,::3]
-fig, ax, im = plot_time_steps(2*xout_std, ax, fig)
-fig.colorbar(im)
+fig, ax = plot_time_steps(2*xout_std, ax, fig)
 
 save()

@@ -1,40 +1,32 @@
 In the following subsection, the ensemble based Kalman filter set up of the later experiments is described.
 
 The neural network is trained to produce advection fields from spatio-temporal advective data but is only able to work with complete data and can only produce deterministic forecasts.
-As real-world observations of any process are rarely complete, or without uncertainties, the neural network is used in the Bayesian filtering context to treat spatio-temporal data in the state-space model.
+The widen the class of possible applications of the neural network model as a general physics-based operator generator, it is integrated to the Bayesian filtering context to treat spatio-temporal data in the state-space model.
 The motivation of implementing this method is twofold.
-Firstly, approximating the filtering distribution provides a way to assimilate observations that may come from multiple sources with varying quality to the state estimates as they come.
+Firstly, approximating the filtering distribution provides a way to assimilate indirect observations that may come from multiple sources with varying quality to the state estimates as they come.
 Secondly, approximating the prediction distribution yields probabilistic forecasts over multiple time steps.
 While the main focus of this work has been on the filtering distribution, the prediction distribution case is also discussed as it comes with some intricacies of its own that need to be addressed.
-A third closely related problem but not considered in the scope of this work would be estimating the smoothing distribution with a Kalman smoother to update the previous state estimates given new data.
+A third closely related problem, but not considered in the scope of this work would be estimating the smoothing distribution with a Kalman smoother to update previous state estimates given new observations.
 
 Due to the high dimensionality of image data, the ensemble transform Kalman filter presented in Algorithm~\ref{alg:etkf} is used and therefore the distributions are only approximations instead of the analytical solutions of the standard Kalman filter.
 The concept of using the neural network model as a state evolution operator in an EnKF takes influence from~\cite{deepide} but here a slightly different approach is taken to accomodate for even larger state vectors and as opposed to the interest in probabilstic forecasting, here the main interest is in the filtering distribution of filling out missing values from observations.
 
 \subsubsection{State-Space Model Operators}
 For analysis of the state-space model~\eqref{eq:statespacemodel}, observation and state evolution operators $H$ and $M$ are needed.
-While the nonstationary inverse problem related to the observation operator make the Kalman filter as powerful method as it is, the main contribution and interest of this work is in the incorporation of the neural network in the state evolution operator.
-Therefore, to separate the questions related to data fusion and more complex problems in order to simplify the later validation of this work, the observation operator is assumed to be a trivial identity mapping but leaving out missing observations from the state vectors.
-But even with this treatment of the observation process, valuable problems related to missing observations that pose a difficult challenge in many applications may be approached.
+While the nonstationary inverse problem related to the observation operator represent a major part in the power of the Kalman filter, the main contribution and interest of this work is in the incorporation of the neural network in the state evolution operator.
+Therefore, to separate the questions related to more complex observation models including data fusion in order to simplify the later validation of this work, the observation operator is assumed to be a trivial identity mapping but leaving out missing observations from the state vectors.
+Despite this somewhat artificial treatment of the observation process, challenges related to missing observations pose an important component in many real-world applications as is the case with tha data used in the numerical experiments of this work.
 
-As the neural network models data through the advection equation by generating advection fields, the output of the network may be interpreted as the linear warping function that transforms a state vector to the next time step.
-Consequently, the state operator can be then defined to be the warping operator that only transforms the coordinate space of the mean state vectors, i.e.
+As the neural network models data through the advection equation by generating advection fields, the output of the network may be interpreted as the linear warping function that transforms a state vector to the next time step that was already discussed with the neural network model.
+The state operator is consequently nothing more than a time-dependent warping operator that operates now with the state vectors in the state-space models, i.e.
 \begin{equation*}
     M_{k+1}x_k[i,j] = 
         x_{k}[i-\mathbf{F}_{u}[i,j], \, j - \mathbf{F}_{v}[i,j]],
 \end{equation*}
 when the $i-\mathbf{F}_{u}[i,j]$ and $j - \mathbf{F}_{v}[i,j]$ are inside the image domain.
-From outside the image domain, the border values must be taken in order to fill the entire image vector.
-While this makes the estimation of border values problematic, the Kalman filter methods correct the states by observations when available as long as the observations can be trusted.
-Moreover, the filtering can be performed over a larger domain than necessary, and focus on the interior of the filtered states.
-Figure~\ref{fig:warping} depicts how the warping operator works for a small $5 \times 5$ image.
-
-\begin{figure}[h]
-    \centering
-    \inputpypgf{model/fig/warping.pypgf}
-    \caption{\label{fig:warping}The warping operator takes the pixel values and moves them to new pixels corresponding to an advection field.
-    Here the black square moves at each time step one one pixel up and one right.}
-\end{figure}
+Now from outside the image domain, the border values are again used to retain the domain size in the filter.
+While when training the neural network over a short time horizon, the border values may be discarded, the Kalman filter methods should correct the states by observations when available as long as the observations can be trusted.
+Moreover, the filtering can be performed over a larger domain than necessary, and focus on the interior of the filtered states so that for the interior pixels observations would be assimilated already multiple times.
 
 Due to the use of the ensemble filter, the same model operator is applied for each of the ensemble members separately according to the Algorithm~\ref{alg:etkf}.
 As the neural network is intended to produce advection fields from single images, the ensemble means are used to update the operator when needed.

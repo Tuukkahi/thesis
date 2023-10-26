@@ -20,9 +20,6 @@ def plot_time_steps(actual, predict, flow_vectors, ax, fig):
 
   lags = actual.shape[0] - predict.shape[0]
 
-  vmin = np.min([np.min(actual), np.min(predict)])
-  vmax = np.min([np.max(actual), np.max(predict)])
-
   if flow_vectors is not None:
     assert predict.shape[0] == flow_vectors.shape[0]
     x_len = flow_vectors.shape[-2]
@@ -70,6 +67,7 @@ uv = np.load('experiments/fig/etkf_blocks_uvout.npy')
 #obs = obs[:,::3,::3]
 #xmean = xmean[:,::3,::3]
 #uv = uv[:,:,::3,::3]
+obs[np.isnan(obs)] = 1e10
 fig = plot_time_steps(obs, xmean, uv, ax, fig)
 
 save()

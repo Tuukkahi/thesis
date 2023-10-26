@@ -23,7 +23,8 @@ latex_width_pt = 427
 width_in = latex_width_pt / 72.27
 height_in = width_in
 fig, ax = plt.subplots(figsize=(width_in, 0.6*height_in), subplot_kw={'projection': ccrs.PlateCarree()})
-im = plt.pcolormesh(lon, lat, test_data, transform=ccrs.PlateCarree(), cmap="binary", vmin=0,vmax=20)
+test_data[np.isnan(test_data)] = 1e10
+im = plt.pcolormesh(lon, lat, test_data, transform=ccrs.PlateCarree(), cmap="bone_r", vmin=0,vmax=20)
 cb = plt.colorbar(im, ax = ax)
 cb.ax.set_ylabel("COT value")
 #cb.ax.tick_params(labelsize=15)

@@ -1,5 +1,6 @@
 In this subsection, the very basics of neural networks are covered starting from the McCulloch-Pitts Neuron and training it to backpropagation to the modern convolutional neural networks.
 As the material of this subsection covers also the elementary underlying principles of neural networks, it is also above the bare minimum needed for understanding the results of this work but provides still some context to later discussions.
+But as in this work neural networks are forced to learn a partial differential equation in a departure from the mainstream neural network applications, the knowledge of their inner workings is crucial in understanding what can be done and what kind of structes could potentially work. 
 
 Artificial neural networks drawing inspiration from the neural structures found in the human brain are a prominent part of modern machine learning methods.
 With the dramatic increase in computing capabilities, more complex neural networks have became feasible for a variety of applications.
@@ -47,8 +48,9 @@ Thus, the function $f : \R^n \rightarrow \R$ becomes
 The structure of the perceptron is depicted in figure~\ref{fig:perceptron}.
 
 \begin{figure}
+    \centering
     \input{background/fig/perceptron.tex}
-    \caption{\label{fig:perceptron}Perceptron (placeholder image)}
+    \caption{\label{fig:perceptron}Perceptron now allows any input values with a bias $b$ and with a more sophisticated activation function $\phi$ the output value can be anything.}
 \end{figure}
 
 The activation function $\phi$ can also be refined to be a more sophisticated one than just the binary step function.
@@ -56,17 +58,20 @@ Commonly used activation functions include the Rectified Linear Unit (ReLU) and 
 The mentioned activation functions are visualised in figure~\ref{fig:activations}.
 The choice of activation function comes with technicalities that are crucial for training a neural networks including the range of possible values and behavior of their derivatives.
 
-\begin{figure}\label{fig:activations}
+\begin{figure}
     \inputpypgf{background/fig/activations.pypgf}
-    \caption{Different commonly used activation functions.}
+    \caption{\label{fig:activations}Different commonly used activation functions.}
 \end{figure}
 
 The single neuron model is only applicable to extremely simple tasks.
 Therefore, the neurons were started to be arranged into layers to form a structure called Multilayer Perceptron (MLP).
 The MLP is nothing more than combining a number of neurons in layers and applying them sequentially as shown in figure~\ref{fig:mlp}.
-\begin{figure}\label{fig:mlp}
-    \includegraphics{background/fig/activations.png}
-    \caption{Multilayer Perceptron (placeholder image)}
+\begin{figure}
+    \centering
+    \input{background/fig/mlp.tex}
+    \caption{\label{fig:mlp}Multilayer Perceptron is now multiple perceptrons combined in layers.
+        This figure has one hidden layer consisting of two perceptrons and thus the output is two-dimensional.
+        MLP uses this way more weights to learn more complex patterns from data.}
 \end{figure}
 
 Formally the MLP function $f^{(l)} : \R^n \rightarrow \R^m$ for layer $l$ is now
@@ -123,7 +128,9 @@ A typical number of convolution filters in the initial layer could be 32 or 64, 
 \begin{figure}
     \centering
     \input{background/fig/conv2d.tex}
-    \caption{\label{fig:2dconv}Two-dimensional convolution with a $3 \times 3$ kernel.}
+    \caption{\label{fig:2dconv}Two-dimensional convolution with a $3 \times 3$ kernel.
+    The convolution operation can be used to reduce the dimensions of the input while retaining essential features with a suitable convolution kernel.
+    For instance, if all elements of $g$ were ${}^1{\mskip -5mu/\mskip -3mu}_9$, the output would have the average value of all $3 \times 3$ windows of the input.}
 \end{figure}
 
 CNNs typically employ pooling layers for downsampling the spatial dimensions of the input by combining multiple values into one, usually by taking the average (average pooling) or maximum (max pooling) values.

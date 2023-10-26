@@ -1,21 +1,21 @@
 \begin{tikzpicture}[>=stealth', auto, node distance=10cm]
 
-    \node (I1) at (0,4.5) {$x_1$};
-    \node (I2) at (0,3.3) {$x_2$};
-    \node (I-dots) at (0, 2.5) {$\vdots$};
-    \node (In) at (0,1.5) {$x_n \in \R$};
+    \node (B) at (0,5.4) {$b$};
+    \node (I1) at (0,4.2) {$x_1$};
+    \node (I2) at (0,3.0) {$x_2$};
+    \node (I-dots) at (0, 2.2) {$\vdots$};
+    \node (In) at (0,1.2) {$x_n \in \R$};
     
 
-    \node[draw, circle, minimum size=1.5cm] (S) at (4, 3) {$\displaystyle \begin{aligned} \sum_{i=1}^{n} &w_i x_i\\ &+ b \end{aligned}$};
+    \node[draw, circle, minimum size=2.5cm] (S) at (4, 3) {$\displaystyle \phi \left(\sum_{i=1}^{n} w_i x_i + b \right)$};
     
-    \node[draw, circle, minimum size=2.0cm] (A) at (7, 3) {$\phi$};
 
-    \node (O) at (11, 3) {$y \in \R$};
-    \path[-] (S) edge node {} (A); 
-    \path[->] (I1) edge node {$w_1$} (S);
-    \path[->] (I2) edge node {$w_2$} (S);
-    \path[->] (In) edge node {$w_n$} (S);
+    \node (O) at (8, 3) {$y \in \R$};
+    \path[->] (B) edge node {} (S);
+    \path[->] (I1) edge node[right of=I2, node distance=0cm, above]{$w_1$} (S);
+    \path[->] (I2) edge node[right of=I2, node distance=0cm, above]{$w_2$} (S);
+    \path[->] (In) edge node[right of=I2, node distance=-0.2cm, above]{$w_n$} (S);
     
-    \path[->] (A) edge node {} (O);
+    \path[->] (S) edge node {} (O);
 
 \end{tikzpicture}

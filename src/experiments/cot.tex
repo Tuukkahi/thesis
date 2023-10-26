@@ -19,7 +19,7 @@ However, due to the geostationary orbit above the equator, the spatial resolutio
 Right under the satellite the spatial resolution is about \SI{3}{\kilo\metre}.
 This dataset has a temporal resolution of 15 minutes, enabling accurate tracking of the evolution of clouds.
 
-\subsubsection{COT Data Preprocessing}
+\subsubsection{COT Data Preprocessing}\label{subsec:cotpreprocessing}
 In order to get usable COT data for the neural network, extensive preprocessing was required.
 Advection modelling within the presented neural network necessitates complete spatio-temporal data in Euclidean coordinates.
 The preprocessing of the incomplete raw COT data in a satellite projection is therefore a vital step before training the network.
@@ -33,12 +33,15 @@ Figure~\ref{fig:trainingdata_area} illustrates the image area and the four segme
     \inputpypgf{experiments/fig/traindata.pypgf}
     \caption{\label{fig:trainingdata_area}The area selected for neural network training over southern Finland and the Gulf of Finland.
     The entire image area is $512 \times 512$ pixels from which four $128 \times 128$ subimages were taken.
-    One pixel covers roughly \SI{2}{\kilo\metre} in longitude and \SI{1}{\kilo\metre} in latitude.}
+    One pixel covers roughly \SI{2}{\kilo\metre} in longitude and \SI{1}{\kilo\metre} in latitude.
+    The missing measurements represented as black pixels present a major complication in usage of satellite data.}
 \end{figure}
 
-Satellite data often contain a considerable number of missing values and thus interpolating the missing pixel values was needed.
-Given the computational cost of advanced interpolation, a simple nearest valid value approach was employed.
-While this crude method results in interpolation artefacts, for the purposes of the model training this is not necessarily a problem. 
+Satellite data often contain a considerable number of missing values as visualised in Figure~\ref{fig:trainingdata_area}.
+As the missing values are mostly random with more occurence during some conditions including lower sun angles, realistic use of such data in forecasting use is thus problematic if needed at all times.
+For training the neural network, some interpolation of the missing pixel values was mandatory to obtain a dataset of usable size.
+Given the computational cost of more advanced interpolation, a simple spatial nearest valid value approach was employed.
+While this crude method results in interpolation artefacts, for the purposes of the model training this is not necessarily a problem as the network is robust against poor and noisy data by its design.
 As the dataset's quality is heavily influenced by the sun's elevation angle, interpolation was restricted to daytime images when the elevation angle exceeded \ang{15}.
 As a last filter for the data, images with minimal COT values, indicating an absence of clouds, were subsequently filtered out from the dataset.
 In this stage the data values were not yet normalised in any way to allow for quick experimentation within the neural network itself.

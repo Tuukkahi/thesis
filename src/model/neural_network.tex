@@ -1,13 +1,28 @@
 In this subsection the neural network model predicting advection fields from two-dimensional spatio-temporal data is described.
 
-The data the network is designed to work with is assumed to follow the discrete advection equation in two spatial dimensions of same length:
+The data the network is designed to work with is assumed to approximately follow the discrete advection equation in a square spatial domain:
 \begin{equation*}
-    \frac{\partial I_t(x,y)}{\partial t} = -\mathbf{F}_{u}(x,y) \frac{\partial I_{t}(x,y)}{\partial x} -\mathbf{F}_{v}(x,y) \frac{\partial I_{t}(x,y)}{\partial y}, \quad I \in \R^{n \times n}, \, t = 0,1,\dots.
+    \frac{\partial I_t[x,y]}{\partial t} \approx -\mathbf{F}_{u}[x,y] \frac{\partial I_{t}[x,y]}{\partial x} -\mathbf{F}_{v}[x,y] \frac{\partial I_{t}[x,y]}{\partial y}, \quad I \in \R^{n \times n}, \, t = 0,1,\dots.
 \end{equation*}
-Specifically, the data consists of some smooth objects moving uniformly across the two spatial dimensions over time.
-Using a sequence of this data, the network predicts an advection field that represents the advection process across the sequence.
-Even in the presence of noisy data, the objective is to produce smooth advection fields.
-While the network is trained and evaluated mainly on satellite images of meteorological data, it is intended to be applicable to all similar advective processes.
+Specific assumption for the images $I$ being that the they consists of some smooth objects moving uniformly across the two spatial dimensions over time.
+Furthermore, as necessitated by the used data, the model was also created to be robust to even large deviations from the pure advective process.
+
+Using a sequence of spatio-temporal image data, the network predicts an advection field that represents the advection process across the sequence.
+So formally the objective is to train a neural network that maps a sequence of images to a vector field, $\mathcal{G} : \R^{n_t \times n \times n} \rightarrow \R^{2 \times n \times n}$.
+Then the output may be interpreted as a warping operator that maps an image forward according to the advection field $W: \R^{n \times n} \rightarrow \R^{n' \times n''}$,
+\begin{equation}\label{eq:warping}
+    W(I_t\, ;\, \mathbf{F})[x,y] = I_{t}[x-\mathbf{F}_{u}[x,y], \, j - \mathbf{F}_{v}[x,y]], \quad \text{if } x, y \in [1,n].
+\end{equation}
+As the model is unaware of image values outside the domain, the output domain is technically smaller, $n', n'' \leq n$ but for training purposes the operator was modified to copy boundary values to simplify loss computation.
+Figure~\ref{fig:warping} depicts in detail how the warping operator works for an interior pixel in a $5 \times 5$ image.
+So while the network is trained and evaluated mainly on satellite images of meteorological data, the general formulation is applicable to all similar advective processes.
+
+\begin{figure}[h]
+    \centering
+    \inputpypgf{model/fig/warping.pypgf}
+    \caption{\label{fig:warping}The warping operator takes the pixel values and moves them to new pixels corresponding to an advection field.
+    Here the pixel moves at each time step one one pixel up and one right.}
+\end{figure}
 
 Advection field estimation has also been studied in the context of optical flow problem.
 Classical optical flow techniques are also often used in meteorology in nowcasting problems~\cite{pulkkinenetal}.
@@ -75,13 +90,16 @@ The specific layer architecture of the used network is shown in Figure~\ref{fig:
 }
 \end{figure}
 
-\subsubsection{Producing Advection Fields}
+\subsubsection{Producing Advection Fields and Forecasts}
 While the described architecture generates the low-dimensional vector of advection field values at only a few points, the primary objective is to produce the complete advection fields.
 To this end, the basis vectors are constructed as polynomials across the spatial data domain using Lagrange polynomial interpolation.
 The method of prediicting advection values from which the polynomial coefficients are then computed gives stability to optimising the network as changes to the output have a predictable change in the loss function value.
 
 Second-degree polynomials are chosen as a strike between capturing a majority of the underlying advection process and maintaining sufficient flexibility to span the same advection field over multiple time steps.
-Thus the advection fields are now of the form
+Since the basis vectors are constant, the model complexity is effectively controlled by the dimensionality of the basis.
+Consequently, the selection of the basis represents a trade-off between smoothness of the advection fields and the ability to fit more complex patterns in the advection fields.
+
+The second-degree polynomial form for the advection fields are now
 \begin{equation*}
     \mathbf{F}(x,y) = 
     \begin{bmatrix}
@@ -153,25 +171,26 @@ Hence, the image domain is set to be $[-1, 1] \times [-1,1]$, and the first node
 \end{figure}
 After solving the polynomial coefficients, the advection vectors may then be interpolated over the entire domain by evaluating the Vandermonde matrix at every pixel and right-multiplying it by the coefficient vectors.  
 
-Since the basis vectors are constant, the model complexity is effectively controlled by the dimensionality of the basis.
-Consequently, the selection of the basis represents a trade-off between smoothness of the advection fields and the ability to fit more complex patterns in the advection fields.
+Now that the advection field can be estimated, forecasts can be produced by applying the warping operator $W(\cdot \, ; \, \mathbf{F})$ from Equation~\eqref{eq:warping} to the latest image repeatedly.
+In principle, the advection field could also be estimated again by adding to the image sequence the latest forecast but as a forecast does not contain any information from the actual process, the advection produced using latest observations is designed to be used.
 
 \subsubsection{Training the Neural Network}
-An unsupervised training approach is employed due to the general unavailability of ground-truth advection fields.
-The loss computation in training has to be thus done trough warping the latest data sample according to the predicted advection field, and comparing it to the true data samples of corresponding time steps.
+Due to general unavailability of ground-truth advection fields, an unsupervised training approach must be taken
+So the loss metric computation in has to be done trough warping the latest data sample according to the predicted advection field, and comparing it to the true data samples of corresponding time steps.
 
-The warping operation essentially transforms the data coordinates in alighment with the predicted advection fields.
-During training phase, bilinear interpolation is applied to execute this operation.
+In training due to differentiability reasons, instead of the nearest-point warping interpolation of Equation~\eqref{eq:warping} a bilinear interpolation was applied.
 This method calculates the value at a new location in the warped data as a weighted average of the values from the nearest four locations in the original data, ensuring differentiability for backpropagation.
-However, this method also tends to smooth out the warped images.
-Consequently, a simpler nearest-point interpolation method is used in inference.
+However, this method smooths out sharp edges in images and consequently the simpler nearest-point interpolation is used in interference.
 
-The network is trained by minimising the average MSE loss between warped images, and the target images over a predetermined number of time steps.
+The network is trained by minimising the average loss between warped images, and the target images over a number of time steps.
 For each iteration, the network predicts the advection fields from a batch of $\tau$ consecutive data samples, and the latest image from this batch is warped using the aforementioned warping scheme.
 The warping is done over several subsequent time steps to compute an average loss between actual images, and the warped images.
-Due to the lack of exterior information beyond the image boundaries, the model cannot predict the edge values.
-Therefore, the edge values are discarded when computing the MSE loss.
-The selection of the $\tau$ and the number of time steps to warp in training depend on the temporal characteristics of the training data.
+As the warping operator is underfined beyond the latest observed image boundaries, it is modified to copy the edge values to obtain full images and the loss metric is only computed in the interior pixels of the predicted images.
+The selection of the $\tau$ and the number of forecasted time steps for loss computation in training depend on the temporal characteristics of the training data.
+If the underlying process adheres to the simplified advection model accurately, longer image sequencies can be used for more accurate training convergence but if the advection model is generally unusable after some number of time steps, the loss would only be random noise.
 
 As the optimisation algorithm, Adam is employed in optimising the model.
 It is a variant of the already discussed SGD method but due to its adaptive step size it is often more efficient than the SGD.
+Thus also step size and step size schedulers do not play such an important role in proper convergence of the model.
+
+Some fine tuning for the model with regards to the actual data used was also applied that is discussed in with the results section in addition to the specific loss function selection.

@@ -6,16 +6,12 @@
     \node (In) at (0,1.5) {$x_n \in \{0,1 \}$};
     
     \node[draw, circle, minimum size=2.5cm] (N) at (4, 3) {};
-    \node[anchor=west] at (2.8, 3) {$\sum\limits_{i=1}^{n} x_i$};
-    \node[anchor=east] at (5.15, 3) {$\mathbf{1}_{\leq T}$};
-    \draw (4,1.75) -- (4,4.25);
-    
+    \node[anchor=west] at (2.8, 3) {$\mathbf{1}_{\leq T} \left( \sum\limits_{i=1}^{n} x_i \right)$};
     
     \node (O) at (8, 3) {$y \in \{0,1 \}$};
     
     \path[->] (I1) edge node {} (N);
     \path[->] (I2) edge node {} (N);
-    \path[->] (I-dots) edge node {} (N);
     \path[->] (In) edge node {} (N);
     
     \path[->] (N) edge node {} (O);

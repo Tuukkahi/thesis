@@ -28,6 +28,16 @@ def warp(X, u, v, dx=1.0, dy=1.0, dt=1.0, D=0.0):
         y = X.reshape(ny, nx)[j, i]
     return y
 
+def add_grid_lines(ax, x_num=5, y_num=5):
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    x_grid = np.linspace(xlim[0], xlim[1], x_num)
+    y_grid = np.linspace(ylim[0], ylim[1], y_num)
+    for x in x_grid:
+        ax.plot([x, x], [ylim[0], ylim[1]], '-', color='grey', alpha=0.2, linewidth=0.2)
+    for y in y_grid:
+        ax.plot([xlim[0], xlim[1]], [y, y], '-', color='grey', alpha=0.2, linewidth=0.2)
+
 nx = 128
 ny = 128
 x = np.arange(0,nx)
@@ -55,14 +65,14 @@ ax[0].set_box_aspect(1)
 ax[1].set_box_aspect(1)
 ax[2].set_box_aspect(1)
 
-ax[0].contourf(mx,my, image, cmap='binary', extend='both')
+ax[0].contourf(mx,my, image, cmap='bone_r', extend='both')
 ax[0].quiver(mx[::15,::15],my[::15,::15], u[::15,::15],v[::15,::15], alpha=0.7, width=0.005)
 ax[0].set_xlabel("$t=0$")
 ax[0].set_yticks([])
 ax[0].set_xticks([])
 
 image = warp(image,u,v,D=5)
-ax[1].contourf(mx,my, image, cmap='binary', extend='both')
+ax[1].contourf(mx,my, image, cmap='bone_r', extend='both')
 ax[1].quiver(mx[::15,::15],my[::15,::15], u[::15,::15],v[::15,::15], alpha=0.7, width=0.005)
 ax[1].set_xlabel("$t=1$")
 ax[1].set_yticks([])
@@ -70,10 +80,14 @@ ax[1].set_xticks([])
 
 
 image = warp(image,u,v,D=5)
-ax[2].contourf(mx,my, image, cmap='binary', extend='both')
+ax[2].contourf(mx,my, image, cmap='bone_r', extend='both')
 ax[2].quiver(mx[::15,::15],my[::15,::15], u[::15,::15],v[::15,::15], alpha=0.7, width=0.005)
 ax[2].set_xlabel("$t=2$")
 ax[2].set_xticks([])
 ax[2].set_yticks([])
+
+add_grid_lines(ax[0])
+add_grid_lines(ax[1])
+add_grid_lines(ax[2])
 
 save()

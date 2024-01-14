@@ -1,56 +1,57 @@
-As a final validation for the model, the trained neural network inside the ensemble Kalman filter is tested.
+The trained neural network inside the ensemble Kalman filter is tested as a final validation for the model.
 
 Evaluating the neural network produced linear warping operator in the ensemble Kalman filter method presents a more intricate task.
-Due to the computationally involved ETKF algorithm, a quick computation of the error metrics for a larger dataset as for the determistic model is not possible.
-As the main focus of this work was in the integration of the neural network as a generator of the state model operator the observation model was simulated with the same training data with missing values to test the concept.
-Anyhow, as discussed in Subsection~\ref{subsec:cotpreprocessing}, the missing values do present a major problem with many real data sources so the exersice is not completely unrealistic even though the end objective would be some form of more sophisticated inverse problems such as data fusion. 
+Due to the computationally involved ETKF algorithm, a quick computation of the error metrics for a larger dataset is not feasible as with the deterministic model.
+As the main focus of this work was on integrating the neural network as a generator of the state model operator, the observation model was simulated with the same training data with missing values to test the concept.
+However, as discussed in Subsection~\ref{subsec:cotpreprocessing}, the missing values do present a significant problem with many real data sources.
+Hence, the exercise is not entirely unrealistic even though the end objective would be some form of more sophisticated inverse problems such as data fusion. 
 Due to the impossibility of knowing the actual complete state of the uninterpolated data, the visual examples are constructed by synthetically removing data values to simulate partial observations. 
-Also due to the separate problems of ensemble generation reflecting a realistic uncertainty for pure prediction problems as discussed earlier, and validation metrics related to probabilstic ensemble forecasts, the forecasting problem tests are not directly presented.
+Also, due to the separate problems of ensemble generation reflecting a realistic uncertainty for pure prediction problems, as discussed earlier, and validation metrics related to probabilistic ensemble forecasts, the forecasting problem tests are not directly presented.
 
-As with evaluations of the deterministic model, similar COT images outside of the training dataset of $128 \times 128$ pixels and similar synthetic examples are used.
+Similar COT images outside of the training dataset of $128 \times 128$ pixels and similar synthetic examples are used as with evaluations of the deterministic model.
 Despite using images of the same shape as the neural network works with, it is not a hard limitation of the proposed framework.
 Larger images could be downsampled for the neural network model to create a state operator to work with larger state vectors in the ETKF or vice versa.
-In order to visualise the performance of the advection models, the presented example images are selected such that they are largely advective with some non-advective variation in order to demonstrate observation assimilation.
+In order to visualise the performance of the motion models, the presented example images are selected such that they largely adhere to the advection equation with some random variation to demonstrate observation assimilation.
 
-For fine tuning the ETKF model integrating the deterministic neural network presented in Subsection~\ref{subsec:etkfmodel}, a few assumptions were made related to the chosen objectives of the verfications with the COT data and synthetic examples.
-The ETKF parameters were chosen with the aim of giving a small uncertainty for the observations with the intent of returning the observation values where available, and otherwise values advected from the precious state.
-This choise stems from the quickly evolving COT data not only within advective fashion and thus outside the capability of the chosen modelling and also to better verify the results.
-In possible operational use of the framework, these parameters are naturally subject to case by case tuning depending on the actual data.
-Particularly, the observation uncertainty standard deviation should be a realistic uncerainty estimate of the measurements instead of the assumed constant of 0.23 used for these examples.
-For best results, a similar scaling as when training the network of $[0, 1]$ range of the data was used also for the ETKF\@.
-As the perturbations for the ensemble according to the strategy presented in Subsection~\ref{subsubsec:etkftuning} result in slightly different data range for the state vectors, the neural network scales the data before generating updated warping operators.
-For the adding spatially varying noise in generation of the initial ensemble and inflation, noise is generated for the entire image area but multiplied by the image values pointwise before adding to the images.
-Localisation is performed in $16 \times 16$ pixel spatial blocks to better maintain spatial structures in the data.
-An ensemble size of 500 is used as it appears to give a good balance of high quality results and adequate computing time.
+For fine-tuning the ETKF model integrating the deterministic neural network presented in Subsection~\ref{subsec:etkfmodel}, a few assumptions were made related to the chosen objectives of the verifications with the COT data and synthetic examples.
+The ETKF parameters were chosen to give a small uncertainty for the observations, intending to return the observation values where available and, otherwise, values warped from the previous state.
+This choice stems from the quickly evolving COT data not only within the model's capability but also to verify the results better.
+In possible operational use of the framework, these parameters are naturally subject to case-by-case tuning depending on the actual data.
+Particularly, the observation uncertainty standard deviation should be a realistic uncertainty estimate of the measurements instead of the assumed constant of 0.23 used for these examples.
+For best results, a similar scaling as when training the network of $[0, 1]$ range of the data was also used for the ETKF\@.
+As the perturbations for the ensemble according to the strategy presented in Subsection~\ref{subsubsec:etkftuning} result in a slightly different data range for the state vectors, the neural network scales the data before generating updated warping operators.
+For the adding spatially varying noise in the generation of the initial ensemble and inflation, noise is generated for the entire image area but multiplied by the image values pointwise before adding to the images.
+Localisation is performed in $16 \times 16$ pixel spatial blocks to maintain spatial structures in the data better.
+An ensemble size of 500 is used as it appears to give a good balance of high-quality results and adequate computing time.
 
 
-For visual validation of the ETKF framework, synthetic data examples provide clearer example images.
-In the observed data with a vertical block of missing observations in Figure~\ref{fig:etkfexamplesynthetic}, rectangular blocks move through the domain according to a uniform advection field.
-Even though the advection field is overestimated by a few pixels, the model works correctly by filling the missing values and removing fine noise from the observations.  
-Furthermore, an incoming observed square also appears in the filtered images as expected.
-Thus this example affirms that the method works as intended.
+Synthetic data examples provide clearer images for visual validation of the ETKF framework.
+In the observed data with a vertical block of missing observations in Figure~\ref{fig:etkfexamplesynthetic}, rectangular blocks move through the domain according to a uniform motion field.
+Even though the motion field is overestimated by a few pixels, the model works correctly by filling in the missing values and removing fine noise from the observations.
+Furthermore, an incoming observed square appears in the filtered images as expected.
+Thus, this example affirms that the method works as intended.
 
 \begin{figure}
     \inputpypgf{experiments/fig/etkf_blocks.pypgf}
     \caption{\label{fig:etkfexamplesynthetic}A handcrafted example of the ETKF system with synthetic data.
-    The second row represents the observed data with a vertical black block of missing values, and the first row has the filtered ensemble means with estimated advection fields.}
+    The second row represents the observed data with a vertical black block of missing values, and the first row has the filtered ensemble means with estimated motion fields.}
 \end{figure}
 
-For verification with the COT data an advective but evolving sequence of images was selected to compare the neural network model as the state operator against the Lucas-Kanade method and just the identity operator.
-In Figure~\ref{fig:etkfexamplecot} the filtered images of the three different state operators are presented.
-As expected due to the small observation error assumption, the used state propagator shows rather small differences in the areas of the image where observations are available.
-However, in the area of missing observations the advective models provide clear advantage as the identity operator leaves the values to the initial state throughout the time steps.
+For verification with the COT data, a sequence of images was selected to compare the neural network model as the state operator against the Lucas-Kanade method and the identity operator.
+In Figure~\ref{fig:etkfexamplecot}, the filtered images of the three different state operators are presented.
+As expected due to the small observation error assumption, the used state propagator shows relatively small differences in the areas of the image where observations are available.
+However, in the area of missing observations, the motion models provide a clear advantage as the identity operator leaves the values to the initial state throughout the time steps.
 
 \begin{figure}
     \inputpypgf{experiments/fig/etkf_cot.pypgf}
     \caption{\label{fig:etkfexamplecot}A comparison of different model operators for the ETKF\@.
-    The leftmost column contains the observations with a vertical black block of simulated missing observations, the second column contains the filtering distribution with neural network as the model operator, the third column with the Lucas-Kanade method, and the third with a trivial identity operator.
-Estimated advection fields using the corresponding models in the filtered images show similar patterns with the Lucas-Kanade method and the neural network model.}
+    The leftmost column contains the observations with a vertical black block of simulated missing observations; the second column contains the filtering distribution with the neural network as the model operator, the third column with the Lucas-Kanade method, and the third with a trivial identity operator.
+Estimated motion fields using the corresponding models in the filtered images show similar patterns with the Lucas-Kanade method and the neural network model.}
 \end{figure}
 
-As the Kalman filter produces probabilstic estimates, another way to interpret the results is through the uncertainty of the forecast ensembles, observation uncertainty, and posterior ensemble uncertainties.
-Figure~\ref{fig:etkferrorbars} shows how the mean deviations are corrected by the ETKF with the observations for the neural network images of Figure~\ref{fig:etkfexamplecot}.
-Fugure~\ref{fig:etkfstd} on the other hand shows the state ensemble stadard deviation images across the same time steps.
+As the Kalman filter produces probabilistic estimates, another way to interpret the results is through the uncertainty of the forecast ensembles, observation uncertainty, and posterior ensemble uncertainties.
+Figure~\ref{fig:etkferrorbars} shows how the ETKF corrects the mean deviations with the observations for the neural network images of Figure~\ref{fig:etkfexamplecot}.
+Figure~\ref{fig:etkfstd}, on the other hand, shows the state ensemble standard deviation images across the same time steps.
 
 \begin{figure}
     \inputpypgf{experiments/fig/errorbars.pypgf}
@@ -62,15 +63,15 @@ Fugure~\ref{fig:etkfstd} on the other hand shows the state ensemble stadard devi
 \begin{figure}
     \inputpypgf{experiments/fig/etkfstd.pypgf}
     \caption{\label{fig:etkfstd}Two standard deviations of the neural network ETKF model of the images in Figure~\ref{fig:etkfexamplecot}.
-    Missing observations lead to higher uncertainty and also due to the used inflation techniques, uncertainty is larger in the areas that have more clouds.}
+    Missing observations lead to higher uncertainty, and also, due to the use of inflation techniques, uncertainty is larger in the areas with more clouds.}
 \end{figure}
 
-While Kalman filtering has the benefit of offering uncertainty estimates, a major difficulty in these kinds of tasks is that the magnitude of uncertainty is effectively controlled by the filter parameters.
-Especially with the ensemble filters where the state propagator model uncertainty is largely defined by the used inflation technique, many unknown parameters must be guessed or estimated by hand.
-While accurate inflation methods would be crucial in order to get accurate uncertainty estimates, without much data to do verification with, the important parameters must often be tuned with just the goal of obtaining visually pleasing results.
+While Kalman filtering has the benefit of offering uncertainty estimates, a significant difficulty in these kinds of tasks is that the filter parameters effectively control the magnitude of uncertainty.
+Especially with the ensemble filters where the used inflation technique essentially defines the state propagator model uncertainty, many unknown parameters must be guessed or estimated by hand.
+While accurate inflation methods would be crucial in order to get accurate uncertainty estimates, without much data to do verification with, the crucial parameters must often be tuned with just the goal of obtaining visually pleasing results.
 In wider use, however, the model uncertainty could be better estimated from previous model errors to get more accurate information.
 
-For possible forecast usage, the inflation and initial ensemble generation are even more important as no observations are available to support the forecasts.
-In addition, as the computation a forecast distribution in the ensemble filter is not limited by the standard Kalman filter assumptions, the range of possibilities for ensemble generation and inflation is much wider.
-In a recent related work related to the forecasting problem presented in~\cite{intraday} an ensemble is generated by multiplying the fourier transforms of a noise field and a state estimate.
-In that work an advective model is also combined with an autoregressive model that could potentially also improve the predictive performance of the neural network of this work with regards to the COT data.
+The inflation and initial ensemble generation are even more critical in possible forecast usage as no observations are available to support the forecasts.
+In addition, as the computation of a forecast distribution in the ensemble filter is not limited by the standard Kalman filter assumptions, the range of possibilities for ensemble generation and inflation is much broader.
+In a recent work related to the forecasting problem presented in~\cite{intraday}, an ensemble is generated by multiplying the Fourier transforms of a noise field and a state estimate.
+In that work, an advection model is also combined with an autoregressive model that could potentially improve the predictive performance of the neural network of this work concerning the COT data.

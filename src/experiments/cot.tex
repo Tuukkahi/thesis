@@ -1,53 +1,54 @@
-While the described model is designed to be data-independent, in the development of it, Cloud Optical Thickness (COT) data retreived from satellites was used.
-COT observations provide a consistent data source suitable for the model while really testing the capabilities of the model due to its qualities.
-The choice of using COT data is motivated by two key factors; (1) it is easiliy available with regular capturing suitable for short-term forecasting applications, (2) the nature of the COT data makes it more or less suitable for the studied advection modelling.
+While the described model is designed to be data-independent, cloud optical thickness (COT) data retrieved from satellites was used in its development.
+COT observations provide a consistent data source suitable for the model while testing its capabilities.
+The choice of using COT data is motivated by two key factors: (1) it is available at regular intervals, which makes it suitable for short-term forecasting applications, and (2) the nature of the COT data makes it more or less suitable for the studied advection equation modelling.
 
 Optical thickness is a quantity that is defined by the ratio of light passing through a material in logarithm, given by
 \begin{equation*}
     \tau = \ln \left(\frac{I}{I_0}\right),
 \end{equation*}
 where $I$ is the transmitted light through the material and $I_0$ is the received light.
-And in the cloud context, COT is a measure of a cloud's ability to absorb and scatter light, and it is an important parameter in satellite observations of clouds.
+In the cloud context, COT is a measure of a cloud's ability to absorb and scatter light, and it is an important parameter in satellite observations of clouds.
 
-The data used for testing this model is computed using the EUMETSAT Nowcasting and Very Short Range Forecasting Satellite Application Facility (NWC SAF) cloud microphysics algorithms at the Finnish Meteorological Institute.
-The algorithm computes the COT values using optical measurements from satellites on different wavelengths and a number of other parameters including atmosphere quantities computed using numerical weather prediction models.
-For deeper understanding of the algorithmic principles behind the computation of the COT data, readers are referred to~\cite{nwcsaf}.
+The data for testing the model is computed using the EUMETSAT Nowcasting and Very Short Range Forecasting Satellite Application Facility (NWC SAF) cloud microphysics algorithms at the Finnish Meteorological Institute.
+The algorithm computes the COT values using optical measurements from satellites on different wavelengths and several other parameters, including atmosphere quantities computed using numerical weather prediction models.
+For a deeper understanding of the algorithmic principles behind the computation of the COT data, readers are referred to~\cite{nwcsaf}.
 
 The data is captured with geostationary satellites that orbit 36000 km above the equator at a point where they remain at a constant position relative to the Earth.
-The stationarity enables continuous observations of the same geographical region, which is indispensable for retrieving coherent spatio-temporal data.
-However, due to the geostationary orbit above the equator, the spatial resolution of the data varies due to curvature of the earth and angle to the satellites.
-Right under the satellite the spatial resolution is about \SI{3}{\kilo\metre}.
+The stationarity enables continuous observations of the same geographical region, indispensable for retrieving coherent spatio-temporal data.
+However, due to the geostationary orbit above the equator, the spatial resolution of the data varies due to the Earth's curvature and the satellites' angle.
+Right under the satellite, the spatial resolution is about \SI{3}{\kilo\metre}.
 This dataset has a temporal resolution of 15 minutes, enabling accurate tracking of the evolution of clouds.
 
 \subsubsection{COT Data Preprocessing}\label{subsec:cotpreprocessing}
-In order to get usable COT data for the neural network, extensive preprocessing was required.
+In order to make the COT data usable for the neural network's purposes, extensive preprocessing was required.
 Advection modelling within the presented neural network necessitates complete spatio-temporal data in Euclidean coordinates.
-The preprocessing of the incomplete raw COT data in a satellite projection is therefore a vital step before training the network.
-As the network is relatively simple and should be trainable with a small dataset by its design, but preprocessing is computationally demanding, the data was spatially constrained to an area around southern Finland, and temporally to the months from April to October of 2021.
+Therefore, preprocessing the incomplete raw COT data in a satellite projection is a vital step before training the network.
+As the network is relatively simple and should be trainable with a small dataset by its design, but preprocessing is computationally demanding, the data was spatially constrained to an area around southern Finland and temporally to the months from April to October of 2021.
 
+COT images were resampled from the native satellite projection to the metric Universal Transverse Mercator (UTM) projection using the pyresample Python package~\cite{pyresample}.
 The spatial resolution of the data was artificially increased to have a pixel cover of approximately \SI{2}{\kilo\metre\squared}, thereby allowing clouds to occupy a larger image area and increasing the observable velocities for the network.
-To accomodate for the neural network's square image inputs, the data was segmented into four $128 \times 128$ image regions.
+The data was segmented into four $128 \times 128$ image regions to accommodate the neural network's square image inputs.
 Figure~\ref{fig:trainingdata_area} illustrates the image area and the four segments used for training the network.
 \begin{figure}[h]
     \centering
     \inputpypgf{experiments/fig/traindata.pypgf}
     \caption{\label{fig:trainingdata_area}The area selected for neural network training over southern Finland and the Gulf of Finland.
-    The entire image area is $512 \times 512$ pixels from which four $128 \times 128$ subimages were taken.
+    The entire image area is $512 \times 512$ pixels from which four $128 \times 128$ sub-images were taken.
     One pixel covers roughly \SI{2}{\kilo\metre} in longitude and \SI{1}{\kilo\metre} in latitude.
-    The missing measurements represented as black pixels present a major complication in usage of satellite data.}
+    The missing measurements, represented as black pixels, present a major complication in satellite data usage.}
 \end{figure}
 
-Satellite data often contain a considerable number of missing values as visualised in Figure~\ref{fig:trainingdata_area}.
-As the missing values are mostly random with more occurence during some conditions including lower sun angles, realistic use of such data in forecasting use is thus problematic if needed at all times.
+Satellite data often contain a considerable amount of missing values, as visualised in Figure~\ref{fig:trainingdata_area}.
+As the missing data values appear at varying locations at varying intensity with more occurrence during some conditions, including lower sun angles, realistic use of such data in forecasting is thus problematic if needed at all times.
 For training the neural network, some interpolation of the missing pixel values was mandatory to obtain a dataset of usable size.
 Given the computational cost of more advanced interpolation, a simple spatial nearest valid value approach was employed.
-While this crude method results in interpolation artefacts, for the purposes of the model training this is not necessarily a problem as the network is robust against poor and noisy data by its design.
-As the dataset's quality is heavily influenced by the sun's elevation angle, interpolation was restricted to daytime images when the elevation angle exceeded \ang{15}.
+While this crude method results in interpolation artefacts for the purposes of the model training, this is not necessarily a problem as the network is robust against poor and noisy data by its design.
+As the sun's elevation angle heavily influences the dataset's quality, interpolation was restricted to daytime images when the elevation angle exceeded \ang{15}.
 As a last filter for the data, images with minimal COT values, indicating an absence of clouds, were subsequently filtered out from the dataset.
-In this stage the data values were not yet normalised in any way to allow for quick experimentation within the neural network itself.
-The finalised dataset was temporally segmented into distinct training, validation, and test sets laying the groundwork for subsequent neural network training.
+In this stage, the data values were not yet normalised in any way to allow for quick experimentation within the neural network itself.
+The finalised dataset was temporally segmented into distinct training, validation, and test sets, laying the groundwork for subsequent neural network training.
 
-A major difficulty posed by the COT data with regards to the advection modelling is the varying nature of its behaviour.
-Large chunks of the finalised data consists of data that hardly evolves according to the simple advection equation.
-While this could in principle have been bypassed by selecting only sequences of the data that evolve according to the advection model, it would have been difficult to achieve in practise and computationally restrictive.
-However, the mixed quality of the training data tests the ability of the neural network to actually capture and learn the relevant information.
+A major difficulty posed by the COT data with regard to the advection equation modelling is the varying nature of its behaviour.
+Large chunks of the finalised data consist of data that hardly evolves according to the simple advection equation.
+While this could, in principle, have been bypassed by selecting only sequences of the data that evolve according to the advection equation model, it would have been computationally restrictive and difficult to achieve in practice.
+However, the mixed quality of the training data tests the neural network's ability to capture and learn the relevant information.

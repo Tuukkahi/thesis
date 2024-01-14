@@ -38,7 +38,7 @@
     \pgfmathtruncatemacro\newoutputvalue{\theoutputvalue + \kernelvalue * \inputvalue}
     \setcounter{outputvalue}{\newoutputvalue}
     
-    \pgfmathsetmacro\inputvalueTL{\inputArray[\x + 5*(\y+1)]}
+    \pgfmathsetmacro\inputvalueTL{\inputArray[\x + 5*(\y+2)]}
     \pgfmathtruncatemacro\newoutputvalueTL{\theoutputvalueTL + \kernelvalue * \inputvalueTL}
     \setcounter{outputvalueTL}{\newoutputvalueTL}
   }

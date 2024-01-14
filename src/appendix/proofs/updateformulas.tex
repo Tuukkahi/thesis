@@ -1,2 +1,27 @@
-\begin{proof}[Proof of Theorem~\ref{thm:updateformulas} following~\cite{kaipiosomersalo}]\label{proof}
+\begin{proof}[Proof of Theorem~\ref{thm:updateformulas} following~\cite{kaipiosomersalo}]
+    For the prediction step~\eqref{eq:predictionstep}, using the Markov property assumption~\eqref{eq:markov1} that $x_{k+1}$ is dependent only from $x_{k}$,
+    \begin{align*}
+        \pi(x_{k+1}, x_{k}, y_{1:k}) &= \pi(x_{k+1} \, \vert \, x_{k}, y_{1:k}) \pi(x_k, y_{1:k})\\
+                                     &= \pi(x_{k+1} \, \vert \, x_{k}) \pi(x_k \, \vert \,  y_{1:k}) \pi(y_{1:k}).
+    \end{align*}
+    Substituting this to
+    \begin{equation*}
+        \pi(x_{k+1}, y_{1:k}) = \int \pi(x_{k+1}, x_{k}, y_{1:k}) \, d x_k,
+    \end{equation*}
+    and solving the conditional distribution $\pi(x_{k+1} \, \vert \, y_{1:k})$ gives the prediction step equation~\eqref{eq:predictionstep},
+    \begin{equation*}
+        \pi(x_{k+1} \, \vert \, y_{1:k}) = \frac{\pi(x_{k+1}, y_{1:k})}{\pi(y_{1:k})} = \int \pi (x_{k+1} \, \vert \, x_k) \pi (x_k \, \vert \, y_{1:k}) \, d x_k.
+    \end{equation*}
+
+    For the observation update step~\eqref{eq:updatestep},
+    \begin{align*}
+        \pi(x_{k+1} \, \vert \, y_{1:k+1}) &= \frac{\pi(x_{k+1}, y_{1:k+1})}{\pi(y_{1:k+1})}\\
+                                           &= \frac{\pi(y_{k+1}, x_{k+1}, y_{1:k})}{\pi(y_{1:k+1})}\\
+                                           &= \frac{\pi(y_{k+1} \, \vert \, x_{k+1}, y_{k}) \pi(x_{k+1}, y_{1:k})}{\pi(y_{1:k+1})}\\
+                                           &= \frac{\pi(y_{k+1} \, \vert \, x_{k+1}) \pi(x_{k+1}, y_{1:k})}{\pi(y_{1:k+1})} \tag{\textasteriskcentered} \label{eq:updateformulas_star}\\
+                                           &= \frac{\pi(y_{k+1} \, \vert \, x_{k+1}) \pi(x_{k+1} \, \vert \,  y_{1:k}) \pi(y_{1:k})}{\pi(y_{1:k}, y_{k+1})}\\
+                                           &= \frac{\pi(y_{k+1} \, \vert \, x_{k+1}) \pi(x_{k+1} \, \vert \,  y_{1:k}) \pi(y_{1:k})}{\pi(y_{k+1} \, y_{1:k}) \pi(y_{1:k})}\\
+                                           &= \frac{\pi(y_{k+1} \, \vert \, x_{k+1}) \pi(x_{k+1} \, \vert \,  y_{1:k})}{\pi (y_{k+1} \, \vert \, y_{1:k})}.
+    \end{align*}
+    Here~\eqref{eq:updateformulas_star} is justified by the conditional independence of $y_{k+1}$ from previous observations if $x_{k+1}$ is known.
 \end{proof}

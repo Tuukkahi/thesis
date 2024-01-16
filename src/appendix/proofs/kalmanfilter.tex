@@ -1,0 +1,77 @@
+\begin{proof}[Proof of Theorem~\ref{thm:kalmanfilterupdate} following~\cite{sarkka}]
+    The predicted state mean results directly from the assumption of the model operator being an unbiased estimator.
+    The prior distribution covariance requires studying a joint distribution.
+    As the state and observation vectors are assumed to be Gaussian variables, so is the joint distribution of a pair of them.
+    The joint distribution of $\pi(x_k \, \vert \, y_{1:k})$ and $\pi(x_{k+1} \, \vert \, y_{1:k})$ is
+    \begin{align*}
+        \pi\left( \begin{matrix}  x_k \, \vert \, y_{1:k}\\ x_{k+1} \, \vert \,  y_{1:k} \end{matrix} \right) \sim \mathcal{N}\left( \begin{bmatrix} x_{k\,\vert\,k} \\ M_{k+1} x_{k\,\vert\,k} \end{bmatrix},
+          \begin{bmatrix}
+              \Sigma_{11} & \Sigma_{12} \\
+              \Sigma_{21} & \Sigma_{22}
+          \end{bmatrix} \right).
+    \end{align*}
+    In the decomposed covariance matrix $\Sigma_{11} = P_{k \, \vert \, k}$, the covariance of $\pi(x_k \, \vert \, y_{1:k})$.
+    $\Sigma_{12}$ is the covariance of $\pi(x_k \, \vert \, y_{1:k})$ and $\pi(x_{k+1} \, \vert \, y_{1:k})$.
+    $x_{k+1} \, \vert \, y_{1:k} = M_{k+1} x_k \, \vert \, y_{1:k} + w_{k+1}$ by the Kalman filter assumptions where $w_{k+1} \sim \mathcal{N}(0, Q_{k+1})$.
+    $\Sigma_{12}$ can be therefore evaluated using the affine equivariance of covariance and the linearity of expectation by
+    \begin{align*}
+        \Sigma_{12} &= \mathbb{E}[(x_k \, \vert \, y_{1:k} - \mathbb{E}[x_k \, \vert \, y_{1:k}])(x_{k+1} \, \vert \, y_{1:k} - \mathbb{E}[x_{k+1} \, \vert \, y_{1:k}])^{\top}]\\
+                    &= \mathbb{E}[(x_k \, \vert \, y_{1:k} - \mathbb{E}[x_k \, \vert \, y_{1:k}])(M_{k+1}(x_k \, \vert \, y_{1:k} - \mathbb{E}[x_k \, \vert \, y_{1:k}]))^{\top}]\\
+                    &= \mathbb{E}[(x_k \, \vert \, y_{1:k} - \mathbb{E}[x_k \, \vert \, y_{1:k}])(x_k \, \vert \, y_{1:k} - \mathbb{E}[x_k \, \vert \, y_{1:k}])^{\top}]M_{k+1}^{\top}\\
+                    &=  P_{k \, \vert \, k}M_{k+1}^{\top}.
+    \end{align*}
+    $\Sigma_{21}$ is then just the transpose of $\Sigma_{12}$ by the symmetricity of the covariance matrix, $\Sigma_{21}= M_{k+1}P_{k \, \vert \, k}^{\top}$.
+    $\Sigma_{22}$ is the covariance of $\pi(x_{k+1} \, \vert \, y_{1:k})$ and by using again the affine equivariance of covariance it can be written as
+    \begin{align*}
+        \Sigma_{22} &= \operatorname{Cov}(x_{k+1} \, \vert \, y_{1:k}, x_{k+1} \, \vert \, y_{1:k})\\
+                    &= \operatorname{Cov}(M_{k+1} x_k \, \vert \, y_{1:k} + w_{k+1}, M_{k+1} x_k \, \vert \, y_{1:k} + w_{k+1})\\
+                    &= M_{k+1} \operatorname{Cov}(x_k \, \vert \, y_{1:k}, x_k \, \vert \, y_{1:k}) M_{k+1}^{\top} + \operatorname{Cov}(w_{k+1})\\
+                    &= M_{k+1} P_{k \, \vert \, k} M_{k+1}^{\top} + Q_{k+1} = P_{k+1 \, \vert \, k}.
+    \end{align*}
+    The distribution for $\pi(x_{k+1} \, \vert \, y_{1:k})$ can be given with the previous as
+    \begin{equation*}
+        \pi(x_{k+1} \, \vert \, y_{1:k}) \sim \mathcal{N}(M_{k+1}x_{k\,\vert\,k}, M_{k+1}P_{k\,\vert\,k}M_{k+1}^{\top} + Q_{k+1},
+    \end{equation*}
+    which concludes the first part.
+
+    The observation update step is derived similarly through joint distributions.
+    The joint distribution of the predicted state $\pi(x_{k+1} \, \vert \, y_{1:k})$ and the predicted observation $\pi(y_{k+1} \, \vert \, y_{1:k})$ is
+    \begin{equation*}
+        \pi \left(
+            \begin{matrix}
+                x_{k+1} \, \vert \, y_{1:k}\\
+                y_{k+1} \, \vert \, y_{1:k}
+            \end{matrix}
+            \right) \sim \mathcal{N} \left(
+                \begin{bmatrix}
+                    x_{k+1 \, \vert \, k}\\
+                    H_{k+1} x_{k+1 \, \vert \, k}
+                \end{bmatrix},
+                \begin{bmatrix}
+                    \Sigma'_{11} & \Sigma'_{12} \\
+                    \Sigma'_{21} & \Sigma'_{22}
+                \end{bmatrix} \right).
+    \end{equation*}
+    With similar reasoning as above the covariance matrix consists of,
+    \begin{align*}
+        \Sigma'_{11} &= P_{k+1 \, \vert \, k}\\
+        \Sigma'_{12} &= P_{k+1 \, \vert \, k} H_{k+1}^{\top}\\
+        \Sigma'_{21} &= H_{k+1} P_{k+1 \, \vert \, k}^{\top}= H_{k+1} P_{k+1 \, \vert \, k}\\
+        \Sigma'_{22} &= H_{k+1} P_{k+1 \, \vert \, k} H_{k+1}^{\top} + R_{k+1}.
+    \end{align*}
+    The normal conditional distribution $\pi(x_{k+1} \, \vert \, y_{k+1}) \sim \mathcal{N}(x_{k+1\,\vert\,k+1},  P_{k+1 \, \vert \, k+1})$ can be constructed from the above normal joint distribution (proof omitted).
+    The expectation is given by
+    \begin{align*}
+        x_{k+1\,\vert\,k+1} &=\mathbb{E}[x_{k+1} \, \vert \,  y_{1:k}] + \Sigma'_{12} {\Sigma'_{22}}^{-1}(y_{k+1} - \mathbb{E}[ y_{k+1} \, \vert \, y_{1:k}])\\
+                                                &= x_{k+1 \, \vert \, k} + P_{k+1 \, \vert \, k} H_{k+1}^{\top} (H_{k+1} P_{k+1 \, \vert \, k} H_{k+1}^{\top} + R_{k+1})^{-1} (y_{k+1} - H_{k+1}x_{k+1 \, \vert \, k})\\
+                                                &= x_{k+1 \, \vert \, k} + K_{k+1}v_{k+1}.
+    \end{align*}
+    And the covariance is given by
+    \begin{align*}
+    P_{k+1 \, \vert \, k+1} &=\Sigma'_{12} - \Sigma'_{12} {\Sigma'_{22}}^{-1} \Sigma'_{21}\\
+        &= P_{k+1 \, \vert \, k} - P_{k+1 \, \vert \, k} H_{k+1}^{\top} (H_{k+1} P_{k+1 \, \vert \, k} H_{k+1}^{\top} + R_{k+1})^{-1} H_{k+1}P_{k+1 \, \vert \, k}\\
+        &= P_{k+1 \, \vert \, k} - K_{k+1} H_{k+1}P_{k+1 \, \vert \, k}\\
+        &= (I -  K_{k+1} H_{k+1}) P_{k+1 \, \vert \, k}.
+    \end{align*}
+    This concludes the proof.
+\end{proof}

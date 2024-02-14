@@ -1,62 +1,61 @@
 This subsection covers some basic principles of spatio-temporal data and the dynamic modelling of such data with the advection-diffusion equation. 
-The spatio-temporal data analysis is an integral part of research across many disciplines.
+Spatio-temporal data analysis is an integral part of research across many disciplines.
 Spatio-temporal data is characterised by having both spatial and temporal components that carry information across space and over time.
 Modelling these datasets requires thus observing and understanding how the phenomenon of interest evolves over time in many locations.
 
 \subsubsection{Defining Spatio-Temporal Data}
-As to dismiss Einstenian physics, where space and time are interdependent, the classical way of separating the spatial and temporal dimensions shall be considered here.
-So the spatio-temporal domain $\Omega \times I$ of interest is the Cartesian product of the spatial domain $\Omega \subset \R^n$, and the temporal domain $I \subset \R^1$.
-Then an arbitrary spatio-temporal process can be written as
+A real-valued spatio-temporal domain $\Omega \times I$ is the Cartesian product of the spatial domain $\Omega \subset \R^n$ and the temporal domain $I \subset \R^1$.
+An arbitrary spatio-temporal process $Y$ over the spatio-temporal domain can be written as
 \begin{equation*}
     \left\{ Y(x, t) \, \middle\vert \, x \in \Omega, \, t \in I \right\}.
 \end{equation*}
-Naturally, either or both the spatial and temporal variables may also be discrete by the nature of the quantities or due to discrete measurements.
+Naturally, each of the domains can also be discrete by the nature of the domains or due to discrete measurements.
 
-A concrete example of spatio-temporal data could be air pollution data that tracks the concentration of pollutants across different areas in a city and how it evolves over time.
+This formulation only requires the spatial and temporal domains to be independent and is thus general enough for most temporally evolving data. 
+Dynamic models are often used to explain the evolution of variables of spatio-temporal data in time.
+This information is usually described with some partial differential equations such as the advection-diffusion equation.
 
-\subsubsection{Dynamic Modelling of Spatio-Temporal Data}\label{subsubsection:dynamicmodellingspatiotemporaldata}
-Dynamical modelling of spatio-temporal data refers to creating mathematical and computational models that explain changes in the observed variables in time.
-Somee prior scientific information on the process isoften  used to motivate the model.
-This information is usually described with some partial differential equations (PDE).
-At the core of the model of this thesis is the advection equation describing the temporal transportation of data according to a vector field.
-Sometimes, extending the pure advection model with diffusion and considering the advection-diffusion process is also fruitful. 
-In the air pollution example, the pollutants would be advected by winds and diffused outwards of high concentrations.
+\subsubsection{Advection-Diffusion Model}\label{subsubsection:dynamicmodellingspatiotemporaldata}
+At the core of the model of this thesis is the advection-diffusion equation describing the temporal transportation and diffusion of data.
+A concrete example of spatio-temporal data that could modelled with the advection-diffusion model is air pollution data that tracks the concentration of pollutants across different areas over time.
+The pollutants are advected by winds and diffused outwards of high concentrations.
 A simplified example of data evolving through the advection-diffusion process is in Figure~\ref{fig:advection_diffusion}.
 
 \begin{figure}[h]
     \centering
     \inputpypgf{background/fig/advectiondiffusion.pypgf}
-    \caption{\label{fig:advection_diffusion}An example of the advection-diffusion process with two Gaussian kernels.
-    The objects are transported according to the vector field and diffused outwards with a constant diffusion parameter.}
+    \caption{\label{fig:advection_diffusion}Advection-diffusion process with two Gaussian kernels.
+    The objects are transported according to the velocity field and diffused outwards with a constant diffusion parameter.}
 \end{figure}
 
-The advection-diffusion equation consists of an advection part that describes the transportation of property and diffusion that describes the diffusion of property.
+The advection-diffusion equation consists of an advection term that describes the transportation of property and a diffusion term that describes the diffusion of property.
 Consider a spatio-temporal function $u: \Omega \times I \rightarrow \R$ representing some quantity on a spatial domain $\Omega \subset \R^n$, and temporal domain $I = (0, T)$.
-The plain advection part is defined as
+The plain advection equation is defined as
 \begin{equation}\label{eq:advection}
     \frac{\partial u}{\partial t} =  - \mathbf{F} \nabla u,
 \end{equation}
-where $\mathbf{F} = \mathbf{F}(x,t)$ is the vector field that transports $u$ forward in time.
+where $\mathbf{F} = \mathbf{F}(x,t)$ is the vector-valued velocity field that transports $u$ forward in time.
 
 The diffusion equation is
 \begin{equation}\label{eq:diffusion}
     \frac{\partial u}{\partial t} = \nabla \cdot (D \nabla u),
 \end{equation}
 with $D = D(x,t)$ being the diffusion coefficient.
-Practically $D$ is often assumed to be constant in space, simplifying the diffusion term $\nabla \cdot (D \nabla u)$ to $D \Delta u$ and then diffusion equation~\eqref{eq:diffusion} recovers to the heat equation.
+Practically $D$ is often assumed to be spatially constant, simplifying the diffusion term $\nabla \cdot (D \nabla u)$ to $D \Delta u$ and then diffusion equation~\eqref{eq:diffusion} recovers to the heat equation.
 
-Now combining~\eqref{eq:advection} and~\eqref{eq:diffusion} gives the full advection-diffusion equation
+Combining~\eqref{eq:advection} and~\eqref{eq:diffusion} gives the full advection-diffusion equation
 \begin{equation}\label{eq:advectiondiffusion}
     \frac{\partial u}{\partial t} = \nabla \cdot (D \nabla u) - \mathbf{F} \nabla u.
 \end{equation}
 
 If the advection field $\mathbf{F}$, and the diffusion coefficient $D$ were known, and the model was perfect $u$ could be solved given some initial condition $u(\cdot, 0) = u_0(\cdot)$, and a boundary condition for the values of $u$ in the Dirichlet problem case or the normal derivative of $u$ along the boundary of $\Omega$ in the Neumann problem case.
-However, measuring advection and diffusion parameters is often not possible and estimates $\overline{\mathbf{F}}$ and $\overline{D}$ need to be extracted, e.g.\ from data.
-While many uncertainties are involved in the parameter estimation, the model~\eqref{eq:advectiondiffusion} is also not a perfect representation, so the approximate model
+However, measuring advection and diffusion parameters is often not possible and estimates $\overline{\mathbf{F}}$ and $\overline{D}$ need to be estimated, e.g.\ from data.
+Many uncertainties are often involved in the parameter estimation but also in the model selection.
+The approximate advection-diffusion model
 \begin{equation}\label{eq:advectiondiffusion_approx}
     \frac{\partial u}{\partial t} = \nabla \cdot (\overline{D} \nabla u) - \overline{\mathbf{F}} \nabla u + e
 \end{equation}
-needs to be considered where $e = e(x,t)$ is the (hopefully small) modelling error.
+needs to be then considered with the (hopefully small) modelling error $e = e(x,t)$.
 In applications, the model also needs to be discretised in time and domain so that each time step represents one measurement point and in space so that $\Omega$ becomes a grid in which the measurements are taken at some resolution.
 
-In the air pollution example the motivation for computing the estimates $\overline{\mathbf{F}}$ and $\overline{D}$ would be that assuming the underlying parameters change little in time, i.e.\ $\mathbf{F}(x,t_{k}) \approx \mathbf{F}(x,t_{k+1})$ and $D(x,t_{k}) \approx D(x,t_{k+1})$, the parameters can be utilised to transport air pollution images $u$ to future and thus producing forecasts.
+In the air pollution example the motivation for computing the estimates $\overline{\mathbf{F}}$ and $\overline{D}$ would be that assuming the underlying parameters change little in time, i.e.\ $\frac{\partial \mathbf{F}(x,t)}{\partial t} \approx 0$ and $\frac{\partial D(x,t)}{\partial t} \approx 0$, the parameters can be utilised to transport air pollution images to future and thus producing forecasts.

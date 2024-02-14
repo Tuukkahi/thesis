@@ -56,17 +56,17 @@ def plot_time_steps(actual, predict, flow_vectors, ax, fig):
       ax[0, i].pcolormesh(predict[i-lags], cmap='bone_r', vmin=0, vmax=1)
       add_grid_lines(ax[1, i])
       if flow_vectors is not None:
-        ax[0, i].quiver(grid_x[::16,::16], grid_y[::16,::16], flow_vectors[i - lags, 0][::16,::16],
-                        flow_vectors[i - lags, 1][::16,::16], alpha=0.3, linewidth=4)
+        ax[0, i].quiver(grid_x[::8,::8], grid_y[::8,::8], flow_vectors[i - lags, 0][::8,::8],
+                        flow_vectors[i - lags, 1][::8,::8], alpha=0.3, linewidth=4)
 
   return fig
 
 obs = np.load('experiments/fig/etkf_blocks_obs.npy')
 xmean = np.load('experiments/fig/etkf_blocks_xmean.npy')
 uv = np.load('experiments/fig/etkf_blocks_uvout.npy')
-#obs = obs[:,::3,::3]
-#xmean = xmean[:,::3,::3]
-#uv = uv[:,:,::3,::3]
+obs = obs[:,::2,::2]
+xmean = xmean[:,::2,::2]
+uv = uv[:,:,::2,::2]
 obs[np.isnan(obs)] = 1e10
 fig = plot_time_steps(obs, xmean, uv, ax, fig)
 

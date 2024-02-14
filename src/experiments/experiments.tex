@@ -1,10 +1,10 @@
-In this section, the described model is trained and tested on meteorological cloud optical thickness (COT) data.
+In this section, the described model is trained and tested on meteorological cloud optical thickness data.
 This section is divided into three parts.
-Firstly, the cloud optical thickness data used for training is described.
-Then, the deterministic neural network model is trained with the COT data, and its performance is evaluated with the COT data and synthetic examples.
-And finally, the neural network is used as a state operator for the ETKF algorithm.
+Firstly, the used cloud optical thickness data is described.
+Then, the deterministic neural network model is trained with the data, and its performance is evaluated.
+And finally, the neural network is tested as a state operator in the ensemble Kalman filter.
 
-\subsection{Cloud Optical Thicnkess Data}
+\subsection{Cloud Optical Thickness Data}
 \input{experiments/cot.tex}
 \subsection{Neural Network Model with COT Data}
 \input{experiments/cot_nn.tex}

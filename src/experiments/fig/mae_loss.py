@@ -8,7 +8,7 @@ mae_loss_nn = [0.04525316, 0.06316551, 0.07602209, 0.08610436, 0.09437905, 0.101
 mae_loss_lk = [0.04282531, 0.05997251, 0.07237583, 0.08259787, 0.09119242, 0.09820219, 0.10454967, 0.11085155]
 mae_loss_naive = [0.04743133, 0.06972325, 0.08400667, 0.09523758, 0.10472386, 0.112858, 0.1194752 , 0.12500473]
 
-plt.plot(x, mae_loss_nn, 'k:', marker='s',fillstyle='none', label='Neural Network')
+plt.plot(x, mae_loss_nn, 'k:', marker='s',fillstyle='none', label='Neural network')
 plt.plot(x, mae_loss_lk, 'k:', marker='v', fillstyle='none', label='Lucas-Kanade')
 plt.plot(x, mae_loss_naive, 'k:', marker='d', fillstyle='none', label='Naive')
 

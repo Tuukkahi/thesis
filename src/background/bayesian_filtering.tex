@@ -9,36 +9,38 @@ A key application of Bayesian filtering is state estimation, which emerges in ma
 It involves estimating the hidden state of a system based on some available indirect and noisy measurements.
 Bayesian filtering provides a robust mathematical framework to combine prior knowledge about a system's state with new measurements to enhance state estimates over time.
 
-The Bayesian filtering theory emerged at the turn of the 1960s, with perhaps the most famous example being the works of Rudolf E. Kálmán, who published a recursive solution to a linear special case of the problem in~\cite{kalman}.
-Meanwhile, in the Soviet Union Ruslan, Stratonovich studied the more general nonlinear Bayesian filtering problem, see e.g.~\cite{stratonovich2, stratonovich1}.
+The Bayesian filtering theory emerged at the turn of the 1960s.
+Perhaps the most famous example being the works of Rudolf E. Kálmán, who published a recursive solution to a linear special case of the optimal state estimation problem in~\cite{kalman}.
+Meanwhile, in the Soviet Union, Ruslan Stratonovich studied the more general nonlinear Bayesian filtering problem, see e.g.~\cite{stratonovich2, stratonovich1}.
 The simultaneous advances in digital computers allowed the theory to quickly prove itself valuable in many applications such as in the guidance system of the Apollo spacecraft~\cite{mcgee}.
 
 In the context of this work, Bayesian filtering is employed to estimate uncertainties related to deterministic estimates and for completing incomplete observations.
 
 \subsubsection{Bayesian Inference}
 Bayesian inference refers to the process of updating prior probability estimates in light of more information.
-The basis of Bayesian inference is the Bayes' Theorem.
+The basis of Bayesian inference lies in the Bayes' Theorem.
 \begin{theorem}[Bayes' Theorem]
     Assume a known prior probability density function $\pi(x)$ from a random variable $X$ and an observed probability $\pi(y)$ from another random variable $Y$.
     Then, the posterior distribution of $X$ given the observed data is given by
-    \begin{equation}
+    \begin{equation*}
         \pi(x \, \vert \, y) = \frac{\pi(x) \pi(y \, \vert \, x)}{\pi(y)}.
-    \end{equation}
+    \end{equation*}
 \end{theorem}
-In Bayesian inference, the prior distribution contains the information of some quantity before observing the data, and the posterior distribution contains the updated information after the observation.
+In Bayesian inference, the prior distribution is thought to contain the information of some quantity before observing the data.
+The posterior distribution then contains the updated information after the observation.
 Bayesian inference revolves around using data to transform the prior distributions into the posterior distributions.
 
 \subsubsection{Probabilistic state-space models}
-The Bayesian framework of assimilating measurements, using a process model, and producing forecasts from them can be formalised as the state-space model.
-Given the inherent uncertainties linked with measurements and modelling, instead of focusing solely on point estimates of the state, it is substantially more fruitful to consider probability distributions.
+The setting in which measurements are assimilated and processed using a model can be formalised as the state-space model.
+Given inherent uncertainties linked with measurements and modelling, it is substantially more fruitful to consider probability distributions instead of relying solely on point estimates.
 
-Consider two stochastic processes, $\{X_k\}_{k=0}^{\infty}$ and $\{Y_k\}_{k=0}^{\infty}$, denoting the state and measurements of a system respectively.
+Consider two stochastic processes, $\{X_k\}_{k=0}^{\infty}$ and $\{Y_k\}_{k=0}^{\infty}$, representing the state and measurements of a system, respectively.
 Figure~\ref{fig:statespacedependency} presents the dependency scheme of the processes needed to formulate the state-space model.
 \begin{figure}[h]
     \input{background/fig/statespacedependency.tex}
     \caption{\label{fig:statespacedependency}Dependency scheme of the state-space model.}
 \end{figure}
-In order for the dependencies of the figure to materialise, some assumptions about the processes are required:
+In order for the dependencies of the figure to materialise, some formal assumptions about the processes are required:
 \begin{enumerate}
     \item 
         $\{X_k\}_{k=0}^{\infty}$ satisfies the Markov property with respect to its own history and history of the observations:
@@ -65,7 +67,7 @@ With these assumptions, the probabilistic state-space model can be defined.
 \end{definition}
 In Definition~\ref{def:state-space},~\eqref{eq:statespace1} is the model that describes the evolution of state over time, and~\eqref{eq:statespace2} is the observation model that describes the distribution of measurements conditioned on the state.
 
-If functions for the state evolution and observations are known, the same can also be alternatively written as 
+If functions for the state evolution and observations are known, the same can be alternatively written as 
 \begin{subequations}\label{eq:statespacemodel}
     \begin{align}
         X_{k+1} &= M_{k+1}(X_{k}, W_{k+1}), \quad k = 0,1,\dots \label{eq:statespacemodel1}\\
@@ -75,7 +77,7 @@ If functions for the state evolution and observations are known, the same can al
 Now~\eqref{eq:statespacemodel1} is the state evolution equation where function $M_{k+1}$ gives the next state $X_{k+1}$ given the previous state $X_{k}$ and the state noise $W_{k+1}$
 The observation equation~\eqref{eq:statespacemodel2} describes the observations $Y_{k}$ as being the output of the observation function $H_{k}$ with the true state $X_{k}$ and the observation noise $V_{k}$.
 
-A few conditional probability distributions are usually of interest for the probabilistic state-space models, outlined in the following definition.
+A few conditional probability distributions are usually of interest with regards to the probabilistic state-space models, outlined in the following definition.
 \begin{definition}
     Assume two stochastic processes $\{X_k\}_{k=0}^{\infty}$ and $\{Y_k\}_{k=0}^{\infty}$ form a probabilistic state-space model.
     Then, the conditional probability distribution
@@ -93,7 +95,7 @@ The prediction distribution is an estimate of future states where observations a
 When the observations arrive, the filtering distribution corrects the prediction distribution according to the observations.
 After observations of future time steps are available, a state may be estimated given observations at all time steps as with, e.g.\ historical time series data.
 
-With the state-space model~\eqref{eq:statespace}, the Bayesian filtering problems can be discussed.
+With the state-space model of Definition~\ref{def:state-space}, the Bayesian filtering problems can be discussed.
 The idea behind Bayesian filtering is to recursively update the predictions and states of the model given latest observations.
 The following theorem presents the two update equations for the Bayesian filtering scheme.
 \begin{theorem}[Bayesian filtering equations]\label{thm:updateformulas}
@@ -120,12 +122,12 @@ The following theorem presents the two update equations for the Bayesian filteri
     In Appendix~\ref{app:proofs}.
 \end{proof}
 
-Theorem~\ref{thm:updateformulas} provides a framework for efficiently computing probability distributions conditioned on observations.
+Theorem~\ref{thm:updateformulas} provides a framework for theoretically estimating probability distributions conditioned on observations.
 The prediction step equation~\ref{eq:predictionstep} as the joint probability distribution of the current and next state conditioned on the latest observations, facilitates probabilistic state estimates.
 Then the observation update equation~\ref{eq:updatestep} is just the Bayes formula where $\pi (x_{k+1} \, \vert \, y_{1:k})$ is interpreted as the prior information of the state for statistical inversion of a new observation.
 
 \subsubsection{Kalman Filter}
-The Kalman filter provides an elegant closed-form solution for the update equations of Theorem~\ref{thm:updateformulas} in the special case of a linear state-space model with a Gaussian additive noise process.
+The Kalman filter provides an elegant closed-form solution for the update equations of Theorem~\ref{thm:updateformulas} in the special case of a linear state-space model with Gaussian additive noise.
 In this special case, the state-space model corresponding to~\eqref{eq:statespacemodel} becomes
 \begin{subequations}\label{eq:kalmanstatespace}
     \begin{align}
@@ -135,8 +137,8 @@ In this special case, the state-space model corresponding to~\eqref{eq:statespac
 \end{subequations}
 with a Gaussian distribution for the initial state $X_0$.
 
-Under these assumptions, the state's probability densities can be given by only estimates of the mean and covariance.
-The following theorem gives the filtering step equations of Theorem~\ref{thm:updateformulas}.
+Under these assumptions, the state's probability densities can be given with estimates of the mean and covariance.
+The following theorem gives the Kalman filter equations corresponding to Theorem~\ref{thm:updateformulas}.
 \begin{theorem}[Kalman filter equations]\label{thm:kalmanfilterupdate}
     Assume a linear Gaussian state-space model~\eqref{eq:kalmanstatespace}.
     Let $x_{k\,\vert\,\ell}$ and $P_{k\,\vert\,\ell}$ represent the posterior mean and covariance of the state at time $k$ given observations $y_{1:\ell}$.
@@ -184,16 +186,17 @@ The following theorem gives the filtering step equations of Theorem~\ref{thm:upd
 \begin{proof}
     In Appendix~\ref{app:proofs}.
 \end{proof}
-While the theorem assumes zero means for noises, the Gaussian distributions can easily be shifted to accommodate non-zero means.
-The Kalman filter leverages the property of Gaussian distributions, retaining their Gaussian form under affine transformations.
-However, for nonlinear state-space models, one can use linear approximations to preserve the convenience of Gaussian densities, known as the extended Kalman filter.
+While the theorem assumes zero means for noises, the Gaussian distributions can be shifted to accommodate non-zero means.
+The Kalman filter leverages the property of Gaussian distributions retaining their Gaussian form under affine transformations.
+With nonlinear state-space models, one use linear linear approximations to preserve the convenience of Gaussian densities.
+This version is known as the extended Kalman filter.
 
-Even when the assumptions for the Kalman filter apply, with larger states and observation spaces, problems will arise with computing the Kalman filter steps.
+Even when the assumptions for the Kalman filter apply, with large state and observation spaces, problems will arise when computing the Kalman filter steps.
 The matrix update formulas of Theorem~\ref{thm:kalmanfilterupdate} quickly cross the limits of computational feasibility.
-One way of tackling the problem is to use Ensemble Kalman filters.
+One way of tackling the problem is to consider ensembles as representations of the Gaussian densities.
 
 \subsubsection{Ensemble Kalman Filter}
-Although the original Kalman filter offers a robust solution to optimal filtering problems, it fails to scale for large state and observation spaces efficiently.
+Although the original Kalman filter offers a robust solution to optimal filtering problems, it fails to efficiently scale for large state and observation spaces.
 This limitation paved the way for the development of the Ensemble Kalman Filter (EnKF).
 It was first introduced by Geir Evensen in~\cite{evensen1994} as a Monte Carlo approach to the Kalman filter.
 EnKF circumvents the need for large covariance matrices by representing both a state and its uncertainty via an ensemble of state samples.
@@ -204,8 +207,9 @@ The prior distribution for the next state in the prediction step is obtained by 
     x_{k+1\,\vert\,k}^{(i)} = M_{k+1} x_{k\,\vert\,k}^{(i)} + W_{k+1}, \quad W_{k+1} \sim \mathcal{N}(0, Q_{k+1}), \quad i = 1,\dots , N.
 \end{equation*}
 
-The observation update step of the EnKF has multiple formulations typically categorised into stochastic and deterministic versions, both of which are introduced here following~\cite{enkfbook} with a focus on the deterministic EnKF.
-However, all variants derive an estimate of the Kalman gain matrix
+The observation update step of the EnKF has multiple formulations typically categorised into stochastic and deterministic versions.
+Both versions are introduced here following~\cite{enkfbook} with a focus on the deterministic EnKF\@.
+All EnKF variants derive an estimate of the Kalman gain matrix
 \begin{equation*}
     \hat{K}_{k+1} = \hat{P}_{k+1\,\vert\,k} H_{k+1}^{\top} (H_{k+1}\hat{P}_{k+1\,\vert\,k}H_{k+1}^{\top} + R_{k+1})^{-1}
 \end{equation*}
@@ -223,12 +227,10 @@ where $\mean{x}$ represents the ensemble mean
 \end{equation*}
 and columns of $X_{k+1 \, \vert \, k}$ are normalised ensemble anomalies to the mean.
 Thus, $\hat{K}$ may be expressed as
-\begin{subequations}
-    \begin{align}
-        \hat{K}_{k+1} &= X_{k+1 \, \vert \, k} X_{k+1 \, \vert \, k}^{\top} H_{k+1}^{\top} (H_{k+1}  X_{k+1 \, \vert \, k} X_{k+1 \, \vert \, k}^{\top} H_{k+1}^{\top} + R_{k+1})^{-1}\\
-                      &= X_{k+1 \, \vert \, k} Y_{k+1 \, \vert \, k}^{\top} (Y_{k+1} Y_{k+1}^{\top} + R_{k+1})^{-1}.
-    \end{align}
-\end{subequations}
+\begin{align*}
+    \hat{K}_{k+1} &= X_{k+1 \, \vert \, k} X_{k+1 \, \vert \, k}^{\top} H_{k+1}^{\top} (H_{k+1}  X_{k+1 \, \vert \, k} X_{k+1 \, \vert \, k}^{\top} H_{k+1}^{\top} + R_{k+1})^{-1}\\
+                  &= X_{k+1 \, \vert \, k} Y_{k+1 \, \vert \, k}^{\top} (Y_{k+1} Y_{k+1}^{\top} + R_{k+1})^{-1}.
+\end{align*}
 
 The stochastic variant produces a simulated ensemble of observations $\left\{ y_{k+1}^{(i)} \right\}_{i=1}^{N}$ by introducing Gaussian noise to form the updated filtering distribution.
 Specifically, the observation update step equations~\eqref{eq:kalmanupdatestep} of Theorem~\ref{thm:kalmanfilterupdate} for each ensemble member become
@@ -241,7 +243,7 @@ Specifically, the observation update step equations~\eqref{eq:kalmanupdatestep} 
 
 In the deterministic EnKF versions, the update step works by deterministically shifting prior ensemble forecasts, avoiding stochastic noise.
 Instead of performing the observation update for each ensemble member, a posterior mean is created on which a new ensemble is created.
-Before deriving the deterministic EnKF equations, a lemma for matrix inversion is needed:
+For deriving the deterministic EnKF equations, the following matrix inversion lemma is needed.
 \begin{lemma}[Woodbury matrix identity]\label{lemma:woodbury}
     Assume $A \in \R^{n \times n}, C \in \R^{k \times k}, U \in \R^{n \times k}, V \in \R^{k \times n}$.
     Then
@@ -259,9 +261,9 @@ Now, the posterior mean is created using prior ensemble forecast means:
 \end{equation*}
 The same may now be formulated with some vector $w$ as 
 \begin{equation*}
-    \mean{x}_{k+1\,\vert\,k+1} = \mean{x}_{k+1\,\vert\,k} + X_{k+1 \, \vert \, k} w_{k+1},
+    \mean{x}_{k+1\,\vert\,k+1} = \mean{x}_{k+1\,\vert\,k} + X_{k+1 \, \vert \, k} w_{k+1}.
 \end{equation*}
-and from these with denoting $v_{k+1}= \left(y_{k+1} - H_{k+1}\left(\mean{x}_{k+1\,\vert\,k}\right) \right)$ and using Lemma~\ref{lemma:woodbury} on line 4,
+From these with denoting $v_{k+1}= \left(y_{k+1} - H_{k+1}\left(\mean{x}_{k+1\,\vert\,k}\right) \right)$ and using Lemma~\ref{lemma:woodbury} on line 4,
 \begin{subequations}
     \begin{align*}
         w_{k+1} &= X_{k+1 \, \vert \, k}^{-1} \hat{K}_{k+1}\\
@@ -272,10 +274,10 @@ and from these with denoting $v_{k+1}= \left(y_{k+1} - H_{k+1}\left(\mean{x}_{k+
 \end{subequations}
 With this, the mean can be computed in the ensemble space dimensions, reducing computational cost significantly when the ensemble is smaller than the number of observations.
 
-Multiple algorithms exist to create an ensemble around the posterior mean, but the Ensemble transform Kalman filter (ETKF) variant is presented and used here.
-A posterior ensemble is created by perturbing the posterior mean with an estimate of posterior uncertainty $P_{k+1\,\vert\,k+1}$.
+Multiple algorithms exist to create an ensemble around the posterior mean, but the Ensemble transform Kalman filter (ETKF) variant is presented and used in this work.
+A posterior ensemble is created by perturbing the posterior mean with an estimate of the posterior uncertainty $P_{k+1\,\vert\,k+1}$.
 
-Starting from the original Kalman filter posterior covariance~\eqref{eq:kalmanposteriorcov} with the ensemble Kalman gain estimate and again using Lemma~\ref{lemma:woodbury}
+Starting from the original Kalman filter posterior covariance~\eqref{eq:kalmanposteriorcov} with the ensemble Kalman gain estimate and again using Lemma~\ref{lemma:woodbury},
 \begin{subequations}
     \begin{align*}
         \hat{P}_{k+1\,\vert\,k+1} &= (I - \hat{K}_{k+1}H_{k+1}) \hat{P}_{k+1\,\vert\,k}\\
@@ -283,10 +285,10 @@ Starting from the original Kalman filter posterior covariance~\eqref{eq:kalmanpo
                                   &= X_{k+1 \, \vert \, k} \left(I - Y_{k+1 \, \vert \, k}^{\top} (Y_{k+1} Y_{k+1}^{\top} + R_{k+1})^{-1} Y_{k+1 \, \vert \, k} \right)  X_{k+1 \, \vert \, k}^{\top}\\
                                   &= X_{k+1 \, \vert \, k} \left(I - (I + Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1} Y_{k+1} )^{-1} Y_{k+1}^{\top} R_{k+1}^{-1} Y_{k+1} \right) X_{k+1 \, \vert \, k}^{\top}\\
 %                                  &= X_{k+1 \, \vert \, k} \left( ((I + Y_{k+1}^{\top} R_{k+1}^{-1} Y_{k+1}) - Y_{k+1}^{\top} R_{k+1}^{-1} Y_{k+1}) (I + Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1} Y_{k+1} )^{-1} \right) X_{k+1 \, \vert \, k}^{\top}\\
-                                  &=  X_{k+1 \, \vert \, k} (I + Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1} Y_{k+1} )^{-1} X_{k+1 \, \vert \, k}^{\top},
+                                  &=  X_{k+1 \, \vert \, k} (I + Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1} Y_{k+1} )^{-1} X_{k+1 \, \vert \, k}^{\top}.
     \end{align*}
 \end{subequations}
-and writing $T = (I + Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1} Y_{k+1 \, \vert \, k})$, the expression can be written as
+Writing $T = (I + Y_{k+1 \, \vert \, k}^{\top} R_{k+1}^{-1} Y_{k+1 \, \vert \, k})$, the expression can be written as
 \begin{equation*}
     \hat{P}_{k+1\,\vert\,k+1} = (X_{k+1 \, \vert \, k} T^{\frac{1}{2}} U)  (X_{k+1 \, \vert \, k} T^{\frac{1}{2}} U)^{\top}
 \end{equation*}
@@ -320,7 +322,7 @@ The algorithm may thus be executed in a loop to create a complete filtering dist
 \end{algorithm}
 
 While the EnKF methods are computationally tempting, free lunches are not guaranteed.
-As full high-dimensional covariance matrices are represented by just a small ensemble, the ensemble covariance might is not a complete representation the full covariance.
+As full high-dimensional covariance matrices are represented by small ensembles, the ensemble covariance is not a full representation the full covariance.
 A common issue is spurious correlations over distant observations caused by sampling errors.
 Techniques called localisation and inflation are used to overcome this issue.
 
@@ -329,14 +331,13 @@ Localisation can be performed either by domain localisation or covariance locali
 Domain localisation works by performing the EnKF analysis in smaller subdomains separately.
 This way, spatially distant observations have no effect in the analysis.
 As an added benefit, domain localisation can be used to speed up the computation by dividing the problem into smaller parallel subproblems.
-As another strategy, covariance localisation filters the ensemble covariance from spurious correlations.
-If some distant observations are known to have little correlation, the ensemble covariance matrix values can be adjusted there.
+Covariance localisation works by filtering the ensemble covariance from spurious correlations.
+If some distant observations are known to have little correlation, the ensemble covariance matrix values can be adjusted accordingly.
 
-Spurious correlations and small ensembles also easily result in underestimating ensemble variance.
-By inflating the ensemble spread, the overly optimistic variances can be widened.
-Inflation can be achieved by multiplying the individual ensemble member deviations from the mean by some scalar larger than 1.
+Spurious correlations and small ensembles also easily result in underestimating ensemble variances.
+By inflating ensemble spreads, overly optimistic variances can be widened.
+Inflation is simplest to achieve by multiplying the individual ensemble member deviations from the mean by some scalar larger than 1.
 
 The usage of Kalman filter methods is not without complexity.
 It involves tuning multiple parameters that significantly impact the filtering results.
 As the parameter tuning is not trivial and depends on the used data, experimentation is required to yield optimal results.
-

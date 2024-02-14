@@ -181,6 +181,7 @@
 \usepackage{algorithm,algpseudocode}
 \usepackage[labelfont=bf]{caption}
 \usepackage{siunitx}
+\sisetup{math-micro=\text{µ},text-micro=µ}
 %% Change the school field to specify your school if the automatically set name
 %% is wrong
 % \university{aalto-yliopisto}
@@ -193,12 +194,12 @@
 
 %% Your major
 %%
-\major{Applied Mathematics}
+\major{Mathematics}
 %%
 
 %% Major subject code
 %%
-\code{SCI3053}
+\code{SCI3054}
 %%
  
 %% Choose one of the three below
@@ -225,7 +226,7 @@
 %% argument in box brackets. This is done because the title is part of the 
 %% metadata in the pdf/a file, and the metadata cannot contain linebreaks.
 %%
-\thesistitle{Title of the thesis}
+\thesistitle{Physics-Informed Neural Networks in Probabilistic Spatio-Temporal Modelling}
 %\thesistitle[Title of the thesis]{Title of\\ the thesis}
 %%
 
@@ -235,7 +236,7 @@
 
 %% The date for the bachelor's thesis is the day it is presented
 %%
-\date{31.8.2018}
+\date{14.2.2024}
 %%
 
 %% Thesis supervisor
@@ -245,7 +246,7 @@
 %% slightly longer space follows, but what is desired is a regular interword
 %% space.
 %%
-\supervisor{Sen.\ Lec.\ Harri Hakula}
+\supervisor{D.Sc.\ (Tech.)\ Harri Hakula}
 %%
 
 %% Advisor(s)---two at the most---of the thesis. Check with your supervisor how
@@ -268,22 +269,26 @@
 %% Thesis keywords:
 %% Note! The keywords are separated using the \spc macro
 %%
-\keywords{For keywords choose\spc concepts that are\spc central to your\spc thesis}
+\keywords{Physics-informed neural networks\spc Uncertainty quantification\spc Bayesian filtering}
 %%
 
 %% The abstract text. This text is included in the metadata of the pdf file as well
 %% as the abstract page.
 %%
 \thesisabstract{
-Your abstract in English. Keep the abstract short. The abstract explains your 
-research topic, the methods you have used, and the results you obtained. In the 
-PDF/A format of this thesis, in addition to the abstract page, the abstract text is 
-written into the pdf file's metadata. Write here the text that goes into the 
-metadata. The metadata cannot contain special characters, linebreak or paragraph 
-break characters, so these must not be used here. If your abstract does not contain 
-special characters and it does not require paragraphs, you may take advantage of 
-the abstracttext macro (see the comment below). Otherwise, the metadata abstract 
-text must be identical to the text on the abstract page.
+    Physics-informed neural networks have proved themselves as valuable supplements to classical mathematical models.
+    Compared to regular physics-free neural networks, boundary conditions can be better enforced in the physics-informed variants.
+    The computational efficiency of neural networks makes them feasible for many applications not possible with classical methods.
+    Most real-world observations and mathematical models are subject to uncertainties.
+    The Kalman filter is a solution to the uncertainty quantification to problems of uncertain observations and models.
+    The ensemble Kalman filter provides an efficient Monte Carlo approximation when dealing with large data vectors.
+    In this thesis, a neural network is constructed to infer velocity fields within the advection equation.
+    The model is trained with meteorological cloud data.
+    Despite the intrinsic difficulties of the training data, the neural network model is shown to learn the dynamics of the advection equation even with simpler synthetic data.
+    In addition, the neural network presents comparable results compared to a commonly used method for optical flow estimation.
+    The network is used as a state process operator in the ensemble Kalman filter.
+    A simulated setting of partial observations with an attempt to produce complete state ensembles is tested.
+    The network functions expectedly within the Kalman filter model. 
 }
 
 %% Copyright text. Copyright of a work is with the creator/author of the work
@@ -361,18 +366,22 @@ text must be identical to the text on the abstract page.
 %% above.
 %%
 \begin{abstractpage}[english]
-  Your abstract in English. Keep the abstract short. The abstract explains your
-  research topic, the methods you have used, and the results you obtained.  
-  
-  The abstract text of this thesis is written on the readable abstract page as
-  well as into the pdf file's metadata via the $\backslash$thesisabstract macro
-  (see above). Write here the text that goes onto the readable abstract page.
-  You can have special characters, linebreaks, and paragraphs here. Otherwise,
-  this abstract text must be identical to the metadata abstract text.
-  
-  If your abstract does not contain special characters and it does not require
-  paragraphs, you may take advantage of the abstracttext macro (see the comment
-  below).
+    Physics-informed neural networks have proved themselves as valuable supplements to classical mathematical models.
+    Compared to regular physics-free neural networks, boundary conditions can be better enforced in the physics-informed variants.
+    The computational efficiency of neural networks makes them feasible for many applications not possible with classical methods.
+
+    Most real-world observations and mathematical models are subject to uncertainties.
+    The Kalman filter is a solution to the uncertainty quantification to problems of uncertain observations and models.
+    The ensemble Kalman filter provides an efficient Monte Carlo approximation when dealing with large data vectors.
+
+    In this thesis, a neural network is constructed to infer velocity fields within the advection equation.
+    The model is trained with meteorological cloud data.
+    Despite the intrinsic difficulties of the training data, the neural network model is shown to learn the dynamics of the advection equation even with simpler synthetic data.
+    In addition, the neural network presents comparable results compared to a commonly used method for optical flow estimation.
+
+    The network is used as a state process operator in the ensemble Kalman filter.
+    A simulated setting of partial observations with an attempt to produce complete state ensembles is tested.
+    The network functions expectedly within the Kalman filter model. 
 \end{abstractpage}
 
 %% The text in the \thesisabstract macro is stored in the macro \abstractext, so
@@ -389,53 +398,64 @@ text must be identical to the text on the abstract page.
 %%
 %% Abstract in Finnish.  Delete if you don't need it. 
 %%
-\thesistitle{Opinnäyteen otsikko}
-\supervisor{Prof.\ Pirjo Professori}
-\advisor{TkT Alan Advisor}
-\degreeprogram{Elektroniikka ja sähkötekniikka}
-%\department{Elektroniikan ja nanotekniikan laitos}
-\major{Sopiva pääaine}
+\thesistitle{Fysiikkainformoidut neuroverkot todennäköisyyspohjaisessa spatiotemporaalisessa mallinnuksessa}
+\supervisor{TkT Harri Hakula}
+\advisor{Prof. Marko Laine, FT Olle Räty}
+\degreeprogram{Mathematics and Operations Researach}
+\department{Matematiikan ja systeemianalyysin laitos}
+\major{Mathematics}
 %% The keywords need not be separated by \spc now.
-\keywords{Vastus, resistanssi, lämpötila}
+\keywords{Fysiikkainformoitu neuroverkko, epävarmuuden määritys, Bayesilainen suodatus}
 %% Abstract text
 \begin{abstractpage}[finnish]
-  Tiivistelmässä on lyhyt selvitys
-  kirjoituksen tärkeimmästä sisällöstä: mitä ja miten on tutkittu,
-  sekä mitä tuloksia on saatu. 
-\end{abstractpage}
+    Fysiikkainformoidut neuroverkot ovat osoittautuneet hyödyllisiksi työkaluiksi klassisten matemaattisten mallien rinnalle.
+    Tavallisiin neuroverkkoihin verrattuna, fysiikkainformoitujen neuroverkkojen ennusteita pystyy rajoittamaan paremmin reunaehdoilla.
+    Neuroverkkomallien laskennallinen tehokkuus mahdollistaa uusia nopeutta vaativia sovelluskohteita.  
 
+    Havaintoihin ja malleihin liittyy usein epävarmuuksia.
+    Kalman-suodin on yksi ratkaisu epävarmuuden arviointiin epävarmojen havaintojen ja mallien ongelmissa.
+    Parven Kalman-suodin on tehokas Monte Carlo -tyyppinen approksimaatio, jota tarvitaan suurten datavektoreiden hallintaan.
+
+    Tässä diplomityössä muodostetaan neuroverkko, joka tunnistaa advektioyhtälön liikekenttiä datasta.
+    Neuroverkkomalli koulutetaan meterologisella pilvidatalla.
+    Koulutusdatan vaikeuksita huolimatta, sillä koulutettu neuroverkko yleistyy odotetusti myös yksinkertaisempaan synteettiseen testidataan.
+    Lisäksi neuroverkkomallin ennustuskyky on verrattavissa yleisesti käytettyyn optisen virtatuksen menetelmään.
+
+    Neuroverkkoa testaan tilaoperaattorina parven Kalman-suotimessa.
+    Testinä käytetään simuloitua tilannetta puuttuvien havaintojen täyttämiseksi.
+    Neuroverkko toimii odotetusti myös Kalman-suodin mallin osana.
+\end{abstractpage}
 %% Force new page so that the Swedish abstract starts from a new page
 \newpage
 
 %% Swedish abstract. Delete it if you don't need it. 
 %% 
-\thesistitle{Arbetets titel}
-\supervisor{Prof.\ Pirjo Professori}
-\advisor{TkD Alan Advisor} %
-\degreeprogram{Electronik och electroteknik}
-\department{Institutionen för radiovetenskap och -teknik}%
+\thesistitle{Fysikinformerade Neuronnät i Probabilistisk Rumstemporal Modellering}
+\supervisor{TkD Harri Hakula}
+\advisor{Prof.\ Marko Laine, FD Olle Räty} %
+\degreeprogram{Mathematics and Operations Researach}
+\major{Mathematics}
+\department{Institutionen för matematik och systemanalys}%
 %% Abstract keywords
-\keywords{Nyckelord p\aa{} svenska, temperatur}
+\keywords{Fysikinformerade neuronnät, osäkerhetskvantifiering, Bayesisk filtrering}
 %% Abstract text
 \begin{abstractpage}[swedish]
- Sammandrag p\aa{} svenska.
- Try to keep the abstract short. Abstract explains your research topic, 
- the methods you have used, and the results you obtained.  
+Fysikinformerade neuronnät har visat sig vara värdefulla komplement till klassiska matematiska modeller.
+Jämfört med vanliga fysikfria neuronnät kan randvillkor bättre upprätth\aa{}llas i de fysikinformerade varianterna.
+Neuronnätens beräkningsmässiga effektivitet gör dem genomförbara för m\aa{}nga tillämpningar som inte är möjliga med klassiska metoder.
+
+De flesta observationer i den verkliga världen och matematiska modeller är förem\aa{}l för osäkerheter.
+Kalmanfiltret är en lösning för att kvantifiera osäkerhet i problem med osäkra observationer och modeller.
+Ensemble-Kalmanfiltret ger en effektiv Monte Carlo-approximation när man hanterar stora datavektorer.
+
+I denna avhandling konstrueras ett neuronnät för att härleda hastighetsfält inom advektion ekvationen.
+Modellen tränas med meteorologiska molndata. Trots de inneboende sv\aa{}righeterna med träningsdatan visar sig neuronnätsmodellen kunna lära sig dynamiken i advektion ekvationen även med enklare syntetiska data.
+Dessutom presenterar neuronnätet jämförbara resultat jämfört med en vanligt använd metod för skattning av optiskt flöde.
+
+Nätverket används som en tillst\aa{}nds processoperator i ensemble Kalman filtret.
+En simulerad inställning av partiella observationer med ett försök att producera kompletta tillst\aa{}ndsensembler testas.
+Nätverket fungerar som förväntat inom Kalman filter modellen.
 \end{abstractpage}
-
-%% Preface
-%%
-%% This section is optional. Remove it if you do not want a preface.
-\mysection{Preface}
-%\mysection{Esipuhe}
-I want to thank Professor Pirjo Professori and my instructor Dr Alan Advisor for 
-their good and poor guidance.\\
-
-\vspace{5cm}
-Otaniemi, 31.8.2018
-
-\vspace{5mm}
-{\hfill Eddie E.\ A.\ Engineer \hspace{1cm}}
 
 %% Force a new page after the preface
 %%

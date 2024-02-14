@@ -1,20 +1,28 @@
 While the described model is designed to be data-independent, cloud optical thickness (COT) data retrieved from satellites was used in its development.
-COT observations provide a consistent data source suitable for the model while testing its capabilities.
-The choice of using COT data is motivated by two key factors: (1) it is available at regular intervals, which makes it suitable for short-term forecasting applications, and (2) the nature of the COT data makes it more or less suitable for the studied advection equation modelling.
+COT observations provide a consistent data source suitable for the model.
+The choice of using COT data is motivated by two key factors: (1) it is available at regular intervals, which makes it suitable for short-term forecasting applications, and (2) the nature of the COT data makes it suitable for the advection equation modelling.
 
-Optical thickness is a quantity that is defined by the ratio of light passing through a material in logarithm, given by
+Optical thickness is a quantity that is related to the Beer's law.
+It describes the exponential attenuation of monochromatic light by
 \begin{equation*}
-    \tau = \ln \left(\frac{I}{I_0}\right),
+    T = \frac{I_1}{I_0} = e^{-\tau}.
 \end{equation*}
-where $I$ is the transmitted light through the material and $I_0$ is the received light.
-In the cloud context, COT is a measure of a cloud's ability to absorb and scatter light, and it is an important parameter in satellite observations of clouds.
+$I_0$ is the intensity of light at the beginning of a travel of light and $I_1$ after the travel.
+$\tau$ is the optical thickness as a function of observation elevation $I_1$ defined by the vertical integral from $I_1$ to the elevation at the beginning of travel $I_0$
+\begin{equation*}
+    \tau (I_1) = \int_{I_1}^{I_0} \beta_e(s) \mathop{ds},
+\end{equation*}
+where $\beta_e(s)$ is the extinction coeficient at elevation $s$.
+In the cloud context, COT is a measure of a cloud's ability to absorb and scatter light.
+Higher optical thickness value means an optically denser cloud which is affected by the extinction coefficient and the height of the cloud.  
 
-The data for testing the model is computed using the EUMETSAT Nowcasting and Very Short Range Forecasting Satellite Application Facility (NWC SAF) cloud microphysics algorithms at the Finnish Meteorological Institute.
-The algorithm computes the COT values using optical measurements from satellites on different wavelengths and several other parameters, including atmosphere quantities computed using numerical weather prediction models.
-For a deeper understanding of the algorithmic principles behind the computation of the COT data, readers are referred to~\cite{nwcsaf}.
+
+The data used for this work is computed with the EUMETSAT Nowcasting and Very Short Range Forecasting Satellite Application Facility (NWC SAF) cloud microphysical properties postprocessing tools at the Finnish Meteorological Institute.
+In practice, the algorithm computes the COT values using measured and simulated reflectances at \SI{0.6}{\micro\meter} and \SI{1.6}{\micro\meter} channels.
+For a deeper understanding of the algorithmic principles behind the computation of the COT data, readers are referred to~\cite{nwcsaf} and~\cite{cot}.
 
 The data is captured with geostationary satellites that orbit 36000 km above the equator at a point where they remain at a constant position relative to the Earth.
-The stationarity enables continuous observations of the same geographical region, indispensable for retrieving coherent spatio-temporal data.
+The stationarity enables continuous observations of the same geographical region which is indispensable for coherent data retrieval.
 However, due to the geostationary orbit above the equator, the spatial resolution of the data varies due to the Earth's curvature and the satellites' angle.
 Right under the satellite, the spatial resolution is about \SI{3}{\kilo\metre}.
 This dataset has a temporal resolution of 15 minutes, enabling accurate tracking of the evolution of clouds.
@@ -22,11 +30,12 @@ This dataset has a temporal resolution of 15 minutes, enabling accurate tracking
 \subsubsection{COT Data Preprocessing}\label{subsec:cotpreprocessing}
 In order to make the COT data usable for the neural network's purposes, extensive preprocessing was required.
 Advection modelling within the presented neural network necessitates complete spatio-temporal data in Euclidean coordinates.
-Therefore, preprocessing the incomplete raw COT data in a satellite projection is a vital step before training the network.
-As the network is relatively simple and should be trainable with a small dataset by its design, but preprocessing is computationally demanding, the data was spatially constrained to an area around southern Finland and temporally to the months from April to October of 2021.
+As preprocessing the data is computationally demanding, a relatively small dataset was preprocessed.
+For preprocessing, the data was spatially constrained to an area around southern Finland and temporally to the months from April to October of 2021.
 
 COT images were resampled from the native satellite projection to the metric Universal Transverse Mercator (UTM) projection using the pyresample Python package~\cite{pyresample}.
-The spatial resolution of the data was artificially increased to have a pixel cover of approximately \SI{2}{\kilo\metre\squared}, thereby allowing clouds to occupy a larger image area and increasing the observable velocities for the network.
+The spatial resolution of the data was artificially increased to have a pixel cover of approximately \SI{2}{\kilo\metre\squared}.
+The larger pixel size allows clouds to occupy a larger image area and increases the observable velocities for the network.
 The data was segmented into four $128 \times 128$ image regions to accommodate the neural network's square image inputs.
 Figure~\ref{fig:trainingdata_area} illustrates the image area and the four segments used for training the network.
 \begin{figure}[h]
@@ -38,13 +47,14 @@ Figure~\ref{fig:trainingdata_area} illustrates the image area and the four segme
     The missing measurements, represented as black pixels, present a major complication in satellite data usage.}
 \end{figure}
 
-Satellite data often contain a considerable amount of missing values, as visualised in Figure~\ref{fig:trainingdata_area}.
-As the missing data values appear at varying locations at varying intensity with more occurrence during some conditions, including lower sun angles, realistic use of such data in forecasting is thus problematic if needed at all times.
-For training the neural network, some interpolation of the missing pixel values was mandatory to obtain a dataset of usable size.
-Given the computational cost of more advanced interpolation, a simple spatial nearest valid value approach was employed.
+Satellite data often contain a considerable amount of missing values, as seen in Figure~\ref{fig:trainingdata_area}.
+The frequency and location of the missing values depends on multiple factors as outlined in~\cite{nwcsaf}.  
+For use of the data within the advection equation model, missing values are problematic.
+Interpolation of missing values was needed to obtain sufficient training data for the neural network.
+Given the computational cost of more advanced interpolation, a simple spatial nearest neighbour value approach was employed.
 While this crude method results in interpolation artefacts for the purposes of the model training, this is not necessarily a problem as the network is robust against poor and noisy data by its design.
 As the sun's elevation angle heavily influences the dataset's quality, interpolation was restricted to daytime images when the elevation angle exceeded \ang{15}.
-As a last filter for the data, images with minimal COT values, indicating an absence of clouds, were subsequently filtered out from the dataset.
+As a last filter for the data, images with low mean COT values, indicating an absence of clouds, were subsequently filtered out from the dataset.
 In this stage, the data values were not yet normalised in any way to allow for quick experimentation within the neural network itself.
 The finalised dataset was temporally segmented into distinct training, validation, and test sets, laying the groundwork for subsequent neural network training.
 

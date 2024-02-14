@@ -1,0 +1,13 @@
+\begin{proof}[Proof of Lemma~\ref{lemma:woodbury}.]
+    Proof directly by multiplying with the claimed inverse.
+    \begin{align*}
+    &(A + UCV) (A + UCV)^{-1}\\
+    &= (A + UCV) (A^{-1} - A^{-1}U(C^{-1} + VA^{-1}U)^{-1}VA^{-1})\\
+    &= A A^{-1} - A A^{-1}U(C^{-1} + VA^{-1}U)^{-1}VA^{-1} + UCV A^{-1} -UCV A^{-1}U(C^{-1} + VA^{-1}U)^{-1}VA^{-1}\\
+    &= I - U((C^{-1} + VA^{-1}U)^{-1} + C -CV A^{-1}U(C^{-1} + VA^{-1}U)^{-1})VA^{-1}\\
+    &= I - U(C + (I - CVA^{-1}U)(C^{-1} + VA^{-1}U)^{-1})VA^{-1}\\
+    &= I - U(C-C(C^{-1} - VA^{-1}U)(C^{-1} + VA^{-1}U)^{-1})VA^{-1}\\
+    &= I - U(C-C)VA^{-1}\\
+    &= I
+    \end{align*}
+\end{proof}

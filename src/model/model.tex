@@ -5,11 +5,11 @@ The developed model is compromised of two main components:
     \item
         A deterministic neural network-based model that learns the patterns and dynamics of the advection equation from spatio-temporal data.
     \item
-        An ensemble Kalman filter that leverages the neural network as a state evolution model in the state-space model to provide probabilistic state estimates.
+        An ensemble Kalman filter that leverages the neural network as a state evolution model to provide probabilistic state estimates.
 \end{itemize}
 These components are next presented separately, starting with the neural network model.
 
 \subsection{Deterministic Neural Network Model\label{subsec:nnmodel}}
 \input{model/neural_network.tex}
-\subsection{Integrating ETKF with the Neural Network\label{subsec:etkfmodel}}
+\subsection{Integrating the Neural Network into ETKF\label{subsec:etkfmodel}}
 \input{model/kalman_filter.tex}

@@ -40,8 +40,8 @@ def plot_time_steps(obs, predict, flow_vectors, ax, fig):
         ax[i, j+1].set_yticks([])
         ax[i, j+1].set_xticks([])
         add_grid_lines(ax[i, j+1])
-        ax[i, j+1].quiver(grid_x[::16,::16], grid_y[::16,::16], flow_vectors[j][i, 0][::16,::16],
-                        flow_vectors[j][i, 1][::16,::16], alpha=0.3, linewidth=4)
+        ax[i, j+1].quiver(grid_x[::8,::8], grid_y[::8,::8], flow_vectors[j][i, 0][::8,::8],
+                        flow_vectors[j][i, 1][::8,::8], alpha=0.3, linewidth=4)
 
   ax[0, 0].set_title("Observation")
   ax[0, 1].set_title("NN")
@@ -49,16 +49,16 @@ def plot_time_steps(obs, predict, flow_vectors, ax, fig):
   ax[0, 3].set_title("I")
   return fig
 
-obs = np.load('experiments/fig/etkf_cot_obs.npy')[:5]
+obs = np.load('experiments/fig/etkf_cot_obs.npy')[:5,::2,::2]
 obs[~np.isfinite(obs)] = 15
 
-uv_NN = np.load('experiments/fig/etkf_cot_uv_NN.npy')[:5]
-uv_LK = np.load('experiments/fig/etkf_cot_uv_LK.npy')[:5]
-uv_I = np.load('experiments/fig/etkf_cot_uv_I.npy')[:5]
+uv_NN = np.load('experiments/fig/etkf_cot_uv_NN.npy')[:5,:,::2,::2]
+uv_LK = np.load('experiments/fig/etkf_cot_uv_LK.npy')[:5,:,::2,::2]
+uv_I = np.load('experiments/fig/etkf_cot_uv_I.npy')[:5,:,::2,::2]
 
-mean_out_NN = np.load('experiments/fig/etkf_cot_mean_out_NN.npy')[:5]
-mean_out_LK = np.load('experiments/fig/etkf_cot_mean_out_LK.npy')[:5]
-mean_out_I = np.load('experiments/fig/etkf_cot_mean_out_I.npy')[:5]
+mean_out_NN = np.load('experiments/fig/etkf_cot_mean_out_NN.npy')[:5,::2,::2]
+mean_out_LK = np.load('experiments/fig/etkf_cot_mean_out_LK.npy')[:5,::2,::2]
+mean_out_I = np.load('experiments/fig/etkf_cot_mean_out_I.npy')[:5,::2,::2]
 
 #obs = obs[:,::3,::3]
 #xmean = xmean[:,::3,::3]

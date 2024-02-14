@@ -9,7 +9,7 @@ fss_nn = np.array([0.46804624, 0.2647375 , 0.17591129, 0.12824737, 0.09450144, 0
 fss_lk = np.array([0.49860354, 0.32033379, 0.22572263, 0.16304816, 0.12662241, 0.08724261, 0.05112378, 0.03949873])
 fss_naive = np.array([0.40156848, 0.20624497, 0.14000424, 0.09172761, 0.06104271, 0.05165397, 0.0321028 , 0.03078491])
 
-ax[0,0].plot(x, fss_nn, 'k:', marker='s',fillstyle='none', label='Neural Network')
+ax[0,0].plot(x, fss_nn, 'k:', marker='s',fillstyle='none', label='Neural network')
 ax[0,0].plot(x, fss_lk, 'k:', marker='v', fillstyle='none', label='Lucas-Kanade')
 ax[0,0].plot(x, fss_naive, 'k:', marker='d', fillstyle='none', label='Naive')
 

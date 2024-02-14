@@ -1,43 +1,44 @@
-Neural networks have proved themselves an important tool in the analysis of high-dimensional and complex data being able to learn patterns and relationships.
-In many physical modelling problems, existing mathematical models exist that characterise the evolution of a system but the models require parameters.
-Direct observations of these model parameters often do not exist and must therefore be estimated from data.
-For that challenge, neural networks could be constrained to learn the physical laws of a system to estimate parameters for the mathematical models.
+This thesis studies the validity of physics-informed neural networks in a Bayesian filtering setting.
+Neural networks have proved themselves an important tool in the modelling of high-dimensional and complex data.
+Physics-informed neural networks that are constructed with prior knowledge of physical models provide a way to constrain a neural network's predictions.
+Placing such network in a Bayesian filtering scheme allows considering uncertain data as probability distributions.
 
-These physics-informed neural networks are designed to learn prior information concerning the mathematical model of a system to capture the essential patterns of interest in even low amounts of data.
 Physics-informed neural networks cover a wide range of possible applications from solvers to partial differential equations~\cite{pinnpde} to inverse problem reconstructors~\cite{hauptmann}, and physics-based simulation models such as the interest of this work.
-While having multiples issues such as hard boundary condition constraints and continuity problems with respect to the input data, the benefits of simplicity fast operations compared to heavy classical models are also evident.
+Constraining a neural network by physical models provides many benefits compared to regular networks such as the ability to capture the essential information quicker with less dependence on a specific set of daata.
+Compared to many classical mathematical models, neural network models offer computational efficiency essential in many applications.
+On the flip side, it is often difficult to impose hard boundary conditions on neural networks and unexpected predictions are difficult to prevent completely.
 
-Often in real-world problems, complete and direct measurements from a quantity of interest are not available.
-But even then, there may be partial measurements from one or more related quantities that provide useful information.
-In these cases, Bayesian filtering techniques such as the well-known Kalman filter provide a powerful method to probabilistically estimate the dynamic state of a system in terms of the actual quantity of interest.  
+In real-world problems, complete and direct measurements from a quantity of interest are not always available.
+But even then, uncertain partial measurements from one or more related quantities that are easier to measure may provide useful information.
+Bayesian filtering techniques provide a powerful method in such cases to estimate the state of the dynamical system in terms of the actual quantity of interest as probability distributions.  
 
-In this thesis, a neural network is constructed to predict motion from two-dimensional data, and it is used as a state model operator in an ensemble-based Kalman filter.
+In this work, a neural network is constructed to predict motion from two-dimensional data, and it is used as a state propagator in an ensemble-based Kalman filter.
 The work is a part of a research project in the Meteorological Research Applications group at the Finnish Meteorological Institute.
 Consequently, the model is trained and tested on meteorological satellite data concerning the physical properties of clouds.
 However, the model is designed to learn the general advection model dynamics instead of the specific data.
 The two-dimensional advection equation that models the transportation of substance according to a vector field is chosen due to the model's simplicity and suitability for short-term modelling of cloud behaviour.
 
-In meteorological short-term forecasting or nowcasting, the so-called physics-free models have been extensively researched in, e.g.\ precipitation forecasts.~\cite{rainnet, metnet}
+In meteorological short-term forecasting or nowcasting, the so-called physics-free neural networks have been extensively researched in, e.g.\ precipitation forecasts.~\cite{rainnet, metnet}
 While these methods have shown some efficiency in forecasting applications, the neural networks often lack interpretability and require large amounts of training data.
-As current physical numerical weather prediction models lack the ability to generate instantaneous high-resolution predictions for clouds, the currently used methods are crude mathematical models such as the advection-based model studied in this thesis.
-As a combination of the physics-free neural networks and current advection-based models, a neural network is trained to learn the temporal evolution of the advection equation. 
+As current physical numerical weather prediction models lack the ability to generate instantaneous high-resolution predictions for clouds, the currently used methods are based on crude mathematical models such as the advection equation.
+A hybrid approach of the physics-free neural networks and current advection-based models is taken to train a neural network to learn the temporal evolution of the advection equation.
 While well-behaving methods exist for this specific advection modelling problem, the neural network could be a more efficient and straightforward alternative for larger data sets.
 The successful development of a neural network for the advection model where good benchmarks exist could also pave the way for models in such applications where well-performing methods do not exist yet.
 Similar work on physics-informed advection-based neural networks has previously been done in~\cite{deepide, debezenac} with sea surface temperature data.
-However, in this work, the objective is to generate smooth motion fields to better meet the requirements of small-scale cloud data.
-As already experimented in~\cite{deepide}, the neural network model is integrated with the Kalman filter model, but instead of the goal of probabilistic forecasting, the emphasis is on the filtering distribution of producing optimal state estimates of a system.
+However, in this work, the objective is to generate smooth velocity fields to better meet the requirements of small-scale cloud data.
+As already experimented in~\cite{deepide}, the neural network model is integrated with the Kalman filter model.
+However, instead of the probabilistic forecasting objective, the emphasis is on producing optimal state estimates of the system with uncertain and incomplete observations.
 
-The main contributions of this thesis are re-purposing an existing image recognition neural network architecture to a physics-informed neural network learning to produce smooth motion fields and integrating it into a high-dimensional ensemble-based Kalman filtering scheme.
-The scope of this work is primarily on the exploration and simple validation of neural network-assisted physics-based modelling.
-Consequently, neural network development is mainly motivated by general data-independent physical interpretability with less focus on performance-based tuning.
-The neural network trained with difficult real-world satellite cloud data is compared against a well-used classical method used in nowcasting applications using a test partition of the used dataset.
+The main contributions of this thesis are designing a physics-informed neural network to produce smooth velocity fields and integrating it into a high-dimensional ensemble-based Kalman filtering scheme.
+The scope of this work is primarily on the exploration and validation of neural network-assisted physics-based modelling.
+Consequently, the neural network design is mainly motivated by general data-independent physical interpretability with less focus on performance-based tuning.
+The neural network trained with real-world satellite cloud data is compared against an established classical method used in nowcasting applications using a test partition of the dataset.
 While not being able to exceed the benchmark accuracy, the neural network still exhibits promising results.
 Moreover, the Kalman filter is set up in a simulated setting with missing observations to validate the proposed framework visually.
 
 The thesis unfolds as follows.
 First, some background material on the theory behind the used methods is presented.
-Due to the wide range of the methods used and the theory behind them, a complete primer is outside this work's scope.
-As a compromise based on the spirit of this work, the background section is divided into three parts consisting of characteristics of spatio-temporal data, neural network basics, and Bayesian filtering theory. 
-Even though the model was constructed hand in hand with the used dataset, due to it being designed for general advective spatio-temporal data, the proposed model is presented independently. 
+The background section is consists of three parts: the characteristics of spatio-temporal data, theoretical background of neural networks, and Bayesian filtering theory. 
+Then the proposed model is presented as a general model for uncertain and partial advective spatio-temporal data.
 Finally, numerical experiments and verification of the trained model is presented with both the cloud data and synthetic test images separately for the neural network model and the Kalman filter application.
 In the very last section, an overall summary of the work is discussed, along with possible directions for further research stemming from the findings of this work.

@@ -8,7 +8,7 @@ mse_loss_nn = np.array([0.00609066, 0.01072457, 0.0146978 , 0.01818584, 0.021350
 mse_loss_lk = np.array([0.0054561 , 0.00959998, 0.01325985, 0.01670621, 0.01983971, 0.02258265, 0.02533306, 0.02820123])
 mse_loss_naive = np.array([0.00679733, 0.01290859, 0.01739062, 0.0215012 , 0.02537579, 0.02885803, 0.0320196 , 0.03482411])
 
-plt.plot(x, np.sqrt(mse_loss_nn), 'k:', marker='s',fillstyle='none', label='Neural Network')
+plt.plot(x, np.sqrt(mse_loss_nn), 'k:', marker='s',fillstyle='none', label='Neural network')
 plt.plot(x, np.sqrt(mse_loss_lk), 'k:', marker='v', fillstyle='none', label='Lucas-Kanade')
 plt.plot(x, np.sqrt(mse_loss_naive), 'k:', marker='d', fillstyle='none', label='Naive')
 

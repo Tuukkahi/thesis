@@ -21,9 +21,9 @@ time = np.arange(xout_std_mean.shape[0])
 trans1 = Affine2D().translate(-0.15, 0.0) + ax.transData
 trans2 = Affine2D().translate(+0.15, 0.0) + ax.transData
 
-eb1 = plt.errorbar(time, np.nanmean(xprior_mean,axis=(1,2)), 2*xprior_std_mean, label='Prior', marker="o", linestyle="none", transform=trans1, color='black', fillstyle='none')
+eb1 = plt.errorbar(time, np.nanmean(xprior_mean,axis=(1,2)), 2*xprior_std_mean, label='Prior', marker="d", linestyle="none", transform=trans1, color='black', fillstyle='none')
 eb1[-1][0].set_linestyle(':')
-eb2 = plt.errorbar(time, np.nanmean(obs, axis=(1,2)), 0.233, marker='s', label='Observation', linestyle="none", color='black', fillstyle='none')
+eb2 = plt.errorbar(time, np.nanmean(obs, axis=(1,2)), 0.233, marker='v', label='Observation', linestyle="none", color='black', fillstyle='none')
 eb2[-1][0].set_linestyle('-.')
 eb3 = plt.errorbar(time, np.nanmean(xout_mean,axis=(1,2)), 2*xout_std_mean, marker='s', label='Posterior', linestyle="none", transform=trans2, color='black', fillstyle='none')
 eb3[-1][0].set_linestyle('--')

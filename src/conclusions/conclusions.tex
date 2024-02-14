@@ -1,28 +1,32 @@
-In this work, an existing neural network architecture was adapted for use in data-independent physics-based advection modelling of spatio-temporal data, and it was used as a state evolution operator in a Kalman filter model.
-The developed neural network trained with a small dataset of satellite measurements of clouds was shown to generalise well for data unrelated to the training data while exhibiting comparable performance to classic optical flow methods.
-By using the Kalman filter with the cloud data examples, the neural network could model the state evolution and thus fill simulated missing observations.
+In this work, an existing neural network architecture was adapted for use in data-independent physics-based advection modelling of spatio-temporal data.
+The neural network was used as a state evolution operator in an ensemble-based Kalman filter model.
+The developed neural network trained with a small dataset of satellite measurements of clouds was shown to generalise well for general data evolving according to the advection equation.
+The neural network exhibited comparable performance to a classic optical flow method.
+Inside the Kalman filter, the neural network could model the state evolution and thus fill simulated missing observations.
 In these experiments, the concept of using neural networks in physical modelling was validated along with using it as a part of another modelling system.
 While the data used in numerical experiments was limited to the cloud optical thickness observations, similar modelling could have applications across multiple domains.
 The advection modelling was chosen for the generality and easy understanding.
 However, similar neural network frameworks could also be applied in other modelling of other phenomena where existing methods are not as well established.
 
-While considerable work remains to follow up with what has been done for this thesis, both with developing the neural network and tuning the Kalman filter needed for better validation of the model, the results were already encouraging.
-As the neural network was mostly a reused image recognition architecture with limited adjustments, a valid case could be made that there are considerable low-hanging fruits to improve its performance.
-For this work, the physics-based interpretability of the neural network model was a primary goal, so engineering the network further with performance in mind and with more sophisticated training with extended and better appropriate data could quickly provide superior results.
+While considerable work remains to follow up with what has been done for this thesis, the results were already encouraging.
+As the neural network was mostly a reused image recognition architecture with limited tuning, a valid case could be made that there are considerable low-hanging fruits to improve its performance.
+For this work, the physics-based interpretability of the neural network model was a primary goal, so engineering the network further with performance in mind and with more sophisticated training could easily provide superior results.
 In application-specific tasks, neural networks predicting outputs directly without physics-based modelling have gained popularity.
 However, due to the lack of interpretability and for problems where mathematical models exist, similar neural network-assisted modelling approaches could be beneficial in generalising and constraining neural network models.
 
 In many ways, the application of Kalman filtering in this work was limited and could not show its full potential.
 While the simulated examples demonstrated its ability to fill missing values in partial observations, more sophisticated treatment of nonstationary inverse problems related to the observation operator in the state-space model could be useful in more complex problems.
 For instance, data fusion of multiple indirect data sources, along with the neural network-assisted modelling studied here, could contribute to meaningful improvements in the accuracy of multiple problems.
-The concept of a data-independent neural network trained to learn a mathematical model instead of specific data would be advantageous in these cases as the training data could be selected or even simulated based on the mathematical model instead of the potentially insufficient actual data of interest.
+The concept of a data-independent neural network trained to learn a mathematical model instead of specific data would be advantageous in these cases.
+The training data could be selected or even simulated based on the mathematical model to account for potentially insufficient actual data of interest.
 
 Even with the wide use and theoretical validity of the ensemble-based Kalman filters, major drawbacks remain to be considered.
 The accurate representation of the uncertainty of state estimates requires handcrafted engineering of the ensembles with multiple unknown parameters.
 Nevertheless, as larger state and observation spaces render the classical Kalman filter unfeasible, the ensemble methods offer a valid workaround.
 Another alternative for applications similar to the one presented here could be appropriate dimension reduction techniques to continue using the classical Kalman filter for higher dimensional problems.
 In addition, the filtering problems could be reformulated to represent the actual task better. 
-As the neural network state operator models only motion at a few control points and considerable uncertainties are related to the motion vectors, a potential reformulation would be incorporating the motion vector parameters into state vectors.
+As the neural network state operator models only motion at a few control points and considerable uncertainties are related to the velocity fields.
+Thus, a potential reformulation would be incorporating the velocity field parameters into the probabilstic state vectors.
 
 For meteorological applications, prediction problems related to the used cloud optical thickness observations could also be valuable, even though less focus was given to that.
 With reliable COT forecasts, the ever-increasing solar energy production could be estimated could be valuable information even for short time horizons in the electricity markets given the variable power of renewable energy sources.

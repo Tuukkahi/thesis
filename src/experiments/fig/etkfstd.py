@@ -37,7 +37,7 @@ def plot_time_steps(data, ax, fig):
   return fig, ax,
 
 xout_std = np.load('experiments/fig/etkf_cot_mean_out_std_NN.npy')
-xout_std = xout_std[:5,::3,::3]
+xout_std = xout_std[:5,::2,::2]
 fig, ax = plot_time_steps(2*xout_std, ax, fig)
 
 save()

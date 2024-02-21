@@ -10,18 +10,18 @@
               \Sigma_{21} & \Sigma_{22}
           \end{bmatrix} \right).
     \end{align*}
-    In the decomposed covariance matrix $\Sigma_{11} = P_{k \, \vert \, k}$, the covariance of $\pi(x_k \, \vert \, y_{1:k})$.
-    $\Sigma_{12}$ is the covariance of $\pi(x_k \, \vert \, y_{1:k})$ and $\pi(x_{k+1} \, \vert \, y_{1:k})$.
-    $x_{k+1} \, \vert \, y_{1:k} = M_{k+1} x_k \, \vert \, y_{1:k} + w_{k+1}$ by the Kalman filter assumptions where $w_{k+1} \sim \mathcal{N}(0, Q_{k+1})$.
-    $\Sigma_{12}$ can be therefore evaluated using the affine equivariance of covariance and the linearity of expectation by
+    In the decomposed covariance matrix $\Sigma_{11} = P_{k \, \vert \, k}$ is the covariance of $\pi(x_k \, \vert \, y_{1:k})$.
+    The covariance of $\pi(x_k \, \vert \, y_{1:k})$ and $\pi(x_{k+1} \, \vert \, y_{1:k})$ is $\Sigma_{12}$.
+    By assumption, $x_{k+1} \, \vert \, y_{1:k} = M_{k+1} x_k \, \vert \, y_{1:k} + w_{k+1}$, where $w_{k+1} \sim \mathcal{N}(0, Q_{k+1})$.
+    Therefore, $\Sigma_{12}$ can be evaluated using the affine equivariance of covariance and the linearity of expectation by
     \begin{align*}
         \Sigma_{12} &= \mathbb{E}[(x_k \, \vert \, y_{1:k} - \mathbb{E}[x_k \, \vert \, y_{1:k}])(x_{k+1} \, \vert \, y_{1:k} - \mathbb{E}[x_{k+1} \, \vert \, y_{1:k}])^{\top}]\\
                     &= \mathbb{E}[(x_k \, \vert \, y_{1:k} - \mathbb{E}[x_k \, \vert \, y_{1:k}])(M_{k+1}(x_k \, \vert \, y_{1:k} - \mathbb{E}[x_k \, \vert \, y_{1:k}]))^{\top}]\\
                     &= \mathbb{E}[(x_k \, \vert \, y_{1:k} - \mathbb{E}[x_k \, \vert \, y_{1:k}])(x_k \, \vert \, y_{1:k} - \mathbb{E}[x_k \, \vert \, y_{1:k}])^{\top}]M_{k+1}^{\top}\\
                     &=  P_{k \, \vert \, k}M_{k+1}^{\top}.
     \end{align*}
-    $\Sigma_{21}$ is then just the transpose of $\Sigma_{12}$ by the symmetricity of the covariance matrix, $\Sigma_{21}= M_{k+1}P_{k \, \vert \, k}^{\top}$.
-    $\Sigma_{22}$ is the covariance of $\pi(x_{k+1} \, \vert \, y_{1:k})$ and by using again the affine equivariance of covariance it can be written as
+    By the symmetricity of the covariance matrix, $\Sigma_{21}$ is then just the transpose of $\Sigma_{12}$, $\Sigma_{21}= M_{k+1}P_{k \, \vert \, k}^{\top}$.
+    Again the affine equivariance of covariance, $\Sigma_{22}$ which is the covariance of $\pi(x_{k+1} \, \vert \, y_{1:k})$ can be written as
     \begin{align*}
         \Sigma_{22} &= \operatorname{Cov}(x_{k+1} \, \vert \, y_{1:k}, x_{k+1} \, \vert \, y_{1:k})\\
                     &= \operatorname{Cov}(M_{k+1} x_k \, \vert \, y_{1:k} + w_{k+1}, M_{k+1} x_k \, \vert \, y_{1:k} + w_{k+1})\\

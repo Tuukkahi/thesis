@@ -4,9 +4,9 @@ The data that the network is designed to work with is assumed to approximately f
 \begin{equation*}
     \frac{\partial I_t[x,y]}{\partial t} \approx -\mathbf{F}_{u}[x,y] \frac{\partial I_{t}[x,y]}{\partial x} -\mathbf{F}_{v}[x,y] \frac{\partial I_{t}[x,y]}{\partial y}, \quad \, t = 0,1,\dots,
 \end{equation*}
-where $I_t \in \R^{n \times n}$ is an image at time $t$, and $\mathbf{F}$ a vector field of the $u$ and $v$ basis components of motion vectors.
+where $I_t \in \R^{n \times n}$ is an image at time $t$, and $\mathbf{F}$ a vector field of the two-dimensional motion vectors.
 The specific assumption for the images $I$ is that they consist of smooth objects moving uniformly across the two spatial dimensions over time.
-Furthermore, as necessitated by the used data, the model was also created to be robust to even large deviations from the pure advective process.
+Furthermore, as necessitated by the used data, the model was also created to be robust to even large deviations from the pure advection process.
 
 The network predicts a velocity field representing the advection process across a sequence of spatio-temporal image data.
 Formally, the objective is to train a neural network that maps a sequence of images to a vector field.
@@ -18,7 +18,7 @@ The model is unaware of image values outside the domain, and thus the output dom
 However, for practical purposes, the operator was modified to copy boundary values that can then be disregarded.
 Figure~\ref{fig:warping} depicts how the warping operator works for an interior pixel in a $5 \times 5$ image.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \inputpypgf{model/fig/warping.pypgf}
     \caption{\label{fig:warping}The warping operator takes the pixel values and moves them to new pixels corresponding to the velocity field.
@@ -35,8 +35,8 @@ Moreover, the data used differs from the typical ones used in the neural network
 A similar unsupervised approach, from which much of the inspiration to the model in this work can be attributed, is explored in~\cite{debezenac} and~\cite{deepide}.
 In these works, a vector field neural network was used with much more complex sea surface temperature data with an attempt to generate pixel-wise motion vector estimates.
 Moreover, these works also modelled the diffusion process, by a hard-coded diffusion coefficient~\cite{debezenac} and by a separate neural network~\cite{deepide}.
-The decision to dismiss diffusion from this model primarily stems from the fact that the used cloud data does not exhibit diffusion and thus the diffusion process lacks physical interpretation.
-Also, in using a neural network for diffusion modelling, specific care must be given to the loss function selection as diffusion is easily overestimated if average prediction errors are minimised.
+The decision to dismiss diffusion from this model primarily stems from the fact that it is unlikely a meaningful physical model for spreading of clouds in the used cloud data.
+Also, in using a neural network for diffusion modelling, specific care must be given to the loss function selection, as diffusion is easily overestimated if average prediction errors are minimised.
 Nevertheless, a diffusion term could be implemented without changing the advection model.
 
 In order to tackle the needs of the much simpler data similar to the one described in Section~\ref{subsubsection:dynamicmodellingspatiotemporaldata} and in Figure~\ref{fig:advection_diffusion} but without diffusion, a different approach to the neural network structure is required.
@@ -49,7 +49,7 @@ Even though the small-scale motion is important for individual samples, it is of
 
 \subsubsection{Model Architecture}
 The proposed model architecture is similar to the well-known Residual Networks (ResNet).
-To create two-dimensional motion vectors, two separate ResNet models are employed, each trained to predict the two basis components of the two-dimensional vector field.
+To create two-dimensional motion vectors, two separate ResNet models are employed, each trained to predict one dimension of the velocity fields.
 
 Residual Networks are characterised by skip connections, which allow the gradient to be directly backpropagated to earlier layers.
 The ‘residual’ term comes from the learning process of these networks, where they learn the residual mappings relative to the layer inputs.
@@ -63,32 +63,30 @@ Residual blocks have the general form
 \begin{equation}\label{eq:residualblock}
     f_{\operatorname{res}}(x) + x,
 \end{equation}
-where $f_{\operatorname{res}}(x)$ is the residual mapping to be learned representing neural network layers. $x$ is the block's original input, representing the skip connection.
-The important aspect here is the behaviour of the residual blocks in backpropagation.
+where $f_{\operatorname{res}}(x)$ is the residual mapping to be learned, representing neural network layers, and $x$ is the block's original input, representing the skip connection.
+An important aspect here is the behaviour of the residual blocks in backpropagation.
 Deep neural networks often suffer from a problem called diminishing gradients.
 This is because the gradient computation involves long chains of multiplications of small values.
 The derivative of the residual block
 \begin{equation}\label{eq:residualblockderivative}
-    \frac{d}{dx} f_{\operatorname{res}}(x) + x = \frac{d}{dx} f_{\operatorname{res}}(x) + 1,
+    \frac{d}{dx} (f_{\operatorname{res}}(x) + x) = \frac{d}{dx} f_{\operatorname{res}}(x) + 1,
 \end{equation}
 ensures that even with propagating gradients through a deep network, they don't vanish, thanks to the $+1$ term.
 
 This technique is applied in a wide array of neural network architectures, but perhaps the most common use is in convolutional neural networks.
-In convolutional networks, the residual blocks consist of several convolution layers, each with batch normalisations and activations.
+In convolutional networks, the residual blocks consist of several convolution layers, each with their own batch normalisations and activations.
 In this thesis, a 26-layer convolutional ResNet was deployed.
 The specific layer architecture of the used network is shown in Figure~\ref{fig:resnetmodel}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \begin{footnotesize}
         \input{model/fig/resnet_model.tex}
     \end{footnotesize}
-    \caption[LoF entry]{\label{fig:resnetmodel}The structure of the used 26-layer ResNet architecture.
+    \caption{\label{fig:resnetmodel}The structure of the used 26-layer ResNet architecture.
     The network takes as an input spatio-temporal data with temporal dimension $\tau$, and spatial dimension $(ny,nx)$, and outputs a vector of length $n_{\text{basis}}$.
-
-    \hspace*{1em}Here, the residual blocks that sum the block input to its output are the groups of layers in brackets.
-
-    \hspace*{1em}The layer parameters are the used kernel size followed by the layer type, number of output channels, and stride.
+    Here, the residual blocks that sum the block input to its output are the groups of layers in the brackets.
+    The layer parameters are the used kernel size, followed by the layer type, number of output channels, and stride.
     Striding divides the spatial dimension by the used parameter by skipping that number of pixels when computing the results.
     The maxpool layer outputs the maximum value inside the used kernel size, and the average pool takes the average value.
     In the last layers, the adaptive average pool adjusts the kernel size such that the output shape of the layer is $512 \times 1 \times 1$, and the linear layer is just a matrix multiplication to produce an $n_{\text{basis}}$-vector.
@@ -96,10 +94,10 @@ The specific layer architecture of the used network is shown in Figure~\ref{fig:
 \end{figure}
 
 \subsubsection{Producing Vector Fields and Forecasts}
-While the described architecture generates the low-dimensional vector fields of motion values at only a few points, the primary objective is to produce the complete vector fields.
-To this end, Lagrange polynomial interpolation is used to extend the predicted vector across the entire domain.
-The method of predicting motion vector values from which the polynomial coefficients are then computed gives stability the optimisation process.
-This way small changes to the network output has predictable small changes in the complete vector fields and thus in the loss values.
+While the described architecture generates low-dimensional velocity fiels only a few points, the primary objective is to produce the complete vector fields.
+To this end, Lagrange polynomial interpolation is used to extend the predicted vectors to form a vector field across the entire domain.
+The method of predicting motion vector values from which the polynomial coefficients are then computed gives stability to the optimisation process.
+This way, small changes to the network output result with predictable small changes in the complete vector fields and thus in the loss values.
 
 Second-degree polynomials are chosen as a compromise between capturing a majority of the underlying process and maintaining sufficient flexibility to span the same vector field over multiple time steps.
 Since the basis vectors are constant, the model complexity is effectively controlled by the dimensionality of the basis.
@@ -169,11 +167,11 @@ Given this, the polynomial coefficients $a_u$ can be solved uniquely by invertin
 \end{align*}
 and similarly for $a_v$.
 As the Vandermonde matrix is notorious for having a large condition number, the nodes need to be selected carefully to ensure stable invertibility.
-Hence, the image domain is set to be $[-1, 1] \times [-1,1]$, and one node is set at the origin and five nodes at non-symmetric points on the unit circle as depicted in Figure~\ref{fig:testpoints}.
-\begin{figure}[h]
+Hence, the image domain is set to be $[-1, 1] \times [-1,1]$, and one node is set at the origin, and five at non-symmetric points on the unit circle as depicted in Figure~\ref{fig:testpoints}.
+\begin{figure}[H]
     \centering
     \input{model/fig/testpoint.pypgf}
-    \caption{\label{fig:testpoints}The six nodes at which the neural network approximated velocity field values. In order to ensure stable invertibility of the two-dimensional Vandermonde matrix, the location of the nodes must be selected carefully.}
+    \caption{\label{fig:testpoints}The six nodes at which the neural network approximates velocity fields. In order to ensure stable invertibility of the two-dimensional Vandermonde matrix, the location of the nodes must be selected carefully.}
 \end{figure}
 After solving the polynomial coefficients, the motion vectors may be interpolated over the entire domain by evaluating the Vandermonde matrix at every pixel and right-multiplying it by the coefficient vectors.  
 
@@ -200,7 +198,7 @@ However, if the advection model is generally unusable after some number of time 
 
 Adam is employed as the optimisation algorithm for the model parameters.
 It is a variant of the SGD discussed in Section~\ref{subsubsec:optimisation} but benefits from an adaptive step size.
-It also simplifies the model tuning as step size and step size schedulers do not play such an important role in the proper convergence of the model.
+It also simplifies the model tuning, as the step size and step size schedulers do not play such an important role in the proper convergence of the model.
 
 Some fine-tuning was applied to the model with respect to the actual data. 
 This is discussed in the results section in addition to the specific loss function selection.

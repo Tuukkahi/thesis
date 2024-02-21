@@ -1,6 +1,6 @@
 This subsection covers the mathematical theory of Bayesian filtering.
 The Kalman filter is presented as an optimal state estimation algorithm under certain assumptions.
-Then it is extended into an ensemble-based version that efficiently handles larger observation and state vectors.
+Then, it is extended into an ensemble-based version that efficiently handles larger observation and state vectors.
 
 Bayesian filtering refers to the Bayesian way of deriving an optimal filtering problem of estimating the state of a nonstationary system through some observations.
 This approach becomes valuable when dealing with real-world phenomena where a mathematical model can approximate the temporal evolution of some process, and measurements of the system may be uncertain.
@@ -36,7 +36,7 @@ Given inherent uncertainties linked with measurements and modelling, it is subst
 
 Consider two stochastic processes, $\{X_k\}_{k=0}^{\infty}$ and $\{Y_k\}_{k=0}^{\infty}$, representing the state and measurements of a system, respectively.
 Figure~\ref{fig:statespacedependency} presents the dependency scheme of the processes needed to formulate the state-space model.
-\begin{figure}[h]
+\begin{figure}[H]
     \input{background/fig/statespacedependency.tex}
     \caption{\label{fig:statespacedependency}Dependency scheme of the state-space model.}
 \end{figure}
@@ -54,7 +54,7 @@ In order for the dependencies of the figure to materialise, some formal assumpti
         \end{equation}
 \end{enumerate}
 With these assumptions, the probabilistic state-space model can be defined.
-\begin{definition}[Probabilstic state-space model]\label{def:state-space}
+\begin{definition}[Probabilistic state-space model]\label{def:state-space}
     Assume stochastic processes $\{X_k\}_{k=0}^{\infty}$ and $\{Y_k\}_{k=0}^{\infty}$ meet the previous assumptions.
     Then, the following conditional probability distributions define the probabilistic state-space model:
     \begin{subequations}\label{eq:statespace}
@@ -65,7 +65,7 @@ With these assumptions, the probabilistic state-space model can be defined.
         \end{align}
     \end{subequations}
 \end{definition}
-In Definition~\ref{def:state-space},~\eqref{eq:statespace1} is the model that describes the evolution of state over time, and~\eqref{eq:statespace2} is the observation model that describes the distribution of measurements conditioned on the state.
+In Definition~\ref{def:state-space},~\eqref{eq:statespace1} is the model that describes the evolution of the state over time, and~\eqref{eq:statespace2} is the observation model that describes the distribution of measurements conditioned on the state.
 
 If functions for the state evolution and observations are known, the same can be alternatively written as 
 \begin{subequations}\label{eq:statespacemodel}
@@ -74,7 +74,7 @@ If functions for the state evolution and observations are known, the same can be
         Y_{k} &= H_{k}(X_{k}, V_{k}), \quad k = 1,2,\dots. \label{eq:statespacemodel2}
     \end{align}
 \end{subequations}
-Now~\eqref{eq:statespacemodel1} is the state evolution equation where function $M_{k+1}$ gives the next state $X_{k+1}$ given the previous state $X_{k}$ and the state noise $W_{k+1}$
+Now~\eqref{eq:statespacemodel1} is the state evolution equation where function $M_{k+1}$ gives the next state $X_{k+1}$ given the previous state $X_{k}$ and the state noise $W_{k+1}$.
 The observation equation~\eqref{eq:statespacemodel2} describes the observations $Y_{k}$ as being the output of the observation function $H_{k}$ with the true state $X_{k}$ and the observation noise $V_{k}$.
 
 A few conditional probability distributions are usually of interest with regards to the probabilistic state-space models, outlined in the following definition.
@@ -123,12 +123,12 @@ The following theorem presents the two update equations for the Bayesian filteri
 \end{proof}
 
 Theorem~\ref{thm:updateformulas} provides a framework for theoretically estimating probability distributions conditioned on observations.
-The prediction step equation~\ref{eq:predictionstep} as the joint probability distribution of the current and next state conditioned on the latest observations, facilitates probabilistic state estimates.
+The prediction step equation~\ref{eq:predictionstep}, which describes the joint probability distribution of the current and next state conditioned on the latest observations, facilitates probabilistic state estimates.
 Then the observation update equation~\ref{eq:updatestep} is just the Bayes formula where $\pi (x_{k+1} \, \vert \, y_{1:k})$ is interpreted as the prior information of the state for statistical inversion of a new observation.
 
 \subsubsection{Kalman Filter}
 The Kalman filter provides an elegant closed-form solution for the update equations of Theorem~\ref{thm:updateformulas} in the special case of a linear state-space model with Gaussian additive noise.
-In this special case, the state-space model corresponding to~\eqref{eq:statespacemodel} becomes
+In this case, the state-space model corresponding to~\eqref{eq:statespacemodel} becomes
 \begin{subequations}\label{eq:kalmanstatespace}
     \begin{align}
         X_{k+1} &= M_{k+1}X_{k}  + W_{k+1}, \quad W_{k+1} \sim \mathcal{N}(0, Q_{k+1})\\
@@ -137,12 +137,12 @@ In this special case, the state-space model corresponding to~\eqref{eq:statespac
 \end{subequations}
 with a Gaussian distribution for the initial state $X_0$.
 
-Under these assumptions, the state's probability densities can be given with estimates of the mean and covariance.
+Under these Gaussian assumptions, probability densities can be given by mean and covariance.
 The following theorem gives the Kalman filter equations corresponding to Theorem~\ref{thm:updateformulas}.
 \begin{theorem}[Kalman filter equations]\label{thm:kalmanfilterupdate}
     Assume a linear Gaussian state-space model~\eqref{eq:kalmanstatespace}.
     Let $x_{k\,\vert\,\ell}$ and $P_{k\,\vert\,\ell}$ represent the posterior mean and covariance of the state at time $k$ given observations $y_{1:\ell}$.
-    Then the filtering equations of Theorem~\ref{thm:updateformulas} take closed-form solutions:
+    Then, the filtering equations of Theorem~\ref{thm:updateformulas} take closed-form solutions:
     \begin{enumerate}
         \item 
             Prediction step:
@@ -188,7 +188,7 @@ The following theorem gives the Kalman filter equations corresponding to Theorem
 \end{proof}
 While the theorem assumes zero means for noises, the Gaussian distributions can be shifted to accommodate non-zero means.
 The Kalman filter leverages the property of Gaussian distributions retaining their Gaussian form under affine transformations.
-With nonlinear state-space models, one use linear linear approximations to preserve the convenience of Gaussian densities.
+With nonlinear state-space models, linear linear approximations can be used to preserve the convenience of Gaussian densities.
 This version is known as the extended Kalman filter.
 
 Even when the assumptions for the Kalman filter apply, with large state and observation spaces, problems will arise when computing the Kalman filter steps.

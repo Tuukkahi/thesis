@@ -13,15 +13,15 @@ Naturally, each of the domains can also be discrete by the nature of the domains
 
 This formulation only requires the spatial and temporal domains to be independent and is thus general enough for most temporally evolving data. 
 Dynamic models are often used to explain the evolution of variables of spatio-temporal data in time.
-This information is usually described with some partial differential equations such as the advection-diffusion equation.
+This information is usually described with some partial differential equations, such as the advection-diffusion equation.
 
 \subsubsection{Advection-Diffusion Model}\label{subsubsection:dynamicmodellingspatiotemporaldata}
-At the core of the model of this thesis is the advection-diffusion equation describing the temporal transportation and diffusion of data.
+At the core of the model of this thesis is the advection-diffusion equation, which describes how the quantity of interest is transported and dispersed in a medium.
 A concrete example of spatio-temporal data that could modelled with the advection-diffusion model is air pollution data that tracks the concentration of pollutants across different areas over time.
 The pollutants are advected by winds and diffused outwards of high concentrations.
-A simplified example of data evolving through the advection-diffusion process is in Figure~\ref{fig:advection_diffusion}.
+A simplified example of data evolving through the advection-diffusion process is shown in Figure~\ref{fig:advection_diffusion}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \inputpypgf{background/fig/advectiondiffusion.pypgf}
     \caption{\label{fig:advection_diffusion}Advection-diffusion process with two Gaussian kernels.
@@ -41,21 +41,21 @@ The diffusion equation is
     \frac{\partial u}{\partial t} = \nabla \cdot (D \nabla u),
 \end{equation}
 with $D = D(x,t)$ being the diffusion coefficient.
-Practically $D$ is often assumed to be spatially constant, simplifying the diffusion term $\nabla \cdot (D \nabla u)$ to $D \Delta u$ and then diffusion equation~\eqref{eq:diffusion} recovers to the heat equation.
+In practice, $D$ is often assumed to be spatially constant, simplifying the diffusion term $\nabla \cdot (D \nabla u)$ to $D \Delta u$ and then diffusion equation~\eqref{eq:diffusion} recovers to the heat equation.
 
 Combining~\eqref{eq:advection} and~\eqref{eq:diffusion} gives the full advection-diffusion equation
 \begin{equation}\label{eq:advectiondiffusion}
     \frac{\partial u}{\partial t} = \nabla \cdot (D \nabla u) - \mathbf{F} \nabla u.
 \end{equation}
 
-If the advection field $\mathbf{F}$, and the diffusion coefficient $D$ were known, and the model was perfect $u$ could be solved given some initial condition $u(\cdot, 0) = u_0(\cdot)$, and a boundary condition for the values of $u$ in the Dirichlet problem case or the normal derivative of $u$ along the boundary of $\Omega$ in the Neumann problem case.
+If the advection field $\mathbf{F}$ and the diffusion coefficient $D$ were known, and the model was perfect, $u$ could be solved given some initial condition $u(\cdot, 0) = u_0(\cdot)$, and a boundary condition for the values of $u$ in the Dirichlet problem case or the normal derivative of $u$ along the boundary of $\Omega$ in the Neumann problem case.
 However, measuring advection and diffusion parameters is often not possible and estimates $\overline{\mathbf{F}}$ and $\overline{D}$ need to be estimated, e.g.\ from data.
-Many uncertainties are often involved in the parameter estimation but also in the model selection.
+Many uncertainties are often involved in the parameter estimation, but also in the model selection.
 The approximate advection-diffusion model
 \begin{equation}\label{eq:advectiondiffusion_approx}
     \frac{\partial u}{\partial t} = \nabla \cdot (\overline{D} \nabla u) - \overline{\mathbf{F}} \nabla u + e
 \end{equation}
 needs to be then considered with the (hopefully small) modelling error $e = e(x,t)$.
-In applications, the model also needs to be discretised in time and domain so that each time step represents one measurement point and in space so that $\Omega$ becomes a grid in which the measurements are taken at some resolution.
+In applications, the model also needs to be discretised in time and space so that each time step represents one measurement point, and in space, so that $\Omega$ becomes a grid in which the measurements are taken at some resolution.
 
-In the air pollution example the motivation for computing the estimates $\overline{\mathbf{F}}$ and $\overline{D}$ would be that assuming the underlying parameters change little in time, i.e.\ $\frac{\partial \mathbf{F}(x,t)}{\partial t} \approx 0$ and $\frac{\partial D(x,t)}{\partial t} \approx 0$, the parameters can be utilised to transport air pollution images to future and thus producing forecasts.
+In the air pollution example the motivation for computing the estimates $\overline{\mathbf{F}}$ and $\overline{D}$ would be that assuming the underlying parameters change little in time, i.e.\ $\frac{\partial \mathbf{F}(x,t)}{\partial t} \approx 0$ and $\frac{\partial D(x,t)}{\partial t} \approx 0$, the parameters can be utilised to transport air pollution images to future, thus producing forecasts.

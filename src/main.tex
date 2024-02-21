@@ -181,6 +181,8 @@
 \usepackage{algorithm,algpseudocode}
 \usepackage[labelfont=bf]{caption}
 \usepackage{siunitx}
+\usepackage{fontspec}
+\usepackage{float}
 \sisetup{math-micro=\text{µ},text-micro=µ}
 %% Change the school field to specify your school if the automatically set name
 %% is wrong
@@ -284,8 +286,8 @@
     The ensemble Kalman filter provides an efficient Monte Carlo approximation when dealing with large data vectors.
     In this thesis, a neural network is constructed to infer velocity fields within the advection equation.
     The model is trained with meteorological cloud data.
-    Despite the intrinsic difficulties of the training data, the neural network model is shown to learn the dynamics of the advection equation even with simpler synthetic data.
-    In addition, the neural network presents comparable results compared to a commonly used method for optical flow estimation.
+    Despite the intrinsic difficulties with the training data, the neural network model is shown to learn the dynamics of the advection equation even with simpler synthetic data.
+    In addition, the neural network presents comparable results with a commonly used method for optical flow estimation.
     The network is used as a state process operator in the ensemble Kalman filter.
     A simulated setting of partial observations with an attempt to produce complete state ensembles is tested.
     The network functions expectedly within the Kalman filter model. 
@@ -414,16 +416,16 @@
 
     Havaintoihin ja malleihin liittyy usein epävarmuuksia.
     Kalman-suodin on yksi ratkaisu epävarmuuden arviointiin epävarmojen havaintojen ja mallien ongelmissa.
-    Parven Kalman-suodin on tehokas Monte Carlo -tyyppinen approksimaatio, jota tarvitaan suurten datavektoreiden hallintaan.
+    Parven Kalman-suodin on tehokas Monte Carlo -tyyppinen approksimaatio perinteisestä Kalman-suotimesta, jota tarvitaan suurten datavektoreiden hallintaan.
 
-    Tässä diplomityössä muodostetaan neuroverkko, joka tunnistaa advektioyhtälön liikekenttiä datasta.
+    Tässä diplomityössä rakennetaan neuroverkko, joka tunnistaa advektioyhtälön liikekenttiä datasta.
     Neuroverkkomalli koulutetaan meterologisella pilvidatalla.
-    Koulutusdatan vaikeuksita huolimatta, sillä koulutettu neuroverkko yleistyy odotetusti myös yksinkertaisempaan synteettiseen testidataan.
-    Lisäksi neuroverkkomallin ennustuskyky on verrattavissa yleisesti käytettyyn optisen virtatuksen menetelmään.
+    Koulutusdatan vaikeuksista huolimatta, sillä koulutettu neuroverkko yleistyy odotetusti myös yksinkertaisempaan synteettiseen testidataan.
+    Lisäksi neuroverkkomallin ennustuskyky on verrattavissa yleisesti käytettyyn optisen virtauksen menetelmään.
 
     Neuroverkkoa testaan tilaoperaattorina parven Kalman-suotimessa.
     Testinä käytetään simuloitua tilannetta puuttuvien havaintojen täyttämiseksi.
-    Neuroverkko toimii odotetusti myös Kalman-suodin mallin osana.
+    Neuroverkko toimii odotetusti myös Kalman-suodin -mallin osana.
 \end{abstractpage}
 %% Force new page so that the Swedish abstract starts from a new page
 \newpage

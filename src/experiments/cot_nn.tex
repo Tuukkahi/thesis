@@ -12,28 +12,28 @@ The velocity fields were produced using various basis types, including Fourier, 
 The described second-degree polynomials provided the best results in terms of desired velocity field properties.
 
 Various loss functions were examined.
-Structural similarity (SSIM), multi-scale SSIM (MS-SSIM), and logarithmic cosh loss functions were tested on top of the chosen MSE loss.
+Structural similarity (SSIM), multi-scale SSIM (MS-SSIM),~\cite{ssim} and logarithmic cosh loss functions were tested on top of the chosen MSE loss.
 Also, additional physics-based terms were tested accounting for the velocity field properties such as gradient, curl, and divergence inspired by~\cite{debezenac}.
 Due to the small effect of the loss function in the results, the simple MSE loss was used for training the final model.
 
 As the input sequence length, three latest images proved to be the optimal choice in terms of the loss function values.
 The average loss was then computed over four future time steps in training.
 The highest possible mini-batch size of within the GPU memory constraints, 64, was chosen.
-A higher mini-batch size gave stability to convergence given the noisy nature of the training data.
+A higher mini-batch size gave stability to convergence, given the noisy nature of the training data.
 
 As the velocity fields are equivariant to rotations, the data was augmented by applying random rotations to the mini-batches.
-With this, overfitting to the training data was avoided while permitting a smaller training dataset and shorter training times.
+With this, overfitting to the training data was avoided while simultaneously permitting a smaller training dataset and shorter training times.
 
 \subsubsection{Training Results}
 The network was trained on the Finnish IT Center for Science (CSC) Puhti high-performance computing environment using a single Nvidia V100 GPU with \SI{32}{\giga\byte} of VRAM.
 The network was implemented using the Python library PyTorch wrapped in the PyTorch Lightning interface.
 
 The network was trained until the average MSE loss metric for the validation set reached a plateau.
-A plateau is reached in around ten epochs and this takes about 10 minutes with the described hardware resources.
+Typically, a plateau was reached in ten epochs and took 10 minutes with the described hardware resources.
 The efficiency of the training process can be attributed to the simplicity of the network architecture and the relatively small dataset required for good performance.
 
-The trained model was tested with simulated synthetic data examples not similar to the training data.
-Despite the differences to the cloud images, the model is able to successfully capture correct motion patterns given similar data scaling to the training dataset.
+The trained model was tested with simulated synthetic data examples, not similar to the training data.
+Despite the differences to the cloud images, the model is able to successfully capture correct motion patterns, given similar data scaling to the training dataset.
 This promising result suggests that the model works as designed by learning the advection equation dynamics instead of the specifics of the particular training data.
 Moreover, this suggests that similar physics-informed models could also be trained even with simulated data.
 Hence, this approach could be used in problems with even more problematic and insufficient training data.
@@ -49,9 +49,9 @@ Figure~\ref{fig:synthetic_example} shows model predictions for a Gaussian circle
 
 To place the model's performance in a broader context, it was compared against two prediction methods with the test dataset.
 The first compared method is the well-established Lucas-Kanade technique for optical flow estimation.
-Te second is a naive prediction using the most recent observation as the forecast.
+The second is a naive prediction using the most recent observation as the forecast.
 As predictability for the data, especially over multiple time steps, is known to be poor, the naive prediction serves as a rudimentary way to assess whether the motion models have any predictive value.
-The Lucas-Kanade method provides a good baseline for a motion-based model as it is a commonly used computational method in similar meteorological applications.
+The Lucas-Kanade method provides a good baseline for a motion-based model, as it is a commonly used computational method in similar meteorological applications.
 The general Lucas-Kanade algorithm assumes a locally constant velocity field that is solved using least squares approximation at each pixel using local spatial and temporal gradients.
 The used Lucas-Kanade version from the PySteps Python library~\cite{lucaskanade} uses a pyramidal implementation presented in~\cite{pyramidallk} that captures the general motion of images by up-scaling the images to varying resolutions.
 Default parameters were used for the Lucas-Kanade test with the same data scaling and input sequence length of 3 as with the neural network.
@@ -68,7 +68,7 @@ RMSE is just the square root of the MSE error, restoring the value to the origin
 These two metrics give insight into the average predictive performance across the entire image domain with different emphasis on smaller and larger prediction errors.
 Due to the averaging, the one-dimensional indexing can be thought of here as flattening multidimensional data.
 The neural network was trained to minimise the MSE loss over the training dataset and the Lucas-Kanade is a least squares method for each image.
-Therefore, it is also important to use a metric not directly related the average metrics to get a less biased perspective on the performance.
+Therefore, it is also important to use a metric not directly related to the average metrics to get a less biased perspective on the performance.
 
 FSS is a spatial verification metric introduced in~\cite{fss} that compares predictions and targets on a spatial area of some size above some threshold.
 FSS first computes binary fields $\bm{1}_{\geq q}(\hat{y})[i,j]$ and $\bm{1}_{\geq q}(y)$ for a two-dimensional prediction $\hat{y}$ and a target $y$ given a threshold value $q$ as
@@ -100,13 +100,14 @@ where the reference MSE is the maximum difference
 \begin{equation*}
     \operatorname{MSE}_{\text{ref}}\left(I_{\hat{y}}(n,q), I_{y}(n,q)\right) = \sum_{i,j}I_{\hat{y}}(n,q)[i,j]^2 + \sum_{i,j}I_{y}(n,q)[i,j]^2.
 \end{equation*}
-The FSS value for a perfect skill where the spatial densities for both binary fields agree is then 1, and for no skill when the spatial densities disagree completely the value is 0.
-Due to the threshold and window size variables, computing multiple FSS scores is needed to get a greater understanding of prediction skill.
+The FSS value for a perfect skill, where the spatial densities for both binary fields agree, is then 1.
+For no skill, when the spatial densities disagree completely, the value is 0.
+Due to the threshold and window size variables, computing multiple FSS scores is needed to get a greater understanding of the prediction skill.
 
 In order to ensure meaningful and balanced comparisons, some issues need to be considered before presenting the results.
 Firstly, the metrics were computed using the normalised test dataset.
 This was essential to provide a more consistent interpretation between both strong and weak cloud patterns, given that the modelling focuses on the motion of cloud structures rather than evolution or formation.
-Furthermore, the evaluations were restricted to regions of the predicted images where the Lucas-Kanade and the neural network generated forecasts based on the latest available state rather than extrapolating values from outside the image area.
+Furthermore, the evaluations were restricted to regions of the predicted images where the Lucas-Kanade and the neural network generated forecasts based on the latest available state, rather than extrapolating values from outside the image area.
 These strategies should ensure a more equitable comparison of the models' performance.
 
 Figures~\ref{fig:mae_loss},~\ref{fig:rmse_loss}, and~\ref{fig:fss} visualise the computed averaged metrics of forecasts of the test dataset up to two hours.
@@ -116,14 +117,14 @@ It affirms the validity of these kinds of neural network applications.
 
 The naive predictions, while not matching the performance of the motion models, are not significantly lagging.
 This relatively close performance can largely be attributed to the challenging nature of the noisy COT dataset.
-The situtaion is not helped by the high share of missing values that are interpolated in a rudimentary manner.
+The situation is not helped by the high share of missing values that are interpolated in a rudimentary manner.
 This also underscores a need for more sophisticated yet efficient methods for handling missing observations, for which the Bayesian filtering approach is one method.
 Moreover, as already discussed, a significant portion of the dataset does not conform to the advection equation, thus not providing purposeful data for the modelling methods.
 
 Despite the challenging dataset, what stands out is the resilience of the neural network model.
 This is partly demonstrated by the close performance of the Lucas-Kanade method but also by the ability to generate sensible velocity fields with simplified, synthetic examples far from the actual training dataset.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \inputpypgf{experiments/fig/mae_loss.pypgf}
     \caption{\label{fig:mae_loss}Mean absolute error (MAE) of predictions over two hours.
@@ -131,7 +132,7 @@ This is partly demonstrated by the close performance of the Lucas-Kanade method 
     The Lucas-Kanade and neural network predictions have similar MAE values and naive higher errors.}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \inputpypgf{experiments/fig/rmse_loss.pypgf}
     \caption{\label{fig:rmse_loss}Root mean squared error (RMSE) of predictions over two hours.
@@ -139,7 +140,7 @@ This is partly demonstrated by the close performance of the Lucas-Kanade method 
     The Lucas-Kanade and neural network have comparable RMSE values and naive worse values.}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \inputpypgf{experiments/fig/fss_05.pypgf}
     \caption{\label{fig:fss}Fractions skill score (FSS) of predictions over two hours with two different window sizes and threshold settings.

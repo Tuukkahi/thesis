@@ -11,7 +11,7 @@ ax.set_ylabel("$y$")
 ax.scatter(points[:,0],points[:,1], color='black')
 
 for i in range(6):
-    text = "$(x_{" + str(i) + "}, y_{" + str(i) + "})$"
+    text = "$(x_{" + str(i+1) + "}, y_{" + str(i+1) + "})$"
     ax.annotate(text, (points[i,0]+0.03, points[i,1]-0.11))
 
 ax.set(xlim=(-1.1, 1.1), ylim=(-1.1, 1.1), aspect='equal')

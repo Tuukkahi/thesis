@@ -1,5 +1,5 @@
 This subsection covers the basics of neural networks, starting from the McCulloch-Pitts Neuron and training it to backpropagation to the modern convolutional neural networks.
-As the material of this subsection also covers the elementary underlying principles of neural networks, it is beyond the bare minimum needed for understanding the results of this work but still provides some context for later discussions.
+As the material of this subsection also covers the elementary underlying principles of neural networks, it is beyond the bare minimum needed to understand the results of this work, but still provides some context for later discussions.
 
 Artificial neural networks draw inspiration from the neural structures in the human brain and are a prominent part of modern machine learning methods.
 As computing capabilities have seen a dramatic increase, more complex neurals have become feasible and thus more useful in more applications.
@@ -15,7 +15,7 @@ The most recent wave of neural network research from the 2000s was spurred by po
 The McCulloch-Pitts neuron from~\cite{mcculloch} is the first mathematical model of neurons and is the fundamental building block for any neural network.
 It consists of two principal components: an aggregation unit that processes an input vector, and an activation function that generates an output based on the aggregation.
 The operational structure of the McCulloch-Pitts Neuron is illustrated in Figure~\ref{fig:mccullochpittsneuron}.
-\begin{figure}
+\begin{figure}[H]
     \centering
     \input{background/fig/mccullochpitts.tex}
     \caption{\label{fig:mccullochpittsneuron}McCulloch-Pitts Neuron takes a binary input vector, evaluates its sum and determines the binary output by comparing the sum to a given threshold.}
@@ -42,7 +42,7 @@ The perceptron aggregation function $f_{\text{perceptron}} : \R^n \rightarrow \R
 where the input vector is weighted by the weight vector $w \in \R^n$ and bias term $b \in \R$ is added to the output. 
 The structure of the perceptron is depicted in Figure~\ref{fig:perceptron}.
 
-\begin{figure}
+\begin{figure}[H]
     \centering
     \input{background/fig/perceptron.tex}
     \caption{\label{fig:perceptron}Perceptron allows any input values that are weighted with $w$ and adds a bias term $\beta$.
@@ -54,7 +54,7 @@ Commonly used activation functions include the Rectified Linear Unit (ReLU), Lea
 These activation functions are visualised in Figure~\ref{fig:activations}.
 The choice of activation function comes with technicalities crucial for training a neural network, such as the range of possible values and behaviour of their derivatives.
 
-\begin{figure}
+\begin{figure}[H]
     \inputpypgf{background/fig/activations.pypgf}
     \caption{\label{fig:activations}Different commonly used activation functions in neural networks.
     The activation functions control the range of values going through a network, and introduce nonlinearity to the otherwise linear networks.}
@@ -63,7 +63,7 @@ The choice of activation function comes with technicalities crucial for training
 The single-neuron model is only applicable to extremely simple tasks.
 Therefore, the so-called multilayer perceptron (MLP) was developed in which several perceptrons are combined as layers and applied sequentially.
 The MLP structure is shown in Figure~\ref{fig:mlp}.
-\begin{figure}
+\begin{figure}[H]
     \centering
     \input{background/fig/mlp.tex}
     \caption{\label{fig:mlp} A schematic illustration of multiplayer perceptron.
@@ -119,9 +119,9 @@ CNNs employ many small convolutions as a replacement for the dot products perfor
 With image inputs, the convolution kernels often have sizes in the range of $3 \times 3$ to $9 \times 9$.
 In Figure~\ref{fig:2dconv}, a convolution of a larger matrix with a $3 \times 3$ kernel is visualised.
 Smaller kernels are usually preferred due to the reduced number of model parameters and lower computational cost while retaining the capacity to learn patterns from data.
-The input is convoluted with a large number of these small kernels individually and hence increasing the depth of the input.
+The input is convolved with a large number of these small kernels individually and hence increasing the depth of the input.
 A typical number of convolution filters in the initial layer could be 32 or 64, and then increasing number of filters for the subsequent layers to allow the model to learn more complex representations.
-\begin{figure}
+\begin{figure}[H]
     \centering
     \input{background/fig/conv2d.tex}
     \caption{\label{fig:2dconv}Two-dimensional convolution with a $3 \times 3$ kernel.
@@ -149,10 +149,10 @@ All neural network learning tasks ultimately lead to an optimisation problem.
 Optimising neural network parameters bears resemblance to other numerical optimisation methods.
 But due to the huge number of parameters and the non-convex nature of the optimisation problem, training a neural network is a lengthy and complex task.
 The optimisation problem of a supervised learning task can be written out as a minimisation of a real-valued cost functional $J$, which represents the expected value of a loss function, with respect to the network parameters $\theta$:
-\begin{equation}
+\begin{equation*}
     \min_{\theta} \, J(\theta) = \mathbb{E}_{(x,y) \sim \hat{\pi}_{\text{data}}} L(f(x; \theta), y) = \frac{1}{n} \sum_{i=1}^{n}  L(f(x^{(i)}; \theta), y^{(i)}).
-\end{equation}
-Here, $f$ denotes the neural network function that generates predictions for some input data $x$, drawn from the empirical training data distribution $\hat{\pi}_{\text{data}}$ given the network parameters.
+\end{equation*}
+Here, $f$ denotes the neural network function that generates predictions for some input data $x$, drawn $n$ times from the empirical training data distribution $\hat{\pi}_{\text{data}}$ given the network parameters.
 $L$ is the loss function which compares the network prediction to the true label $y$.
 This is easily modified to unsupervised learning by excluding $y$ from the equation, in which case the loss function has to use another method to compare correctness.
 
@@ -160,17 +160,17 @@ Choosing an appropriate loss function is a crucial part of model training.
 The family of loss functions suitable for neural networks is large and dependent on the type of data.
 While the definitions of different loss functions look very different, the choice is typically made based on how large prediction errors should be valued compared to small ones.
 Perhaps the most commonly used and well-known loss function is the mean squared error (MSE), which computes the mean of squared prediction errors between an $n$-dimensional target value $y$ and predicted value $\hat{y}$:
-\begin{equation}
+\begin{equation*}
     L_{\operatorname{MSE}}(\hat{y}, y) = \frac{1}{n} \sum_{i=1}^{n} \left( y_{i} - \hat{y}_{i} \right)^{2}.
-\end{equation}
+\end{equation*}
 The standard loss functions are sometimes augmented with application-specific quantities.
 For instance, in the realm of physics-informed neural networks, it is customary to add some physical quantities with some weights to the loss function.
-Theoretically, these quantities are then minimised in the training process but enforcing it is difficult and choosing appropriate weights is non-trivial.
-Consequently, hard boundary conditions are then hard to meet in this manner.
+Theoretically, these quantities are then minimised in the training process, but enforcing it is difficult, and choosing appropriate weights is non-trivial.
+Consequently, hard boundary conditions are hard to meet in this manner.
 
 Many optimisation algorithms with neural networks are based on Stochastic gradient descent (SGD).
 SGD is an adaptation of the classical gradient descent algorithm.
-The basic concept of adjusting the decision variable in the direction of the loss function's gradient, scaled by a constant step size is the same.
+The basic concept of adjusting the decision variable in the direction of the loss function's gradient, scaled by a constant step size, is the same.
 The stochastic version primarily differs from the original one in that it estimates gradients from a subset of the data, thereby reducing the computational cost.
 
 For a true stochastic optimisation method, only one sample would be taken, but it is often more practical to take a small number of samples, called mini-batching.
@@ -192,8 +192,9 @@ The SGD algorithm with mini-batching is detailed in Algorithm~\ref{alg:sgd}.
 
 The stochastic nature of the SGD algorithm introduces noise into the computed losses also in an optimum.
 Consequently, the algorithm would never stabilise at the optimum but keep altering parameters.
-A usual mitigation for this is decreasing the step size during training according to some schedule.
-As the technical details related to step size scheduling techniques are outside the scope of this work, the interested are referred to e.g.~\cite{goodfellow} for in-depth review.
+A usual mitigation for this is to decrease the step size during training according to some schedule.
+As the technical details related to step size scheduling techniques are outside the scope of this work.
+E.g.~\cite{goodfellow} provides an in-depth review.
 
 While SGD serves as a standard first-order algorithm, more advanced algorithms are also often employed.
 SGD with momentum, for instance, supplements the current search direction with a fraction of the previous one to robustify the search directions.
@@ -213,12 +214,12 @@ Conventional approaches for numerical gradient estimation are computationally in
 Therefore, a technique called backpropagation is needed for efficient gradient estimation.
 
 Reverse accumulation as an automatic differentiation technique for MLP networks was first introduced in the 1970s and 1980s and became later known as backpropagation.
-Backpropagation was first introduced by Paul Werbos in their 1974 PhD thesis~\cite{werbos} but gained popularity a decade later through the works of David Rumelhart and others~\cite{rumelhartetal}.
+It was first introduced by Paul Werbos in their 1974 PhD thesis~\cite{werbos} but gained popularity a decade later through the works of David Rumelhart and others~\cite{rumelhartetal}.
 
 These works facilitated the efficient training of more complex networks due to the precise gradient estimation of neural network parameters.
 However, reverse accumulating gradients were studied independently by multiple others even earlier.
 Perhaps the most notable example is the work of the Finnish mathematician Seppo Linnainmaa in their MSc thesis from 1970~\cite{linnainmaa}.
-However, in Linnainaa's work, the concept of reverse accumulation was studied in the context of cumulative floating point errors.
+However, in Linnainmaa's work, the concept of reverse accumulation was studied in the context of cumulative floating point errors.
 
 The core principle behind the backpropagation algorithm is the recursive application of the chain rule of calculus.
 The chain rule states that for $g: \R^{m}\rightarrow \R^{n}$ and $f: \R^{n} \rightarrow \R$ with $f(g(x))$ the partial derivatives of $f$ are given by
@@ -232,24 +233,24 @@ Subsequently, the chain rule can be used to obtain the partial derivatives with 
 As the shape and size of the trainable parameters differ for each specific network architecture, the exact formulation of the gradients differs a bit.
 For the simple MLP case, the formulas are easy to write to see the idea behind the backpropagation algorithm.
 Recall that the network parameters can be expressed for each layer $\ell$ as a matrix $\theta^{(\ell)} = \begin{bmatrix} W & b \end{bmatrix}^{(\ell)}$.
-Then mark the output of layer $\ell$ as $z^{(\ell)} = W^{(\ell)} a^{(\ell-1)} + b$ where $a^{(\ell-1)} =  \phi^{\ell-1}(z^{(\ell-1)})$ is the output from the activation of the previous layer.
+Then, denote the output of layer $\ell$ as $z^{(\ell)} = W^{(\ell)} a^{(\ell-1)} + b$ where $a^{(\ell-1)} =  \phi^{\ell-1}(z^{(\ell-1)})$ is the output from the activation of the previous layer.
 The chain rule thus gives for the partial derivative of the objective function w.r.t.\ parameter $\theta_{ij}^{(\ell)}$
 \begin{equation}\label{eq:mlpchainrule}
     \frac{\partial J}{\partial \theta_{ij}^{(\ell)}} = \sum_{k} \frac{\partial J}{\partial z_{k}^{(\ell)}} \frac{\partial z_{k}^{(\ell)}}{\partial \theta_{ij}^{(\ell)}}. 
 \end{equation}
-Then, the $z$ derivatives are easily evaluated for the weight terms to
+For the weight derivatives this is evaluated as
 \begin{equation*}
-    \frac{\partial J}{\partial W_{ij}^{(\ell)}} = \frac{\partial J}{\partial z_{j}^{(\ell)}} z_{i}^{(\ell)},
+    \frac{\partial J}{\partial W_{ij}^{(\ell)}} = \frac{\partial J}{\partial z_{j}^{(\ell)}} a_{i}^{(\ell-1)},
 \end{equation*}
-and for the bias terms to
-\begin{equation}
+and the bias derives as
+\begin{equation*}
     \frac{\partial J}{\partial b_{j}^{(\ell)}} = \frac{\partial J}{\partial z_{j}^{(\ell)}} 1.
-\end{equation}
+\end{equation*}
 Thus,~\eqref{eq:mlpchainrule} can be written as
 \begin{equation}\label{eq:mlchainrulevec}
     \nabla_{\theta^{(\ell)}} J = \begin{bmatrix} z^{(\ell)} \\ 1 \end{bmatrix} (\nabla_{z^{(\ell)}} J)^{\top}.
 \end{equation}
-The only thins left then is to find an equation for the gradient term of~\eqref{eq:mlchainrulevec} that is often called the local gradient or error.
+The only thing left then is to find an equation for the gradient term of~\eqref{eq:mlchainrulevec} that is often called the local gradient or error.
 Denote it by $\delta^{(\ell)}$, and apply the chain rule once again,
 \begin{align*}
     \delta_{j}^{(\ell)} = \frac{\partial J}{\partial z_{j}^{(\ell)}} = &\sum_{k} \frac{\partial J}{\partial z_{k}^{(\ell + 1)}} \frac{\partial z_{k}^{(\ell+1)}}{\partial z_{j}^{(\ell)}} \\
@@ -270,5 +271,5 @@ For the last layer $L$, the error can be given more simply,
                                                                     &= \frac{\partial J}{\partial a_{j}^{L}} \phi^{(L)\prime} (z_{j}^{(L)}).
 \end{align*}
 
-Now that the neural network construction is defined, there is a way to find the optimal network parameters by computing the gradients, a complete neural network can be trained.
-Things need not be this complicated for users of neural networks as the computations presented are typically encapsulated inside the widely used numerical neural network libraries. 
+Now that the neural network construction is defined, there is a way to find the optimal network parameters by computing the gradients, and a complete neural network can be trained.
+Things need not be this complicated for users of neural networks, as the computations presented are typically encapsulated inside the widely used numerical neural network libraries. 

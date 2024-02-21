@@ -5,14 +5,14 @@ The neural network is integrated into the Kalman filter model to widen the class
 The motivation for this is two-fold.
 Firstly, approximating the filtering distribution provides a way to assimilate multiple indirect partial observations of varying quality to the state estimates as they arrive.
 Secondly, approximating the prediction distribution yields probabilistic forecasts over multiple time steps.
-While this work's primary focus has been filtering distribution, the prediction distribution case is also discussed as it comes with some intricacies of its own.
+While this work's primary focus has been filtering distribution, the prediction distribution case is also discussed, as it comes with some intricacies of its own.
 A third closely related problem, but not considered in this work's scope, is the smoothing distribution estimation with a Kalman smoother to update previous state estimates given future observations.
 
 Due to the high dimensionality of image data, the ensemble transform Kalman filter presented in Algorithm~\ref{alg:etkf} is used.
 Therefore, the distributions are only ensemble approximations instead of the analytical solutions of the standard Kalman filter.
 Using the neural network model as a state evolution operator in an EnKF is influenced by~\cite{deepide}.
 However, a slightly different approach is taken here to accommodate even larger state vectors.
-Furthermore, here, the interest is in the filtering distribution instead of probabilistic forecasting with the aim of providing an estimate of the entire state from incomplete observations.
+Furthermore, here, the interest is in the filtering distribution instead of probabilistic forecasting, with the aim of providing an estimate of the entire state from incomplete observations.
 
 \subsubsection{State-Space Model Operators}
 For analysis of the state-space model~\eqref{eq:statespacemodel}, observation and state evolution operators $H$ and $M$ are needed.
@@ -22,15 +22,15 @@ Despite this somewhat artificial treatment of the observation process, challenge
 Missing observations present a significant challenge also in the data considered in this work's numerical experiments.
 
 As the neural network models data using the advection equation, the network output can be interpreted as the linear warping function that transforms a state vector to the next time step already discussed with the neural network model.
-The state operator is consequently a time-dependent warping operator that operates with the state vectors in the state-space model, i.e.,
+The state operator is consequently a time-dependent warping operator that operates with the state vectors in the state-space model, i.e.
 \begin{equation*}
     M_{k+1}x_k[i,j] = 
         x_{k}[i-\mathbf{F}_{u}[i,j], \, j - \mathbf{F}_{v}[i,j]],
 \end{equation*}
-when the $i-\mathbf{F}_{u}[i,j]$ and $j - \mathbf{F}_{v}[i,j]$ are inside the image domain.
+when indices $i-\mathbf{F}_{u}[i,j]$ and $j - \mathbf{F}_{v}[i,j]$ are inside the image domain.
 As discussed earlier, if the source point is outside the image domain, the border values are used to retain the domain size in the filter.
-The filtering can be performed over a larger domain than necessary and focus on the interior of the filtered states so that observations would be assimilated multiple times for the interior pixels.
-Also wrong border values are over time corrected with observations by the Kalman filter.
+The filtering can be performed over a larger domain and focus on the interior of the filtered states, so that observations would be assimilated multiple times for the interior pixels.
+Also, wrong border values are corrected over time with observations by the Kalman filter.
 
 Due to the use of the ensemble filter, the same model operator is applied for each ensemble member separately according to the Algorithm~\ref{alg:etkf}.
 As the neural network is intended to estimate motion from single point estimates, the ensemble means are used to produce new velocity fields to update $M$ when required.
@@ -53,20 +53,20 @@ In the ensemble case these assumptions translate to that the state ensemble shou
 This assumption yields an efficient formulation, but the validity of the assumption depends on the target application and data used.
 
 It is also imporant to note that the assumptions are only needed for the optimality of the observation update step.
-As the prediction distribution case with the ETKF works essentially by propagating the latest state ensemble estimate forward, the ensemble need not be limited by the Gaussian distribution assumptions.
-Consequently, the ensemble generation has more freedom when generating only predictions.
-The ensemble can in the prediction case then be generated and inflated on a case-by-case basis depending on the exact data source used and e.g.\ on the quality of previous predictions.
+The prediction distribution case with the ETKF works essentially by just propagating the latest state ensemble estimate forward.
+Thus, the ensemble need not be limited by the Gaussian distribution assumptions, and can be generated with more freedom.
+In the prediction case the ensemble can then be generated and inflated on a case-by-case basis depending on the exact data source used and on the accuracy of previous predictions.
 
 But also for the filtering distribution case, a non-religious following of the assumptions is needed to get valid state ensembles.
-Given the advective data considered here, the uncertainties are known to be related to the location of spatial objects in data and their values.
+Given the data considered here, the uncertainties are known to be related to the location of spatial objects in data and their values.
 Therefore, while not theoretically entirely consistent with the Kalman filter assumptions, the initial ensemble is created by applying Gaussian noise of small intensity and applying uniform random warps to the first state estimate.
 
 As the same model operator given by the neural network is applied to all ensemble members, the state's borders become broadly similar between ensemble members.
 Consequently, uncertainty in the border areas is easily underestimated.
-Inflation is needed to address this by increasing the variation between ensemble members.
-Similar techniques as with creating the initial ensemble are used, i.e.\ perturbing the ensemble by Gaussian noise and applying small uniform warping operations to each member of the ensembles.
+Inflation is thus needed to to increase the variation between the ensemble members.
+Similar techniques as with creating the initial ensemble are used, i.e.\ perturbing the ensemble by Gaussian noise and applying small uniform warping operations to each member of the ensemble.
 
-Another issue arising from the nature of the used data is that small ensembles and the assimilation of large observations easily break down the spatial structures.
+Another issue arising from the nature of the used data is that that a small ensemble size and the assimilation of large observations easily break down the spatial structures.
 Therefore, localisation is performed by dividing the state into smaller patches where the ETKF algorithm is performed separately.
-As the trivial observation operator does not consider values outside the domain, the localisation behaves well on the borders of the patches.
+As the trivial observation operator does not consider values outside the domain, localisation behaves well on the borders of the patches.
 Another benefit of localisation is the possibility of speeding up computation significantly by performing the algorithm in parallel for each of the smaller blocks.

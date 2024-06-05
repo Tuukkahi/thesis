@@ -1,0 +1,34 @@
+In this work, an existing neural network architecture was adapted for use in data-independent physics-based advective modelling of spatio-temporal data and it was used as a state evolution operator in a Kalman filter model.
+The developed neural network trained with a small dataset of satellite measurements of clouds was shown to generalise well for data unrelated to the training data while exhibiting comparable perormance to classic optical flow methods.
+With using the Kalman filter with the cloud data examples, the neural network was able to model the state evolution in and thus fill simulated missing observations.
+In these experiments the concept of using neural networks in physical modelling was validated along with using it as a part of another modelling system.
+While the data used in numerical experiments was limited to the cloud optical thickness observations, similar modelling could have applications across multiple domains.
+The advective modelling was chosen for the generality and easy understanding but similar neural network frameworks could as well be applied in other modelling other phenomena where existing methods are not as well established.
+
+While considerable work remains to follow up with what has been done for this thesis both with development of the neural network and tuning the Kalman filter is needed for better validation of the model, the results were already encouraging.
+As the neural network was mostly a reused image recognition architecture with limited adjustments, a valid case could be made that there are considerable low-hanging fruits to improve its performance.
+For this work, the physics-based interpretability of the neural network model was a primary goal so engineering the network further with performance in mind and with more sophisticated training with extended and better appropriate data could easily provide superior results.
+In application specific tasks, neural networks predicting outputs directly without physics-based modelling have gained popularity but the lack in interpretability and for problems where mathematical models exist, similar neural network assisted modelling approach could be beneficial in generalising and constraining neural network models.
+
+In many ways the applicarion of Kalman filtering in this work was limited and could not show its full potential.
+While the simulated examples demonstrated its ability fill missing values in partial observations, more sophisticated treatment of nonstaionary inverse problems related to the observation operator in the state-space model could be useful in more complex problems.
+For instance, data fusion of multiple indirect data sources along with the neural network assisted modelling studied here could contribute to meaningful improvements in accuracy of multiple problems.
+The concept of a data-independent neural network trained to learn a mathematical model instead of a specific data would be advantageous in these cases as the training data could be selected or even simulated based on the mathematical model instead of the potentially insufficient actual data of interest.  
+
+Even with the wide use and theoretical validity of the ensemble based Kalman filters, major drawbacks remain to be considered.
+The accurate representation of the uncertainty of state estimates requires handcrafted engineering of the ensembles with multiple unknown parameters.
+But as larger state and observation spaces render the classical Kalman filter unfeasible, the ensemble methods offer a valid workaround.
+Another alternative for applications similar to the one presented here could be appropriate dimension reduction techniques in order to continue using the classical Kalman filter for higher dimensional problems as well.
+In addition, the filtering problems could be reformulated to better represent the actual task. 
+As the neural network state operator models only advection at a few control points and big uncertainties are related to the advection vectors, a potential reformulation would be to incorporate the advection parameters to state vectors.
+
+For meteorological applications, prediction problems related to the used cloud optical thickness observations could also be valuable even though less focus was given to that.
+With reliable COT forecasts, the ever increasing solar energy production could be estimated that could be valuable information even for short time horizons in the electricity markets given the variable power of renewable energy sources.
+For the forecasting problems, the presented model framework could be already used for complete and reliable estimates of the initial state from which with some adjustments probabilstic forecasts could be produced.
+
+In conclusion, the findings of this work could direct further work toward multiple directions.
+In the realm of the study of neural network assisted modelling, similar techniques could be researched for other other physics-based problems as well where existing methods are slow or difficult.
+For example, in more complicated problems with insufficient training data a neural network could be trained to  mathematical models using simulated or related data to yield speed benefits in modelling.
+On the other hand, this, and similar methods would benefit from futher engineering work of verification and optimisation to specific tasks to yield better results.
+As continuing the work on combining the neural network to Bayesian filtering problems, the completing and smoothing of historical advective time series or the incorporation of more sophisticated observation models would be a possible topic.
+As for direct continuation, advective prediction problems related to specific data and applications could be studied where the model of this work can provide complete initial states and a predictor model.

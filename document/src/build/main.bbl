@@ -1,0 +1,229 @@
+\begin{thebibliography}{10}
+
+\bibitem{enkfbook}
+Mark Asch, Marc Bocquet, and Ma{\"e}lle Nodet.
+\newblock {\em Data assimilation: methods, algorithms, and applications}.
+\newblock SIAM, 2016.
+
+\bibitem{rainnet}
+Georgy Ayzel, Tobias Scheffer, and Maik Heistermann.
+\newblock Rainnet v1.0: a~convolutional neural network for radar-based
+  precipitation nowcasting.
+\newblock {\em Geoscientific Model Development}, 13(6):2631--2644, 2020.
+
+\bibitem{pinnpde}
+Jan Blechschmidt and Oliver~G Ernst.
+\newblock Three ways to solve partial differential equations with neural
+  networks—a review.
+\newblock {\em GAMM-Mitteilungen}, 44(2):e202100006, 2021.
+
+\bibitem{pyramidallk}
+Jean-Yves Bouguet et~al.
+\newblock Pyramidal implementation of the affine lucas kanade feature tracker
+  description of the algorithm.
+\newblock {\em Intel corporation}, 5(1-10):4, 2001.
+
+\bibitem{sintel}
+Daniel~J. Butler, Jonas Wulff, Garrett~B. Stanley, and Michael~J. Black.
+\newblock A naturalistic open source movie for optical flow evaluation.
+\newblock In Andrew Fitzgibbon, Svetlana Lazebnik, Pietro Perona, Yoichi Sato,
+  and Cordelia Schmid, editors, {\em Computer Vision -- ECCV 2012}, pages
+  611--625, Berlin, Heidelberg, 2012. Springer Berlin Heidelberg.
+
+\bibitem{intraday}
+Alberto Carpentieri, Doris Folini, Daniele Nerini, Seppo Pulkkinen, Martin
+  Wild, and Angela Meyer.
+\newblock Intraday probabilistic forecasts of surface solar radiation with
+  cloud scale-dependent autoregressive advection.
+\newblock {\em Applied Energy}, 351:121775, 2023.
+
+\bibitem{cybenko}
+George Cybenko.
+\newblock Approximation by superpositions of a sigmoidal function.
+\newblock {\em Mathematics of control, signals and systems}, 2(4):303--314,
+  1989.
+
+\bibitem{debezenac}
+Emmanuel de~Bézenac, Arthur Pajot, and Patrick Gallinari.
+\newblock Deep learning for physical processes: incorporating prior scientific
+  knowledge.
+\newblock {\em Journal of Statistical Mechanics: Theory and Experiment},
+  2019(12):124009, dec 2019.
+
+\bibitem{nwcsaf}
+Météo-France /~Centre de~Météorologie~Spatiale.
+\newblock Algorithm theoretical basis document for the cloud product processors
+  of the nwc/geo.
+\newblock Technical Report NWC/CDOP2/GEO/MFL/SCI/ATBD/Cloud, Issue 2, Rev. 1,
+  EUMETSAT NWC SAF, 2019.
+
+\bibitem{evensen1994}
+Geir Evensen.
+\newblock Sequential data assimilation with a nonlinear quasi-geostrophic model
+  using monte carlo methods to forecast error statistics.
+\newblock {\em Journal of Geophysical Research: Oceans}, 99(C5):10143--10162,
+  1994.
+
+\bibitem{kitti}
+Andreas Geiger, Philip Lenz, and Raquel Urtasun.
+\newblock Are we ready for autonomous driving? the kitti vision benchmark
+  suite.
+\newblock In {\em 2012 IEEE Conference on Computer Vision and Pattern
+  Recognition}, pages 3354--3361, 2012.
+
+\bibitem{goodfellow}
+Ian Goodfellow, Yoshua Bengio, and Aaron Courville.
+\newblock {\em Deep learning}.
+\newblock MIT press, 2016.
+
+\bibitem{resnet}
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun.
+\newblock Deep residual learning for image recognition.
+\newblock {\em CoRR}, abs/1512.03385, 2015.
+
+\bibitem{hebb}
+Donald~O. Hebb.
+\newblock The organization of behavior.
+\newblock {\em New York}, 1949.
+
+\bibitem{pyresample}
+David Hoese, Martin Raspaud, Panu Lahtinen, William Roberts, Lavergne, Stickler
+  Bot, Gerrit Holl, Stephan Finkensieper, Gionata Ghiggi, Adam Dybbroe, Xin
+  Zhang, Mikhail Itkin, Andrea Meraner, BENR0, Antonio Valentino, Nina, Lars
+  Ørum Rasmussen, lorenzo clementi, Martin Valgur, Denis Rykov, Alan Brammer,
+  Bas Couwenberg, Brian Hawkins, Florian Pinault, storpipfugl, owenlittlejohns,
+  Abel Aoun, and Andres Ricardo~Pena Morena.
+\newblock pytroll/pyresample: Version 1.26.1 (2023/02/07), February 2023.
+
+\bibitem{hornik}
+Kurt Hornik.
+\newblock Approximation capabilities of multilayer feedforward networks.
+\newblock {\em Neural networks}, 4(2):251--257, 1991.
+
+\bibitem{horniketal}
+Kurt Hornik, Maxwell Stinchcombe, and Halbert White.
+\newblock Multilayer feedforward networks are universal approximators.
+\newblock {\em Neural networks}, 2(5):359--366, 1989.
+
+\bibitem{kaipiosomersalo}
+Jari Kaipio and Erkki Somersalo.
+\newblock {\em Statistical and computational inverse problems}, volume 160.
+\newblock Springer Science \& Business Media, 2006.
+
+\bibitem{kalman}
+Rudolf.~E. Kálmán.
+\newblock {A New Approach to Linear Filtering and Prediction Problems}.
+\newblock {\em Journal of Basic Engineering}, 82(1):35--45, 03 1960.
+
+\bibitem{linnainmaa}
+Seppo Linnainmaa.
+\newblock The representation of the cumulative rounding error of an algorithm
+  as a taylor expansion of the local rounding errors.
+\newblock Master's thesis, (in Finnish), Univ. Helsinki, 1970.
+
+\bibitem{liou}
+Kuo-Nan Liou.
+\newblock {\em An introduction to atmospheric radiation}, volume~84.
+\newblock Elsevier, 2 edition, 2002.
+
+\bibitem{mcculloch}
+Warren~S McCulloch and Walter Pitts.
+\newblock A logical calculus of the ideas immanent in nervous activity.
+\newblock {\em The bulletin of mathematical biophysics}, 5:115--133, 1943.
+
+\bibitem{mcgee}
+Leonard~A. McGee and Stanley~F. Schmidt.
+\newblock Discovery of the kalman filter as a practical tool for aerospace and
+  industry.
+\newblock Technical Report NASA Technical Memorandum 86847, National
+  Aeronautics and Space Administration, 1985.
+
+\bibitem{hauptmann}
+Subhadip Mukherjee, Andreas Hauptmann, Ozan {\"O}ktem, Marcelo Pereyra, and
+  Carola-Bibiane Sch{\"o}nlieb.
+\newblock Learned reconstruction methods with convergence guarantees: a survey
+  of concepts and applications.
+\newblock {\em IEEE Signal Processing Magazine}, 40(1):164--182, 2023.
+
+\bibitem{cot}
+Teruyuki Nakajima and Michael~D King.
+\newblock Determination of the optical thickness and effective particle radius
+  of clouds from reflected solar radiation measurements. part i: Theory.
+\newblock {\em Journal of Atmospheric Sciences}, 47(15):1878--1893, 1990.
+
+\bibitem{pulkkinenetal}
+Seppo Pulkkinen, Daniele Nerini, Andr\'es~A. P\'erez~Hortal, Carlos
+  Velasco-Forero, Alan Seed, Urs Germann, and Loris Foresti.
+\newblock Pysteps: an open-source python library for probabilistic
+  precipitation nowcasting (v1.0).
+\newblock {\em Geoscientific Model Development}, 12(10):4185--4219, 2019.
+
+\bibitem{lucaskanade}
+PySteps.
+\newblock \texttt{pysteps.motion.lucaskanade.dense\_lucaskanade}.
+\newblock
+  \url{https://pysteps.readthedocs.io/en/stable/generated/pysteps.motion.lucaskanade.dense_lucaskanade.html}.
+\newblock Accessed: 2023-08-20.
+
+\bibitem{fss}
+Nigel~M Roberts and Humphrey~W Lean.
+\newblock Scale-selective verification of rainfall accumulations from
+  high-resolution forecasts of convective events.
+\newblock {\em Monthly Weather Review}, 136(1):78--97, 2008.
+
+\bibitem{rosenblatt}
+Frank Rosenblatt.
+\newblock Principles of neurodynamics: perceptrons and the theory of brain
+  mechanisms.
+\newblock Technical report, Cornell Aeronautical Lab Inc Buffalo NY, 1961.
+
+\bibitem{rumelhartetal}
+David~E Rumelhart, Geoffrey~E Hinton, and Ronald~J Williams.
+\newblock Learning representations by back-propagating errors.
+\newblock {\em nature}, 323(6088):533--536, 1986.
+
+\bibitem{metnet}
+Casper~Kaae S{\o}nderby, Lasse Espeholt, Jonathan Heek, Mostafa Dehghani,
+  Avital Oliver, Tim Salimans, Shreya Agrawal, Jason Hickey, and Nal
+  Kalchbrenner.
+\newblock Metnet: {A} neural weather model for precipitation forecasting.
+\newblock {\em CoRR}, abs/2003.12140, 2020.
+
+\bibitem{stratonovich2}
+Ruslan~L Stratonovich.
+\newblock On the theory of optimal non-linear filtering of random functions.
+\newblock {\em Theory of Probability and its Applications}, 4:223--225, 1959.
+
+\bibitem{stratonovich1}
+Ruslan~L Stratonovich.
+\newblock Conditional markov processes.
+\newblock In {\em Non-linear transformations of stochastic processes}, pages
+  427--453. Elsevier, 1965.
+
+\bibitem{sarkka}
+Simo Särkkä.
+\newblock {\em Bayesian Filtering and Smoothing}.
+\newblock Institute of Mathematical Statistics Textbooks. Cambridge University
+  Press, 2013.
+
+\bibitem{ssim}
+Zhou Wang, Eero~P. Simoncelli, and Alan~C. Bovik.
+\newblock Multiscale structural similarity for image quality assessment.
+\newblock In {\em The Thrity-Seventh Asilomar Conference on Signals, Systems \&
+  Computers, 2003}, volume~2, pages 1398--1402 Vol.2, 2003.
+
+\bibitem{werbos}
+Paul Werbos.
+\newblock {\em Beyond regression: New tools for prediction and analysis in the
+  behavioral sciences}.
+\newblock PhD thesis, Committee on Applied Mathematics, Harvard University,
+  Cambridge, MA, 1974.
+
+\bibitem{deepide}
+Andrew Zammit-Mangion and Christopher~K. Wikle.
+\newblock Deep integro-difference equation models for spatio-temporal
+  forecasting.
+\newblock {\em Spatial Statistics}, 37:100408, 2020.
+\newblock Frontiers in Spatial and Spatio-temporal Research.
+
+\end{thebibliography}

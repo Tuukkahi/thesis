@@ -1,0 +1,193 @@
+Bayesian filtering refers to to the Bayesian way of deriving an optimal filtering problem of estimating the state of a nonstationary system through some observations.
+This approach becomes valuable when dealing with real-world phenomena where a mathematical model can approximate the temporal evolution of some process and measurements of the system may be uncertain.
+
+
+A key application of Bayesian filtering is state estimation which emerges in many disciplines.
+It involves estimating a hidden state of a system based on some available indirect and noisy measurements.
+Bayesian filtering provides a robust mathematical framework to combine prior knowledge about a system's state with new measurements to enhance state estimates over time.
+
+The Bayesian filtering theory emerged at the turn of the 1960s with perhaps the most famous example being the works of Rudolf E. Kálmán who published a recursive solution to a linear special case of the problem in~\cite{kalman}.
+Meanwhile in the Soviet Union Ruslan, Stratonovich studied the more general nonlinear Bayesian filtering problem, see e.g.~\cite{stratonovich2, stratonovich1}.
+The simultaneous advances in digital computers allowed the theory to prove itself quickly useful in many applications, an early well-known example of which is the guidance system of the Apollo spacecraft~\cite{mcgee}.
+
+In the context of this work, Bayesian filtering is employed to manage uncertainties related to the neural network model.
+The neural network is capable of capturing the advection fields, and the Bayesian filtering framework provides a way to generate probailistic state estimates of the COT data.
+
+\subsubsection{Bayesian Inference}
+Bayesian inference refers to the process of updating prior probability estimates in light of more information.
+The basis of Bayesian inference is the Bayes' Theorem.
+\begin{theorem}[Bayes' Theorem]
+    Assume a known prior probability density function $\pi(x)$ from a random variable $X$, and an observed probability $\pi(y)$ from another random variable $Y$.
+    Then the posterior distribution of $X$ given the observed data is given by
+    \begin{equation}
+        \pi(x \, \vert \, y) = \frac{\pi(x) \pi(y \, \vert \, x)}{\pi(y)}.
+    \end{equation}
+\end{theorem}
+In Bayesian inference, the prior distribution contains the information of some quantity before observing the data, and the posterior distribution the updated information after the observation.
+Bayesian inference revolves around using data to transform the prior distributions into the posterior distributions.
+
+\subsubsection{Probabilistic state-space models}
+The Bayesian framework of assimilating measurements, using a process model, and producing forecasts from them can be formalised as the state-space model.
+Given the inherent uncertainties linked with measurments and modelling, instead of focusing solely on point estimates of the state, it is substantially more fruitful to consider probability distributions.
+
+Consider two stochastic processes, $\{X_k\}_{k=0}^{\infty}$ and $\{Y_k\}_{k=0}^{\infty}$, denoting the state and measurements of a system respectively.
+Figure~\ref{fig:statespacedependency} presents the dependency scheme of the processes needed to formulate the state-space model.
+\begin{figure}[h]
+    \input{background/fig/statespacedependency.tex}
+    \caption{\label{fig:statespacedependency}Dependency scheme of the state-space model.}
+\end{figure}
+In order for the dependencies of the figure to materialise, some assumptions about the processes are required:
+\begin{enumerate}
+    \item 
+        $\{X_k\}_{k=0}^{\infty}$ satisfies the Markov property with respect to its own history, and history of the observations:
+        \begin{equation*}
+            \pi (x_{k+1} \, \vert \, x_{0:k}, y_{1:k}) = \pi (x_{k+1} \, \vert \, x_k).
+        \end{equation*}
+    \item
+        $\{Y_k\}_{k=0}^{\infty}$ satisfies the Markov property with respect to the history of the true state:
+        \begin{equation*}
+            \pi (y_k \, \vert \, x_{0:k}) = \pi (y_k \, \vert \, x_k).
+        \end{equation*}
+\end{enumerate}
+With these assumptions the probabilistic state-space model can be defined.
+\begin{definition}[Probabilstic state-space model]\label{def:state-space}
+    Assume stochastic processes $\{X_k\}_{k=0}^{\infty}$ and $\{Y_k\}_{k=0}^{\infty}$ meet the previous assumptions.
+    Then the following conditional probability distributions define the probabilstic state-space model:
+    \begin{subequations}\label{eq:statespace}
+        \begin{align}
+            X_0 &\sim \pi (x_0)\\
+            X_{k+1} &\sim \pi (x_{k+1} \, \vert \, x_{k}), \quad k = 0,1,2,\dots \label{eq:statespace1}\\
+            Y_k &\sim \pi (y_k \, \vert \, x_k), \quad k = 1,2,\dots. \label{eq:statespace2}
+        \end{align}
+    \end{subequations}
+\end{definition}
+In Definition~\ref{def:state-space},~\eqref{eq:statespace1} is the model that describes the evolution of state over time, and~\eqref{eq:statespace2} is the observation model that describes the distribution of measurements conditioned on the state.
+
+If functions for the state evolution and observations are known, the same can also be alternatively written as 
+\begin{subequations}\label{eq:statespacemodel}
+    \begin{align}
+        X_{k+1} &= M_{k+1}(X_{k}, W_{k+1}), \quad k = 0,1,\dots \label{eq:statespacemodel1}\\
+        Y_{k} &= H_{k}(X_{k}, V_{k}), \quad k = 1,2,\dots. \label{eq:statespacemodel2}
+    \end{align}
+\end{subequations}
+Now~\eqref{eq:statespacemodel1} is the state evolution equation where function $M_{k+1}$ gives the next state $X_{k+1}$ given the previous state $X_{k}$ and the state noise $W_{k+1}$
+The observation equation~\eqref{eq:statespacemodel2} describes the observations $Y_{k}$ as being the output of the observation function $H_{k}$ with the true state $X_{k}$ and the observation noise $V_{k}$.
+
+For the probailistic state-space models, a few conditional probability distributions are usually of interest outlined in the following definition.
+\begin{definition}
+    Assume two stochastic processes $\{X_k\}_{k=0}^{\infty}$ and $\{Y_k\}_{k=0}^{\infty}$ form a probabilistic state-space model.
+    Then the conditional probability distribution
+    \begin{itemize}
+        \item
+            $\pi(x_k \, \vert \, y_{1:k})$ is a filtering distribution.
+        \item
+            $\pi(x_{k+n}\, \vert \, y_{1:k}), \, n > 0$ is a prediction distribution.
+        \item
+            $\pi(x_k \, \vert \, y_{1:})$ is a smoothing distribution.
+    \end{itemize}
+\end{definition}
+
+With the state-space model~\eqref{eq:statespace} the Bayesian filtering problems can be discussed.
+The idea behind Bayesian filtering is to recursively update the predictions and states of the model given latest observations.
+The following theorem presents the two update equations for the Bayesian filtering scheme.
+\begin{theorem}[Bayesian filtering equations]\label{thm:updateformulas}
+    Let $\{X_k\}_{k=0}^{\infty}$ be a state process and $\{Y_k\}_{k=0}^{\infty}$ an observation process in a state-space model.
+    Then the following recursive equations for Bayesian filtering steps apply:
+    \begin{enumerate}
+        \item 
+            Prediction step:
+            \begin{equation}\label{eq:predictionstep}
+                \pi (x_{k+1} \, \vert \, y_{1:k}) = \int \pi (x_{k+1} \, \vert \, x_k) \pi (x_k \, \vert \, y_{1:k}) \, d x_k.
+            \end{equation}
+        \item
+            Observation update step:
+            \begin{equation}\label{eq:updatestep}
+                \pi(x_{k+1} \, \vert \, y_{1:k+1}) = \frac{\pi (y_{k+1} \, \vert \, x_{k+1}) \pi (x_{k+1} | y_{1:k})}{\pi (y_{k+1} \, \vert \, y_{1:k})},
+            \end{equation}
+            with
+            \begin{equation*}
+                \pi (y_{k+1} \, \vert \, y_{1:k}) = \int \pi (y_k \, \vert \, x_k) \pi (x_k \, \vert \, y_{1:k-1}) \, d x_{k+1}.
+            \end{equation*}
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    In Appendix~\ref{app:proofs}.
+\end{proof}
+
+Theorem~\ref{thm:updateformulas} provides a framwork for efficiently computing probability distributions conditioned on observations.
+The prediction step equation~\ref{eq:predictionstep} being the joint probability distribution of the current and next state conditioned on the latest observations facilitates probabilistic state estimates.
+Then the observation update equation~\ref{eq:updatestep} is just the Bayes formula where $\pi (x_{k+1} \, \vert \, y_{1:k})$ is interpreted as the prior information of the state for statistical inversion of a new observation.
+
+\subsubsection{Kalman Filter}
+The Kalman filter provides an elegant closed-form solution for the update equations of Theorem~\ref{thm:updateformulas} in the special case of a linear state-space model with Gaussian additive noise process.
+In this special case the state-space model corresponding to~\eqref{eq:statespacemodel} becomes
+\begin{subequations}\label{eq:kalmanstatespace}
+    \begin{align}
+        X_{k+1} &= M_{k+1}X_{k}  + W_{k+1}, \quad W_{k+1} \sim \mathcal{N}(0, Q_{k+1})\\
+        Y_{k} &= H_{k}X_{k} + V_{k}, \quad V_t \sim \mathcal{N}(0, R_k)
+    \end{align}
+\end{subequations}
+with a Gaussian distribution for the initial state $X_0$.
+
+Under these assumptions, the state's probability densities of the state of the model can be given by just estimates of the mean and covariance.
+The following theorem gives the filtering step equations of Theorem~\ref{thm:updateformulas}.
+\begin{theorem}[Kalman filter equations]\label{thm:kalmanfilterupdate}
+    Assume a linear Gaussian state-space model~\eqref{eq:kalmanstatespace}.
+    Let $x_{k\,\vert\,\ell}$ and $P_{k\,\vert\,\ell}$ represent the a posteriori mean and covariance of the state at time $k$ given observations $y_{1:\ell}$.
+    Then the filterering equations of Theorem~\ref{thm:updateformulas} take closed form solutions:
+    \begin{enumerate}
+        \item 
+            Prediction step:
+            Given
+            \begin{equation*}
+                \pi (x_k \, \vert \, y_{1:k}) \sim \mathcal{N}(x_{k\,\vert\,k}, P_{k\,\vert\,k}),
+            \end{equation*}
+            a priori distribution of the next state is
+            \begin{equation*}
+                \pi (x_{k+1} \, \vert \,  y_{1:k}) \sim \mathcal{N}(\hat{x}_{k+1\,\vert\,k}, \hat{P}_{k+1\,\vert\,k}),
+            \end{equation*}
+            where parameters of the distribution are given by
+            \begin{subequations}\label{eq:kalmanpredictionstep}
+                \begin{align}
+                    \hat{x}_{k+1\,\vert\,k} &= M_{k+1}x_{k\,\vert\,k}\\
+                    \hat{P}_{k+1\,\vert\,k} &= M_{k+1}P_{k\,\vert\,k}M_{k+1}^{\top} + Q_{k+1}.
+                \end{align}
+            \end{subequations}
+        \item
+            Observation update step:
+            Given
+            \begin{equation*}
+                \pi (x_{k+1} \, \vert \,  y_{1:k}) \sim \mathcal{N}(x_{k+1\,\vert\,k}, P_{k+1\,\vert\,k}),
+            \end{equation*}
+            a posteriori distribution of the next state is
+            \begin{equation*}
+                \pi (x_{k+1} \, \vert \,  y_{1:k+1}) \sim \mathcal{N}(x_{k+1\,\vert\,k+1}, P_{k+1\,\vert\,k+1}).
+            \end{equation*}
+            With 
+            \begin{subequations}\label{eq:kalmanupdatestep}
+                \begin{align}
+                    v_{k+1} &= y_{k+1} - H_{k+1}x_{k+1 \, \vert \, k},\\
+                    S_{k+1} &= H_{k+1} \hat{P}_{k+1\,\vert\,k} H_{k+1}^{\top},\\
+                    K_{k+1} &= \hat{P}_{k+1\,\vert\,k}  H_{k+1}^{\top} S_{k+1}^{-1},\\
+                    x_{k+1\,\vert\,k+1} &= \hat{x}_{k+1\,\vert\,k} + K_{k+1} v_{k+1},\\
+                    P_{k+1\,\vert\,k+1} &= (I-K_{k+1}H_{k+1})\hat{P}_{k+1\,\vert\,k}.
+                \end{align}
+            \end{subequations}
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    In Appendix~\ref{app:proofs}.
+\end{proof}
+While the theorem assumes zero means for noises, the Gaussian distributions can easiliy be shifted to accomodate for non-zero means, too.
+The Kalman filter leverages the property of Gaussian distributions retaining their Gaussian form under affine transformations.
+However, for nonlinear state-space models one can use linear approximations in order to preserve the convenience of Gaussian densities, a method known as extended Kalman filter.
+
+Even when the assumptions for the Kalman filter apply, with larger states and observation spaces, problems will arise with computing the Kalman filter steps.
+The matrix update formulas of Theorem~\ref{thm:kalmanfilterupdate} cross quickly the limits of computational feasibility.
+One way of tackling the problem is to use Ensemble Kalman filters.
+
+\subsubsection{Ensemble Kalman Filter}
+Despite the effectiveness of the original Kalman filter in optimal filtering problems, it doesn't scale well with large state and observation spaces.
+This limitation leads to the Ensemble Kalman Filter (EnKF).
+It was first introduced by Geir Evensen in~\cite{evensen1994} as a Monte Carlo approach to the Kalman filter.
+EnKF circumvents the large covariance matrices by representing a state of an state-space model by Monte Carlo samples from which sample covariances are computed.

@@ -18,13 +18,13 @@ jobs:
           submodules: recursive
       - name: Install Python dependencies
         run: |
-          pip3 install --no-cache-dir -r requirements.txt
+          pip3 install --no-cache-dir -r document/requirements.txt
       - name: Build LaTeX
         run: |
-          cd src
+          cd document/src
           latexmk
       - name: Upload PDF file
         uses: actions/upload-artifact@v3
         with:
           name: PDF
-          path: src/build/main.pdf
+          path: document/src/build/main.pdf
